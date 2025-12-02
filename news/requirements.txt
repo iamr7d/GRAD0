@@ -1,0 +1,7 @@
+langgraph
+langchain
+langchain_openai
+langchain_community
+duckduckgo-search
+pydantic
+asyncio

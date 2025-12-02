@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin: 0; padding: 0; background: black; overflow: hidden; }
+        #bg-video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; /* Ensures video fills screen without stretching */
+            opacity: 0; transition: opacity 1s; filter: brightness(0.4); /* Darken so text pops */
+        }
+        #bg-video.active { opacity: 1; }
+    </style>
+</head>
+<body>
+    <video id="bg-video" autoplay muted loop playsinline></video>
+
+    <script>
+        let currentUrl = "";
+
+        async function checkVideoUpdate() {
+            try {
+                // 1. Ask Server what is "On Air"
+                const res = await fetch('/bucket/news/queue/playout_status.json?v=' + Date.now());
+                const status = await res.json();
+                
+                // 2. Fetch the Queue to find the video link for that ID
+                const queueRes = await fetch('/bucket/news/queue/run_of_show.json?v=' + Date.now());
+                const queue = await queueRes.json();
+                
+                const activeItem = queue.find(i => i.id === status.current_id);
+                
+                if (activeItem && activeItem.video_url) {
+                    const video = document.getElementById('bg-video');
+                    
+                    // Only change if it's a new video URL
+                    if (currentUrl !== activeItem.video_url) {
+                        currentUrl = activeItem.video_url;
+                        
+                        // Smooth Transition
+                        video.classList.remove('active');
+                        setTimeout(() => {
+                            video.src = currentUrl;
+                            video.play();
+                            video.classList.add('active');
+                        }, 1000);
+                    }
+                }
+            } catch (e) { console.log("Syncing video..."); }
+        }
+
+        setInterval(checkVideoUpdate, 2000);
+    </script>
+</body>
+</html>

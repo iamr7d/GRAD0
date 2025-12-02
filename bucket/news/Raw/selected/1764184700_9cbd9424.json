@@ -1,0 +1,28 @@
+{
+    "final_production_data": {
+        "ticker": "BEYOND GOOD & EVIL 2 DEVELOPMENT CONTINUES",
+        "main_heading": "Beyond Good & Evil 2 Development Persists",
+        "headlines": [
+            "Ubisoft shuts down a support studio, but Beyond Good & Evil 2 is still in development",
+            "Game industry layoffs lead to questions about project's future",
+            "Stay tuned for updates on the game's progress"
+        ],
+        "tts_script": "With the gaming industry's recent rash of layoffs, Ubisoft shuts down a support studio. However, Beyond Good & Evil 2 is still in development."
+    },
+    "validation_data": {
+        "bias": 1,
+        "politics": 0
+    },
+    "original_raw_news": {
+        "original_title": "Beyond Good & Evil 2 is somehow still under development",
+        "original_summary": "<p>With the gaming industry's recent rash of layoffs, Ubisoft shuts down a support studio, Beyond Good & Evil 2 is somehow still under development.",
+        "sources_count": 1,
+        "category": "Gaming",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 1,
+            "politics": 0
+        },
+        "reason": "Safe"
+    }
+}

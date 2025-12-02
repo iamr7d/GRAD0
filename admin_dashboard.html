@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEN | Director's Console</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6; /* Very light gray background */
+            color: #1F2937;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
+
+        /* Animations */
+        @keyframes pulse-live {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        .animate-pulse-live {
+            animation: pulse-live 2s infinite;
+        }
+
+        /* Tab Transitions */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Sidebar Active State */
+        .sidebar-link.active {
+            background-color: #EEF2FF; /* Indigo 50 */
+            color: #4F46E5; /* Indigo 600 */
+            border-right: 3px solid #4F46E5;
+        }
+        
+        /* Card Hover Effect */
+        .hover-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col z-20 shadow-sm">
+        <div class="h-16 flex items-center px-6 border-b border-gray-100 bg-white">
+            <div class="flex items-center gap-2 font-bold text-xl tracking-tight text-gray-900">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
+                    <i data-lucide="zap" class="w-5 h-5 fill-current"></i>
+                </div>
+                <span>PEN<span class="text-indigo-600">.AI</span></span>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Studio</p>
+            
+            <a href="#dashboard" onclick="switchTab('dashboard', this)" class="sidebar-link active flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-md transition-all">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                Overview
+            </a>
+            <a href="#runofshow" onclick="switchTab('runofshow', this)" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-md transition-all">
+                <i data-lucide="list-video" class="w-4 h-4"></i>
+                Run of Show
+            </a>
+            <a href="#tickereditor" onclick="switchTab('tickereditor', this)" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-md transition-all">
+                <i data-lucide="scroll-text" class="w-4 h-4"></i>
+                Ticker & Graphics
+            </a>
+
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-8 mb-3">Intelligence</p>
+            <a href="#logs" onclick="switchTab('logs', this)" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-md transition-all">
+                <i data-lucide="activity" class="w-4 h-4"></i>
+                Agent Activity
+            </a>
+            <a href="#config" onclick="switchTab('config', this)" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-md transition-all">
+                <i data-lucide="sliders" class="w-4 h-4"></i>
+                System Config
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-gray-100 bg-gray-50/50">
+            <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Director+AI&background=4F46E5&color=fff" class="w-9 h-9 rounded-full border-2 border-white shadow-sm" alt="User">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-900 truncate">Director Mode</p>
+                    <p class="text-xs text-green-600 flex items-center gap-1 font-medium">
+                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Online
+                    </p>
+                </div>
+                <button class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#F3F4F6]">
+        
+        <!-- TOP HEADER -->
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 lg:px-8 shadow-sm z-10">
+            <div class="flex items-center gap-4">
+                <h2 class="text-xl font-bold text-gray-800 tracking-tight" id="main-header-title">Overview</h2>
+                <div class="h-6 w-px bg-gray-200"></div>
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200 flex items-center gap-1">
+                        <i data-lucide="check-circle-2" class="w-3 h-3"></i> Healthy
+                    </span>
+                    <span class="text-xs text-gray-400 font-mono" id="server-clock">--:--:-- UTC</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors relative">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <a href="/broadcast_screen.html" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-sm">
+                    <i data-lucide="external-link" class="w-4 h-4"></i> Open Broadcast
+                </a>
+            </div>
+        </header>
+
+        <!-- SCROLLABLE AREA -->
+        <main class="flex-1 overflow-auto p-6 lg:p-8">
+            
+            <!-- TAB 1: DASHBOARD -->
+            <div id="dashboard" class="tab-content active">
+                
+                <!-- TOP STATS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Stat 1 -->
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm transition-all hover-card">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Active Viewers (Sim)</p>
+                                <h3 class="text-3xl font-bold text-gray-900 mt-2">12.4k</h3>
+                            </div>
+                            <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                                <i data-lucide="users" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-green-600 font-medium">
+                            <i data-lucide="trending-up" class="w-3 h-3 mr-1"></i> +18% from last hour
+                        </div>
+                    </div>
+
+                    <!-- Stat 2 -->
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm transition-all hover-card">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Queue Depth</p>
+                                <h3 class="text-3xl font-bold text-gray-900 mt-2" id="dash-queue-len">0</h3>
+                            </div>
+                            <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                                <i data-lucide="layers" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
+                            <div id="dash-queue-bar" class="bg-blue-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Stat 3 -->
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm transition-all hover-card">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Avg. Quality Score</p>
+                                <h3 class="text-3xl font-bold text-gray-900 mt-2">8.9</h3>
+                            </div>
+                            <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
+                                <i data-lucide="star" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-xs text-gray-400">Based on last 50 segments</div>
+                    </div>
+
+                    <!-- Stat 4 -->
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm transition-all hover-card relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-red-500/10 rounded-bl-full -mr-4 -mt-4"></div>
+                        <div class="flex justify-between items-start relative z-10">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Broadcast Status</p>
+                                <h3 class="text-xl font-bold text-red-600 mt-2 flex items-center gap-2">
+                                    <span class="relative flex h-3 w-3">
+                                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                      <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                    </span>
+                                    LIVE AIR
+                                </h3>
+                            </div>
+                            <div class="p-2 bg-red-50 rounded-lg text-red-600">
+                                <i data-lucide="radio" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-xs font-mono text-gray-500 truncate" id="dash-on-air-title">Loading...</p>
+                    </div>
+                </div>
+
+                <!-- MAIN DASHBOARD CONTENT -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <!-- LEFT: AGENT STATUS -->
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                            <i data-lucide="bot" class="w-5 h-5 text-gray-400"></i> AI Agent Status
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Agent 1 -->
+                            <div class="flex items-center justify-between group">
+                                <div class="flex items-center gap-4">
+                                    <div class="p-2 rounded-lg bg-orange-50 text-orange-600 group-hover:bg-orange-100 transition-colors">
+                                        <i data-lucide="globe" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-sm text-gray-900">Ingestion Agent</p>
+                                        <p class="text-xs text-gray-500">Monitoring 4 RSS feeds</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md border border-green-100">Idle</span>
+                            </div>
+
+                            <!-- Agent 2 -->
+                            <div class="flex items-center justify-between group">
+                                <div class="flex items-center gap-4">
+                                    <div class="p-2 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors">
+                                        <i data-lucide="edit-3" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-sm text-gray-900">Editor Agent</p>
+                                        <p class="text-xs text-gray-500">Scripting & Summarization</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md border border-green-100">Active</span>
+                            </div>
+
+                            <!-- Agent 3 -->
+                            <div class="flex items-center justify-between group">
+                                <div class="flex items-center gap-4">
+                                    <div class="p-2 rounded-lg bg-purple-50 text-purple-600 group-hover:bg-purple-100 transition-colors">
+                                        <i data-lucide="mic" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-sm text-gray-900">Voice Synthesis</p>
+                                        <p class="text-xs text-gray-500">ElevenLabs API</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-1 bg-gray-50 text-gray-600 text-xs font-medium rounded-md border border-gray-100">Waiting</span>
+                            </div>
+
+                            <!-- Agent 4 -->
+                            <div class="flex items-center justify-between group">
+                                <div class="flex items-center gap-4">
+                                    <div class="p-2 rounded-lg bg-pink-50 text-pink-600 group-hover:bg-pink-100 transition-colors">
+                                        <i data-lucide="image" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-sm text-gray-900">Visual Director</p>
+                                        <p class="text-xs text-gray-500">Pexels/Stock Retrieval</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md border border-green-100">Processing</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: RECENT ACTIVITY / LOGS PREVIEW -->
+                    <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <i data-lucide="terminal" class="w-5 h-5 text-gray-400"></i> System Activity
+                            </h3>
+                            <button onclick="switchTab('logs', document.querySelector('a[href=\'#logs\']'))" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View Full Logs</button>
+                        </div>
+                        <div id="dashboard-logs" class="flex-1 bg-gray-50 rounded-xl p-4 font-mono text-xs text-gray-600 overflow-y-auto max-h-[300px] space-y-2 border border-gray-100">
+                            <!-- Logs injected here -->
+                            <div class="text-gray-400 italic">Waiting for system events...</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 2: RUN OF SHOW (TIMELINE) -->
+            <div id="runofshow" class="tab-content">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[calc(100vh-8rem)]">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0 bg-gray-50/50">
+                        <div class="flex items-center gap-4">
+                            <div class="flex flex-col">
+                                <h3 class="text-lg font-bold text-gray-900">Playout Timeline</h3>
+                                <p class="text-xs text-gray-500">Manage the automated broadcast queue</p>
+                            </div>
+                            <span class="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wide rounded-md">Synced</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="clearQueue()" class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-100">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i> Clear Queue
+                            </button>
+                            <button class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm shadow-indigo-200">
+                                <i data-lucide="plus" class="w-3 h-3"></i> Add Segment
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="timeline-container" class="divide-y divide-gray-100 overflow-y-auto flex-1 bg-white">
+                        <!-- CONTENT INJECTED HERE -->
+                        <div class="h-full flex flex-col items-center justify-center text-gray-400">
+                            <i data-lucide="loader-2" class="w-10 h-10 animate-spin text-indigo-200 mb-4"></i>
+                            <p>Connecting to broadcast server...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB 3: TICKER EDITOR -->
+            <div id="tickereditor" class="tab-content">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="p-3 bg-indigo-50 rounded-xl text-indigo-600">
+                                <i data-lucide="type" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">Live Ticker Editor</h3>
+                                <p class="text-sm text-gray-500">Edit the scrolling text at the bottom of the broadcast.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <textarea id="ticker-input" class="w-full h-48 p-4 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none font-mono text-gray-700 leading-relaxed shadow-inner" placeholder="Loading ticker content..."></textarea>
+                            <div class="absolute bottom-4 right-4 text-xs text-gray-400 bg-white/80 backdrop-blur px-2 py-1 rounded">
+                                Font: JetBrains Mono
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex items-center justify-between">
+                            <p class="text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg inline-block">
+                                <span class="font-semibold">Tip:</span> Separate distinct news items with <code class="text-indigo-600 font-bold bg-indigo-50 px-1 rounded"> +++ </code>
+                            </p>
+                            <button onclick="saveTicker()" class="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95">
+                                <i data-lucide="save" class="w-4 h-4"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: AGENT LOGS -->
+            <div id="logs" class="tab-content">
+                <div class="bg-[#0F172A] rounded-2xl border border-gray-800 shadow-xl overflow-hidden h-[calc(100vh-8rem)] flex flex-col">
+                    <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between bg-[#1E293B]">
+                        <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="terminal" class="w-4 h-4 text-green-400"></i> System Console
+                        </h3>
+                        <div class="flex gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                        </div>
+                    </div>
+                    <div id="console-logs" class="flex-1 p-6 font-mono text-xs text-gray-300 overflow-y-auto space-y-2">
+                        <div class="text-green-400">[SYSTEM] Admin Console Connected successfully.</div>
+                        <div class="text-gray-500">Waiting for live events...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: CONFIG -->
+            <div id="config" class="tab-content">
+                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-12 text-center max-w-2xl mx-auto mt-10">
+                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="settings" class="w-10 h-10 text-gray-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Configuration Panel</h3>
+                    <p class="text-gray-500 mb-8">This module allows adjustment of RSS sources, LLM temperature, and safety filters. Currently in read-only mode.</p>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 text-sm font-medium hover:bg-gray-50 transition">
+                        View Config File (JSON)
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        const API_BASE = window.location.origin;
+        const QUEUE_URL = `${API_BASE}/bucket/news/queue/run_of_show.json?v=`;
+        const STATUS_URL = `${API_BASE}/bucket/news/queue/playout_status.json?v=`;
+        const TICKER_URL = `${API_BASE}/bucket/news/ticker/latest.txt?v=`;
+        
+        // DOM Elements
+        const mainHeaderTitle = document.getElementById('main-header-title');
+        const dashQueueLen = document.getElementById('dash-queue-len');
+        const dashQueueBar = document.getElementById('dash-queue-bar');
+        const dashOnAirTitle = document.getElementById('dash-on-air-title');
+        const timelineContainer = document.getElementById('timeline-container');
+        const tickerInput = document.getElementById('ticker-input');
+        const consoleLogs = document.getElementById('console-logs');
+        const dashboardLogs = document.getElementById('dashboard-logs');
+        const serverClock = document.getElementById('server-clock');
+
+        let currentQueue = [];
+        let currentStatus = {};
+        let lastTickerText = "";
+        let isSaving = false;
+        
+        // --- TAB SWITCHING LOGIC ---
+        function switchTab(tabId, element) {
+            // Update active sidebar link styles
+            document.querySelectorAll('.sidebar-link').forEach(el => {
+                el.classList.remove('active', 'text-indigo-600', 'bg-indigo-50');
+                el.classList.add('text-gray-600');
+                
+                // Reset icon color
+                const icon = el.querySelector('i, svg');
+                if (icon) {
+                    icon.classList.add('text-gray-400');
+                    icon.classList.remove('text-indigo-600');
+                }
+            });
+
+            // Set Active State
+            if (element) {
+                element.classList.add('active');
+                element.classList.remove('text-gray-600');
+                const activeIcon = element.querySelector('i, svg');
+                if (activeIcon) {
+                    activeIcon.classList.remove('text-gray-400');
+                    activeIcon.classList.add('text-indigo-600');
+                }
+                mainHeaderTitle.textContent = element.textContent.trim();
+            }
+            
+            // Toggle Content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+        }
+
+        // --- CORE FUNCTIONALITY ---
+
+        // Clock
+        setInterval(() => {
+            const now = new Date();
+            serverClock.innerText = now.toLocaleTimeString('en-GB') + ' UTC';
+        }, 1000);
+
+        // Logging Helper
+        function logEvent(msg, type='info') {
+            const time = new Date().toLocaleTimeString('en-GB', {hour12: false});
+            const colorClass = type === 'error' ? 'text-red-400' : (type === 'success' ? 'text-green-400' : 'text-gray-300');
+            const dashColorClass = type === 'error' ? 'text-red-600' : (type === 'success' ? 'text-green-600' : 'text-gray-600');
+            
+            const html = `<div class="mb-1"><span class="opacity-50 mr-2">[${time}]</span> ${msg}</div>`;
+            
+            // Add to full console
+            const logEntry = document.createElement('div');
+            logEntry.className = colorClass;
+            logEntry.innerHTML = html;
+            consoleLogs.appendChild(logEntry);
+            consoleLogs.scrollTop = consoleLogs.scrollHeight;
+
+            // Add to dashboard preview
+            const dashEntry = document.createElement('div');
+            dashEntry.className = `text-xs font-mono ${dashColorClass} border-b border-gray-100 pb-1 last:border-0`;
+            dashEntry.innerHTML = `<span class="text-gray-400 mr-2">${time}</span> ${msg}`;
+            dashboardLogs.prepend(dashEntry); // Add to top
+            if (dashboardLogs.children.length > 10) dashboardLogs.lastChild.remove();
+        }
+
+        // --- INTERACTIVE CONTROLS ---
+
+        async function mockSaveQueue(newQueue, actionDescription) {
+            logEvent(`${actionDescription} pending...`, 'info');
+            currentQueue = newQueue;
+            renderTimeline();
+            
+            if (newQueue.length > 0) {
+                // If manipulating queue, inform server of current head
+                const nextItem = newQueue[0];
+                await fetch('/sync', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ current_id: nextItem.id, heading: nextItem.main_heading, timestamp: Date.now() })
+                });
+                logEvent(`${actionDescription} successful.`, 'success');
+            } else {
+                logEvent(`${actionDescription} successful. Queue cleared.`, 'success');
+            }
+            fetchPlayoutStatus();
+        }
+
+        window.playNext = function(itemId) {
+            const indexToPlay = currentQueue.findIndex(item => item.id === itemId);
+            if (indexToPlay === -1) return;
+
+            const itemToMove = currentQueue[indexToPlay];
+            let newQueue = [itemToMove, ...currentQueue.slice(indexToPlay + 1)];
+            
+            if (newQueue[0].id === currentStatus.current_id) {
+                 newQueue = newQueue.slice(1);
+            } else if (currentStatus.current_id) {
+                 newQueue = newQueue.filter(item => item.id !== currentStatus.current_id);
+            }
+
+            mockSaveQueue(newQueue, `Manual Play: ${itemToMove.main_heading}`);
+        }
+
+        window.deleteItem = function(itemId) {
+            const itemToDelete = currentQueue.find(item => item.id === itemId);
+            if (!itemToDelete) return;
+            const newQueue = currentQueue.filter(item => item.id !== itemId);
+            mockSaveQueue(newQueue, `Deleted: ${itemToDelete.main_heading}`);
+        }
+        
+        window.clearQueue = function() {
+            if (!confirm('Are you sure you want to clear the entire Run of Show?')) return;
+            mockSaveQueue([], "Cleared entire queue");
+        }
+
+        window.saveTicker = async function() {
+            if (isSaving) return;
+            isSaving = true;
+            const newTickerText = tickerInput.value.trim();
+            // In real app: await fetch(TICKER_URL, { method: 'POST', body: newTickerText });
+            lastTickerText = newTickerText;
+            logEvent("Ticker saved successfully.", 'success');
+            isSaving = false;
+        }
+        
+        // --- DATA FETCHERS ---
+
+        async function fetchPlayoutStatus() {
+            try {
+                const res = await fetch(STATUS_URL + Date.now());
+                if (!res.ok) throw new Error('Status fetch failed');
+                const newStatus = await res.json();
+                
+                if (newStatus.current_id !== currentStatus.current_id) {
+                    logEvent(`Now Playing: ${newStatus.heading || 'Unknown Story'}`, 'success');
+                }
+
+                currentStatus = newStatus;
+                if(dashOnAirTitle) dashOnAirTitle.textContent = currentStatus.heading || 'System Idle';
+                
+                renderTimeline(); // Re-render to update active state highlighting
+
+            } catch (e) {}
+        }
+        
+        async function fetchQueueData() {
+            try {
+                const res = await fetch(QUEUE_URL + Date.now());
+                if (!res.ok) {
+                    currentQueue = [];
+                    renderTimeline();
+                    return;
+                }
+                const data = await res.json();
+                if (JSON.stringify(data) !== JSON.stringify(currentQueue)) {
+                    currentQueue = Array.isArray(data) ? data : [];
+                    renderTimeline();
+                    if (currentQueue.length > 0) logEvent(`Queue sync: ${currentQueue.length} items.`);
+                }
+            } catch (e) {}
+        }
+
+        async function fetchTicker() {
+            try {
+                const res = await fetch(TICKER_URL + Date.now());
+                if (res.ok) {
+                    const text = await res.text();
+                    if (text !== lastTickerText && document.activeElement !== tickerInput) {
+                        tickerInput.value = text.trim();
+                        lastTickerText = text.trim();
+                    }
+                }
+            } catch(e) {}
+        }
+
+        // --- RENDER ---
+        function renderTimeline() {
+            // Update Dashboard Metrics
+            const count = currentQueue.length;
+            if(dashQueueLen) dashQueueLen.textContent = count;
+            if(dashQueueBar) dashQueueBar.style.width = `${Math.min((count / 20) * 100, 100)}%`;
+            
+            if (count === 0) {
+                timelineContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full p-12 text-center">
+                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                            <i data-lucide="inbox" class="w-8 h-8 text-gray-300"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Queue is Empty</h3>
+                        <p class="text-gray-500 mt-1 max-w-sm">The broadcast queue is currently empty. Waiting for the AI Editor to generate new segments.</p>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            timelineContainer.innerHTML = currentQueue.map((item, index) => {
+                const isActive = item.id === currentStatus.current_id;
+                
+                // Conditional Styles
+                const bgClass = isActive ? 'bg-indigo-50/50' : 'bg-white hover:bg-gray-50';
+                const borderClass = isActive ? 'border-l-4 border-indigo-500' : 'border-l-4 border-transparent';
+                const statusBadge = isActive 
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800 animate-pulse">
+                         <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full mr-1.5"></span> ON AIR
+                       </span>`
+                    : '';
+
+                const badgeColor = item.type === 'breaking' 
+                    ? 'bg-red-100 text-red-700 border-red-200' 
+                    : 'bg-blue-100 text-blue-700 border-blue-200';
+
+                return `
+                    <div class="group relative py-5 px-6 ${bgClass} ${borderClass} transition-colors border-b border-gray-50 flex gap-5 items-start">
+                        
+                        <!-- Index -->
+                        <div class="text-lg font-bold text-gray-300 w-8 pt-1">${index + 1}</div>
+
+                        <!-- Content -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-3 mb-1.5">
+                                <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wide border ${badgeColor}">
+                                    ${item.type}
+                                </span>
+                                <span class="text-xs font-mono text-gray-400">ID: ${item.id}</span>
+                                ${statusBadge}
+                            </div>
+                            
+                            <h4 class="text-base font-bold text-gray-900 leading-snug mb-1">
+                                ${item.main_heading}
+                            </h4>
+                            <p class="text-sm text-gray-500 line-clamp-1 mb-2">
+                                ${item.content_text}
+                            </p>
+
+                            <div class="flex items-center gap-2">
+                                <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-gray-100 text-xs font-medium text-gray-600 border border-gray-200">
+                                    <i data-lucide="clock" class="w-3 h-3 text-gray-400"></i>
+                                    ${item.display_duration || 15}s
+                                </div>
+                                <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-gray-100 text-xs font-medium text-gray-600 border border-gray-200">
+                                    <i data-lucide="image" class="w-3 h-3 text-gray-400"></i>
+                                    <span class="truncate max-w-[150px]">${item.extra_data?.visual_keyword || 'Default'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Metrics -->
+                        <div class="hidden sm:block w-32 shrink-0 pt-1">
+                            <div class="mb-2">
+                                <div class="flex justify-between text-[10px] uppercase font-semibold text-gray-400 mb-1">Quality</div>
+                                <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-indigo-500 rounded-full" style="width: ${((item.scores?.quality || 0)/10)*100}%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[10px] uppercase font-semibold text-gray-400 mb-1">Impact</div>
+                                <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-purple-500 rounded-full" style="width: ${((item.scores?.impact || 0)/10)*100}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions (Hover) -->
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            ${!isActive ? `
+                            <button onclick="playNext('${item.id}')" class="p-2 bg-white border border-gray-200 text-green-600 hover:bg-green-50 rounded-lg shadow-sm hover:shadow-md transition-all" title="Play Next">
+                                <i data-lucide="skip-forward" class="w-4 h-4"></i>
+                            </button>
+                            ` : ''}
+                            <button onclick="deleteItem('${item.id}')" class="p-2 bg-white border border-gray-200 text-red-600 hover:bg-red-50 rounded-lg shadow-sm hover:shadow-md transition-all" title="Delete">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                `;
+            }).join('');
+            
+            lucide.createIcons();
+        }
+        
+        // --- LOOP ---
+        fetchPlayoutStatus();
+        fetchQueueData();
+        fetchTicker();
+        setInterval(fetchPlayoutStatus, 2000);
+        setInterval(fetchQueueData, 5000);
+        setInterval(fetchTicker, 10000);
+    </script>
+</body>
+</html>

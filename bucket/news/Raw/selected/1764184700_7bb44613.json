@@ -1,0 +1,28 @@
+{
+    "final_production_data": {
+        "ticker": "TELEHEALTH IMPROVES CAT HEALTH",
+        "main_heading": "Telehealth Improves Cat Health",
+        "headlines": [
+            "Researchers found telehealth visits can improve care for cats with feline arthritis",
+            "Telehealth offers convenience and accessibility for pet owners",
+            "Stay tuned for more information on the study's findings"
+        ],
+        "tts_script": "Researchers found that telehealth visits can improve care for cats with feline arthritis."
+    },
+    "validation_data": {
+        "bias": 1,
+        "discrimination": 0
+    },
+    "original_raw_news": {
+        "original_title": "Telehealth can improve care for cats with chronic health issues",
+        "original_summary": "Researchers found telehealth visits can improve care for cats with feline arthritis.",
+        "sources_count": 1,
+        "category": "Science",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 1,
+            "discrimination": 0
+        },
+        "reason": "Safe"
+    }
+}

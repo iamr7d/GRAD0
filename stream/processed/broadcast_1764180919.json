@@ -1,0 +1,106 @@
+{
+    "show_intro": "Welcome back to our show, where we bring you the latest breakthroughs in science and technology!",
+    "segments": [
+        {
+            "id": 1,
+            "ticker": "AI AND CLIMATE CHANGE",
+            "main_heading": "Artificial Intelligence: A New Weapon Against Climate Change",
+            "headlines": [
+                "The Economist and Space.com report on AI's potential to combat climate change.",
+                "Experts predict significant reductions in carbon emissions."
+            ],
+            "tts_script": "According to The Economist and Space.com, Artificial Intelligence is set to become a powerful tool in the fight against climate change. Experts predict that with its ability to analyze vast amounts of data, AI could significantly reduce carbon emissions."
+        },
+        {
+            "id": 2,
+            "ticker": "DIGITAL TWINS",
+            "main_heading": "Revolutionizing Science: The Rise of Digital Twins",
+            "headlines": [
+                "MIT Technology Review discusses the use of digital twins in science.",
+                "These virtual replicas could lead to more accurate simulations and predictions."
+            ],
+            "tts_script": "In a report by MIT Technology Review, we learn about the growing use of digital twins in science. These virtual replicas allow for more accurate simulations and predictions, potentially revolutionizing various fields."
+        },
+        {
+            "id": 3,
+            "ticker": "WORLD SPACE WEEK 2024",
+            "main_heading": "Preparing for the Cosmos: World Space Week Approaches",
+            "headlines": [
+                "Space.com shares details about the upcoming World Space Week.",
+                "Expect a global celebration of space exploration and discovery."
+            ],
+            "tts_script": "Space.com has announced that the next World Space Week is fast approaching. This global event will celebrate all things space, from exploration to discovery."
+        },
+        {
+            "id": 4,
+            "ticker": "MASTER OF SCIENCE",
+            "main_heading": "Purdue University Offers New Master's Program in Engineering Technology",
+            "headlines": [
+                "The university introduces a new program aimed at advancing engineering technology.",
+                "Students will gain practical skills for the modern industry."
+            ],
+            "tts_script": "Purdue University has announced a new Master of Science program focused on Engineering Technology. This innovative course aims to equip students with the practical skills they need for today's competitive industry."
+        },
+        {
+            "id": 5,
+            "ticker": "CHINA'S REGIONAL CITIES",
+            "main_heading": "China's Regional Cities: A New Hub for World Science",
+            "headlines": [
+                "Nature magazine explores the growing scientific influence of China's regional cities.",
+                "These cities are becoming key players in global research."
+            ],
+            "tts_script": "In a report by Nature magazine, we learn about the growing influence of China's regional cities in the world of science. These cities are now key players in global research and innovation."
+        },
+        {
+            "id": 6,
+            "ticker": "TRUMP ADMINISTRATION",
+            "main_heading": "The Trump Administration's Plans to Reshape American Science",
+            "headlines": [
+                "The Economist discusses the potential changes in American science under the Trump administration.",
+                "Experts warn of possible impacts on research and development."
+            ],
+            "tts_script": "According to The Economist, the Trump Administration is planning significant changes for American science. Experts are concerned about the potential impact on research and development."
+        },
+        {
+            "id": 7,
+            "ticker": "TCCHS PROGRAMS",
+            "main_heading": "TCCHS Healthcare and Business Computer Science Programs Recertify",
+            "headlines": [
+                "Thomasville Times-Enterprise reports on the recertification of TCCHS programs.",
+                "Students can now continue their education in healthcare and business computer science."
+            ],
+            "tts_script": "The Thomasville Times-Enterprise has announced that TCCHS's Healthcare and Business Computer Science programs have been recertified. This means students can continue their education in these fields."
+        },
+        {
+            "id": 8,
+            "ticker": "NANO PROTECH",
+            "main_heading": "Innovative Eyewear Solutions: Nano ProTech Revolutionizes Protection Technology",
+            "headlines": [
+                "The Manila Times highlights the groundbreaking work of Nano ProTech.",
+                "These eyewear solutions offer unparalleled protection and style."
+            ],
+            "tts_script": "In a report by The Manila Times, we learn about Nano ProTech's innovative eyewear solutions. These products not only offer superior protection but also stylish designs."
+        },
+        {
+            "id": 9,
+            "ticker": "IEEE FORUM",
+            "main_heading": "The Future of Networks: IEEE Forum 2025 Preview",
+            "headlines": [
+                "Press Trust of India previews the upcoming IEEE Future Networks World Forum.",
+                "Experts and industry leaders will gather to discuss the future of networks."
+            ],
+            "tts_script": "According to Press Trust of India, the next IEEE Future Networks World Forum is fast approaching. This event will bring together experts and industry leaders to discuss the future of networks."
+        },
+        {
+            "id": 10,
+            "ticker": "SCIENCE AND GOVERNMENT",
+            "main_heading": "Strengthening the Bond: Science and Government Collaboration",
+            "headlines": [
+                "Nature magazine discusses the importance of collaboration between science and government.",
+                "This partnership could lead to groundbreaking discoveries."
+            ],
+            "tts_script": "In a report by Nature magazine, we learn about the growing importance of collaboration between science and government. This partnership could lead to groundbreaking discoveries and advancements in various fields."
+        }
+    ],
+    "show_outro": "That's all for tonight! Join us next time as we continue to explore the fascinating world of science and technology. Goodnight!"
+}

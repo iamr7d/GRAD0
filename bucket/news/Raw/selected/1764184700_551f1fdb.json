@@ -1,0 +1,28 @@
+{
+    "final_production_data": {
+        "ticker": "DISNEY+ HULU BUNDLE DISCOUNT",
+        "main_heading": "Disney+ and Hulu Bundle on Sale for Black Friday",
+        "headlines": [
+            "Bundle drops to $5 per month for one year",
+            "Deal offers savings for streaming services",
+            "Take advantage of the limited-time offer"
+        ],
+        "tts_script": "The Disney+ and Hulu bundle drops to $5 per month for one year for Black Friday. This deal offers savings for streaming services."
+    },
+    "validation_data": {
+        "bias": 1,
+        "clickbait": 2
+    },
+    "original_raw_news": {
+        "original_title": "The Disney+ Hulu bundle drops to $5 per month for one year for Black Friday",
+        "original_summary": "<p>The <a class=\"rapid-with-clickid\" href=\"https://shopping.yahoo.com/rdlw?merchantId=85d85ef3-fac9-418f-9573-418cf162cd0c&amp;siteId=us-engadget&amp;pageId=1p-autolink&amp;contentUuid=b7abde49-c93c-410e-ab77-984f0f7e9c48&amp;featureId=text-link&amp;merchantName=Disney%2B&amp;linkText=Disney%2B+and+",
+        "sources_count": 1,
+        "category": "Deals",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 1,
+            "clickbait": 2
+        },
+        "reason": "Clickbait but still informative"
+    }
+}

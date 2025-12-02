@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI News Main Card</title>
+    <style>
+        /* --- BROADCAST TYPOGRAPHY & ANIMATIONS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;500&display=swap');
+        
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: transparent; 
+            font-family: 'Roboto', sans-serif; 
+            overflow: hidden;
+        }
+        
+        /* The Main Container (Positioned Bottom-Left above ticker) */
+        .news-container {
+            position: absolute; 
+            bottom: 140px; /* Adjust based on your ticker height */
+            left: 60px; 
+            width: 700px;
+            opacity: 0; 
+            transform: translateX(-100px); /* Start off-screen left */
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        
+        /* State: When active, slide in and fade in */
+        .news-container.active { 
+            opacity: 1; 
+            transform: translateX(0); 
+        }
+        
+        /* The Red "BREAKING" or "TOP STORY" Label */
+        .heading-label {
+            background: #c0392b; 
+            color: white;
+            padding: 8px 25px; 
+            font-family: 'Oswald', sans-serif;
+            font-size: 28px; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            display: inline-block; 
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.5);
+            margin-bottom: 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* The Dark Content Box */
+        .content-box {
+            background: linear-gradient(135deg, rgba(16, 24, 40, 0.95) 0%, rgba(26, 37, 58, 0.95) 100%);
+            color: #ecf0f1;
+            padding: 30px 35px; 
+            border-left: 8px solid #c0392b; /* Red accent line */
+            margin-top: -5px; /* Overlap slightly for tightness */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            border-radius: 0 10px 10px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Text Styles */
+        h1 { 
+            margin: 0 0 15px 0; 
+            font-size: 48px; 
+            line-height: 1.1; 
+            font-weight: 700; 
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+        
+        p { 
+            margin: 0; 
+            font-size: 26px; 
+            line-height: 1.4; 
+            color: #bdc3c7; 
+            font-weight: 400;
+        }
+
+        /* Progress Bar (Optional visual flair) */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: #e74c3c;
+            width: 0%;
+            transition: width linear;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="card" class="news-container">
+        <div id="label" class="heading-label">TOP STORY</div>
+        <div class="content-box">
+            <h1 id="title">Loading...</h1>
+            <p id="summary">Connecting to AI News Station...</p>
+            <div id="progress" class="progress-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        let queue = [];
+        let currentIndex = 0;
+        let timer = null;
+
+        // 1. Fetch the Playlist
+        async function fetchQueue() {
+            try {
+                // Path depends on your Python server root. 
+                // Assuming root is /home/rahulraj/pen_stream/
+                const res = await fetch('/bucket/news/queue/run_of_show.json?v=' + Date.now());
+                const data = await res.json();
+                
+                // If we got new data, update our local queue
+                // In a real app, we might diff this. For now, we replace.
+                if (data && data.length > 0) {
+                    // If queue was empty, start playing immediately
+                    if (queue.length === 0) {
+                        queue = data;
+                        playItem(0);
+                    } else {
+                        // Just update data for next cycle
+                        queue = data;
+                    }
+                }
+            } catch (e) { console.log("Waiting for queue...", e); }
+        }
+
+        // 2. Play a specific item
+        function playItem(index) {
+            if (index >= queue.length) index = 0; // Loop back to start
+            currentIndex = index;
+            
+            const item = queue[index];
+            const card = document.getElementById('card');
+            const progressBar = document.getElementById('progress');
+
+            // Step A: Animate OUT (if visible)
+            card.classList.remove('active');
+            
+            setTimeout(() => {
+                // Step B: Update Content while hidden
+                
+                // Update Label based on type (Breaking vs Standard)
+                const label = document.getElementById('label');
+                if (item.type === 'breaking' || index === 0) {
+                    label.innerText = "BREAKING NEWS";
+                    label.style.background = "#c0392b"; // Red
+                } else {
+                    label.innerText = "LATEST UPDATE";
+                    label.style.background = "#2980b9"; // Blue
+                }
+
+                document.getElementById('title').innerText = item.main_heading;
+                document.getElementById('summary').innerText = item.content_text;
+
+                // Step C: Animate IN
+                card.classList.add('active');
+
+                // Step D: Handle Duration
+                const duration = (item.display_duration || 10) * 1000;
+                
+                // Reset and animate progress bar
+                progressBar.style.transition = 'none';
+                progressBar.style.width = '0%';
+                setTimeout(() => {
+                    progressBar.style.transition = `width ${duration}ms linear`;
+                    progressBar.style.width = '100%';
+                }, 100);
+
+                // Schedule next item
+                if (timer) clearTimeout(timer);
+                timer = setTimeout(() => {
+                    playItem(currentIndex + 1);
+                }, duration + 1000); // Add 1s buffer for transition
+
+            }, 800); // Wait for slide-out animation
+        }
+
+        // Start the loop
+        setInterval(fetchQueue, 5000); // Check for new news every 5s
+        fetchQueue(); // Initial load
+    </script>
+</body>
+</html>

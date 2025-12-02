@@ -1,0 +1,28 @@
+{
+    "final_production_data": {
+        "ticker": "SMELL STUDY MODEL DEVELOPED",
+        "main_heading": "New Model Developed to Study Sense of Smell",
+        "headlines": [
+            "Three-dimensional model used to study regeneration of nerve tissue in the nose",
+            "One type of stem cell may play a more significant role than originally believed",
+            "Stay tuned for more information on the study's findings"
+        ],
+        "tts_script": "Using a newly devised, three-dimensional model to study the regeneration of nerve tissue in the nose, researchers have discovered that one type of stem cell thought to be dormant may play a more significant role in preserving the sense of smell than originally believed."
+    },
+    "validation_data": {
+        "bias": 1,
+        "politics": 0
+    },
+    "original_raw_news": {
+        "original_title": "Researchers develop innovative model to study sense of smell",
+        "original_summary": "Using a newly devised, three-dimensional model to study the regeneration of nerve tissue in the nose, researchers have discovered that one type of stem cell thought to be dormant may play a more significant role in preserving the sense of smell than originally believed.",
+        "sources_count": 1,
+        "category": "Science",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 1,
+            "politics": 0
+        },
+        "reason": "Safe"
+    }
+}

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI News Mission Control</title>
+    <style>
+        /* --- CORE STYLING (reusing your clean admin style) --- */
+        :root {
+            --bg-color: #0f172a; /* Darker background for "Control Room" feel */
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 30px;
+        }
+
+        /* --- LIVE TICKER MONITOR --- */
+        .live-monitor {
+            background: #000;
+            border: 1px solid var(--accent-red);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+        }
+        .monitor-label {
+            color: var(--accent-red);
+            font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 8px; display: block;
+        }
+        .ticker-display {
+            font-family: 'Courier New', monospace;
+            color: #e2e8f0; font-size: 18px; white-space: nowrap; overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- TABLE CONTAINER --- */
+        .timeline-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+        thead { background-color: #0f172a; }
+        
+        th {
+            padding: 16px 24px; font-weight: 600; color: var(--text-muted);
+            text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td { padding: 16px 24px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        tr:hover { background-color: #26334af0; }
+
+        /* --- COLUMN STYLES --- */
+        .date-cell span { display: block; }
+        .date-main { font-weight: bold; color: var(--text-main); }
+        .date-sub { font-size: 12px; color: var(--text-muted); }
+
+        .badge {
+            padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+        }
+        .badge.breaking { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
+        .badge.headline { background: #172554; color: #93c5fd; border: 1px solid #1e40af; }
+
+        .desc-text { color: #cbd5e1; font-weight: 500; display: block; margin-bottom: 4px;}
+        .sub-text { color: #64748b; font-size: 12px; }
+
+        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .on-air { background-color: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); animation: blink 2s infinite; }
+        .queued { background-color: var(--accent-blue); }
+        
+        @keyframes blink { 0% {opacity: 1;} 50% {opacity: 0.4;} 100% {opacity: 1;} }
+    </style>
+</head>
+<body>
+
+    <div class="live-monitor">
+        <span class="monitor-label">🔴 LIVE ON AIR TICKER</span>
+        <div id="ticker-feed" class="ticker-display">Waiting for signal...</div>
+    </div>
+
+    <div class="timeline-card">
+        <div style="padding: 20px; border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between;">
+            <h2 style="margin:0; font-size:18px;">Run of Show (Queue)</h2>
+            <span style="font-size:12px; color:#94a3b8;" id="last-updated">Syncing...</span>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th width="15%">Time Generated</th>
+                    <th width="12%">Time Remaining</th>
+                    <th width="10%">Type</th>
+                    <th width="20%">Main Heading</th>
+                    <th width="38%">Script / Content</th>
+                    <th width="15%">Status</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Point this to your Python Server
+        const API_BASE = "http://localhost:8000";
+
+        // --- SSE SETUP ---
+        let latestQueue = [];
+        let latestTicker = "Waiting for signal...";
+        let lastSync = null;
+        let timeRemainingInterval = null;
+
+        function startSSE() {
+            const evtSource = new EventSource(`${API_BASE}/stream/dashboard`);
+            evtSource.onmessage = function(event) {
+                // Expect JSON: { ticker: "...", queue: [...] }
+                try {
+                    const data = JSON.parse(event.data);
+                    latestTicker = data.ticker || "";
+                    latestQueue = data.queue || [];
+                    lastSync = new Date();
+                    updateDashboard();
+                } catch(e) { console.log("SSE parse error", e); }
+            };
+            evtSource.onerror = function(e) {
+                document.getElementById('ticker-feed').innerText = "Connection lost...";
+                document.getElementById('last-updated').innerText = "Offline";
+            };
+        }
+
+        function updateDashboard() {
+            // Update ticker
+            document.getElementById('ticker-feed').innerText = latestTicker;
+            // Update queue table
+            renderTable(latestQueue);
+            // Update timestamp
+            if (lastSync) {
+                document.getElementById('last-updated').innerText = "Synced: " + lastSync.toLocaleTimeString();
+            }
+        }
+
+        let countdownIntervals = [];
+        function clearCountdowns() {
+            countdownIntervals.forEach(clearInterval);
+            countdownIntervals = [];
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            clearCountdowns();
+
+            // Calculate time remaining for each item
+            const now = Math.floor(Date.now() / 1000);
+            let items = data.map((item, idx) => {
+                // ON AIR slot logic: first item is ON AIR, rest are queued
+                let startTime = idx === 0 ? item.timestamp : null;
+                let duration = item.display_duration;
+                let endTime = startTime ? startTime + duration : null;
+                let remaining = startTime ? Math.max(0, endTime - now) : null;
+                return { ...item, startTime, endTime, remaining };
+            });
+
+            // ON AIR is first item, rest are queued
+            let onAir = items.length > 0 ? items[0] : null;
+            let queue = items.slice(1);
+
+            // If ON AIR ended, set its time remaining to ∞ and move to bottom
+            // If ON AIR ended, set its time remaining to ∞ and move to bottom
+            if (onAir && (onAir.remaining === 0 || onAir.remaining === '∞')) {
+                onAir.remaining = '∞';
+                queue.push(onAir);
+                onAir = queue.shift(); // Next item becomes ON AIR
+            }
+
+            // For queued items, time remaining is time until their ON AIR slot
+            let cumulativeTime = onAir && typeof onAir.remaining === 'number' ? onAir.remaining : 0;
+            queue = queue.map((item, idx) => {
+                let timeUntilOnAir = cumulativeTime;
+                cumulativeTime += item.display_duration;
+                return { ...item, remaining: timeUntilOnAir };
+            });
+
+            // Table order: ON AIR (if exists), then queue, then ended (∞)
+            let ended = queue.filter(i => i.remaining === '∞');
+            let activeQueue = queue.filter(i => i.remaining !== '∞');
+            let sorted = [];
+            if (onAir) sorted.push(onAir);
+            sorted = sorted.concat(activeQueue).concat(ended);
+
+            sorted.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const dateObj = new Date(item.timestamp * 1000);
+                const dateStr = dateObj.toLocaleDateString();
+                const timeStr = dateObj.toLocaleTimeString();
+                const badgeClass = item.type === 'breaking' ? 'breaking' : 'headline';
+                let statusHtml = '';
+                let timeRemainingHtml = '';
+                if (index === 0 && item.remaining !== '∞') {
+                    statusHtml = `<span class="status-dot on-air"></span> <span style="color:#fca5a5">ON AIR</span>`;
+                    tr.style.background = "rgba(239, 68, 68, 0.05)";
+                    timeRemainingHtml = `<span id="time-remaining-${item.id}" style="color:#22c55e; font-weight:700;">${item.remaining}s</span>`;
+                    // Start countdown for ON AIR
+                    let interval = setInterval(() => {
+                        let now = Math.floor(Date.now() / 1000);
+                        let remaining = Math.max(0, item.timestamp + item.display_duration - now);
+                        let el = document.getElementById(`time-remaining-${item.id}`);
+                        if (el) {
+                            el.innerText = remaining > 0 ? remaining + 's' : '∞';
+                        }
+                        if (remaining === 0) {
+                            clearInterval(interval);
+                            renderTable(data); // Re-render to move ended item down
+                        }
+                    }, 1000);
+                    countdownIntervals.push(interval);
+                } else if (item.remaining === '∞') {
+                    statusHtml = `<span class="status-dot queued"></span> <span style="color:#64748b">ENDED</span>`;
+                    timeRemainingHtml = `<span style="color:#64748b;">∞</span>`;
+                } else {
+                    statusHtml = `<span class="status-dot queued"></span> <span style="color:#93c5fd">QUEUED</span>`;
+                    timeRemainingHtml = `<span id="time-remaining-${item.id}" style="color:#64748b;">${item.remaining}s</span>`;
+                    // Start countdown for queued items
+                    let interval = setInterval(() => {
+                        let el = document.getElementById(`time-remaining-${item.id}`);
+                        if (el) {
+                            // For queued items, show time until ON AIR slot
+                            let prev = sorted.slice(0, index).reduce((acc, i) => acc + (typeof i.display_duration === 'number' ? i.display_duration : 0), 0);
+                            let now = Math.floor(Date.now() / 1000);
+                            // For ON AIR, show time left to disappear
+                            if (index === 0) {
+                                let timeLeft = Math.max(0, item.timestamp + item.display_duration - now);
+                                el.innerText = timeLeft + 's';
+                            } else {
+                                let timeUntilOnAir = Math.max(0, item.timestamp + prev - now);
+                                el.innerText = timeUntilOnAir + 's';
+                            }
+                        }
+                    }, 1000);
+                    countdownIntervals.push(interval);
+                }
+                tr.innerHTML = `
+                    <td>
+                        <div class="date-cell">
+                            <span class="date-main">${timeStr}</span>
+                            <span class="date-sub">${dateStr}</span>
+                        </div>
+                    </td>
+                    <td>${timeRemainingHtml}</td>
+                    <td><span class="badge ${badgeClass}">${item.type}</span></td>
+                    <td style="font-weight:bold; color:#fff;">${item.main_heading}</td>
+                    <td>
+                        <span class="desc-text">${item.content_text}</span>
+                        <span class="sub-text">ID: ${item.id} • Duration: ${item.display_duration}s</span>
+                    </td>
+                    <td>${statusHtml}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function startTimeRemaining(item) {
+            // Clear previous interval
+            if (timeRemainingInterval) clearInterval(timeRemainingInterval);
+            const duration = item.display_duration;
+            const startTs = item.timestamp;
+            function updateCountdown() {
+                const now = Math.floor(Date.now() / 1000);
+                let remaining = Math.max(0, startTs + duration - now);
+                let el = document.getElementById('time-remaining');
+                if (el) {
+                    el.innerText = remaining > 0 ? `Time Remaining: ${remaining}s` : 'Ended';
+                }
+            }
+            updateCountdown();
+            timeRemainingInterval = setInterval(updateCountdown, 1000);
+        }
+
+        // Start SSE
+        startSSE();
+    </script>
+</body>
+</html>

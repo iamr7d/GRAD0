@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Timeline Full View</title>
+    <style>
+        /* --- 1. BASE & TYPOGRAPHY --- */
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary-color: #3b82f6;
+            --success-bg: #dcfce7; --success-text: #166534;
+            --danger-bg: #fee2e2; --danger-text: #991b1b;
+            --warning-bg: #fef3c7; --warning-text: #92400e;
+            --info-bg: #e0f2fe; --info-text: #075985;
+            --neutral-bg: #f1f5f9; --neutral-text: #475569;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px;
+        }
+
+        /* --- 2. CONTAINER & CARD STYLES --- */
+        .timeline-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
+            overflow: hidden; /* Clip rounded corners */
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* --- 3. TABLE STYLES --- */
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        thead {
+            background-color: #f8fafc;
+            position: sticky; /* Sticky Header */
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 16px 24px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: #f8fafc; /* Hover Effect */
+        }
+
+        /* --- 4. COLUMN SPECIFICS --- */
+        
+        /* Timestamp Column */
+        .date-cell {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+        }
+        .date-main { font-weight: 600; color: var(--text-main); }
+        .date-sub { font-size: 12px; color: var(--text-muted); }
+
+        /* Actor/User Column */
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 12px;
+            object-fit: cover;
+        }
+        .avatar.bot { background-color: #dbeafe; color: #2563eb; } /* Special color for bots */
+        
+        .user-info { display: flex; flex-direction: column; }
+        .user-name { font-weight: 500; color: var(--text-main); }
+        .user-role { font-size: 11px; color: var(--text-muted); text-transform: capitalize; }
+
+        /* Action Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .badge.created { background-color: var(--success-bg); color: var(--success-text); }
+        .badge.deleted { background-color: var(--danger-bg); color: var(--danger-text); }
+        .badge.updated { background-color: var(--info-bg); color: var(--info-text); }
+        .badge.alert   { background-color: var(--warning-bg); color: var(--warning-text); }
+        .badge.login   { background-color: var(--neutral-bg); color: var(--neutral-text); }
+
+        /* Description Column */
+        .desc-text { color: var(--text-main); }
+        .resource-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .resource-link:hover { text-decoration: underline; }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .status-success { color: var(--success-text); }
+        .status-success .dot { background-color: #22c55e; }
+        
+        .status-failed { color: var(--danger-text); }
+        .status-failed .dot { background-color: #ef4444; }
+        
+        .status-pending { color: var(--warning-text); }
+        .status-pending .dot { background-color: #f59e0b; }
+
+        /* Action Menu (Meatball menu) */
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 18px;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        .action-btn:hover { background-color: #e2e8f0; }
+
+    </style>
+</head>
+<body>
+
+    <div class="timeline-card">
+        <div class="card-header">
+            <h2>System Audit Log</h2>
+            <div style="font-size:13px; color:#64748b;">Showing last 5 events</div>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="15%">Timestamp</th>
+                        <th width="20%">Actor</th>
+                        <th width="10%">Action</th>
+                        <th width="30%">Description</th>
+                        <th width="15%">Target</th>
+                        <th width="10%">Status</th>
+                        <th width="5%"></th> </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>
+                            <div class="date-cell">
+                                <span class="date-main">Oct 24, 2023</span>
+                                <span class="date-sub">14:32 PM</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-cell">
+                                <img src="https://ui-avatars.com/api/?name=Sarah+J&background=random" class="avatar" alt="SJ">
+                                <div class="user-info">
+                                    <span class="user-name">Sarah Jenkins</span>
+                                    <span class="user-role">Administrator</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge updated">Updated</span></td>
+                        <td class="desc-text">Modified user permissions group.</td>
+                        <td><a href="#" class="resource-link">Group: #Admin</a></td>
+                        <td>
+                            <div class="status-indicator status-success">
+                                <span class="dot"></span> Success
+                            </div>
+                        </td>
+                        <td><button class="action-btn">⋮</button></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="date-cell">
+                                <span class="date-main">Oct 24, 2023</span>
+                                <span class="date-sub">11:15 AM</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="avatar bot">🤖</div>
+                                <div class="user-info">
+                                    <span class="user-name">System Bot</span>
+                                    <span class="user-role">Automated</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge alert">Alert</span></td>
+                        <td class="desc-text">Failed payment retry attempt (3/3).</td>
+                        <td><a href="#" class="resource-link">Inv-2024-001</a></td>
+                        <td>
+                            <div class="status-indicator status-failed">
+                                <span class="dot"></span> Failed
+                            </div>
+                        </td>
+                        <td><button class="action-btn">⋮</button></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="date-cell">
+                                <span class="date-main">Oct 24, 2023</span>
+                                <span class="date-sub">09:45 AM</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-cell">
+                                <img src="https://ui-avatars.com/api/?name=Mike+R&background=0D8ABC&color=fff" class="avatar" alt="MR">
+                                <div class="user-info">
+                                    <span class="user-name">Mike Ross</span>
+                                    <span class="user-role">Editor</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge created">Published</span></td>
+                        <td class="desc-text">Released new blog post "Q4 Roadmap".</td>
+                        <td><a href="#" class="resource-link">Post: #892</a></td>
+                        <td>
+                            <div class="status-indicator status-success">
+                                <span class="dot"></span> Success
+                            </div>
+                        </td>
+                        <td><button class="action-btn">⋮</button></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="date-cell">
+                                <span class="date-main">Oct 23, 2023</span>
+                                <span class="date-sub">16:20 PM</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-cell">
+                                <img src="https://ui-avatars.com/api/?name=Sarah+J&background=random" class="avatar" alt="SJ">
+                                <div class="user-info">
+                                    <span class="user-name">Sarah Jenkins</span>
+                                    <span class="user-role">Administrator</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge login">Login</span></td>
+                        <td class="desc-text">Login from new IP (192.168.1.55).</td>
+                        <td><span style="color:#94a3b8;">--</span></td>
+                        <td>
+                            <div class="status-indicator status-pending">
+                                <span class="dot"></span> Suspicious
+                            </div>
+                        </td>
+                        <td><button class="action-btn">⋮</button></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="date-cell">
+                                <span class="date-main">Oct 23, 2023</span>
+                                <span class="date-sub">10:00 AM</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-cell">
+                                <img src="https://ui-avatars.com/api/?name=Dave+B&background=random" class="avatar" alt="DB">
+                                <div class="user-info">
+                                    <span class="user-name">Dave Batista</span>
+                                    <span class="user-role">Support</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge deleted">Deleted</span></td>
+                        <td class="desc-text">Removed archived ticket #404.</td>
+                        <td><a href="#" class="resource-link">Ticket #404</a></td>
+                        <td>
+                            <div class="status-indicator status-success">
+                                <span class="dot"></span> Success
+                            </div>
+                        </td>
+                        <td><button class="action-btn">⋮</button></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

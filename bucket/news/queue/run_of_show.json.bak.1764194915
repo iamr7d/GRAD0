@@ -1,0 +1,456 @@
+[
+  {
+    "id": "90ea8e34",
+    "type": "headline",
+    "main_heading": "Syria Government Avoids Sectarian Violence",
+    "content_text": "Syrian government security deployments helped avoid sectarian violence, unlike previous incidents this year.",
+    "display_duration": 15,
+    "timestamp": 1764185244,
+    "played": false
+  },
+  {
+    "id": "94c5aa76",
+    "type": "headline",
+    "main_heading": "Apple Sued Over Conflict Minerals",
+    "content_text": "A US group has sued Apple over DR Congo conflict minerals, as the company instructs its suppliers to halt sourcing from the region.",
+    "display_duration": 15,
+    "timestamp": 1764185244,
+    "played": false
+  },
+  {
+    "id": "82983bbc",
+    "type": "headline",
+    "main_heading": "Hong Kong Tower Block Fire",
+    "content_text": "A fire has engulfed Hong Kong tower blocks, with firefighters struggling to put out the flames and a rising death toll.",
+    "display_duration": 15,
+    "timestamp": 1764185244,
+    "played": false
+  },
+  {
+    "id": "1702816f",
+    "type": "headline",
+    "main_heading": "What We Know About Hong Kong Fires",
+    "content_text": "Hundreds are missing as firefighters continue to battle the flames in Hong Kong.",
+    "display_duration": 15,
+    "timestamp": 1764185244,
+    "played": false
+  },
+  {
+    "id": "2699dd79",
+    "type": "headline",
+    "main_heading": "NYC Pension Fund Drops BlackRock Recommendation",
+    "content_text": "New York City Comptroller Brad Lander is urging three of the city's pension funds to drop BlackRock because of what he's calling \"inadequate\" climate plans.",
+    "display_duration": 15,
+    "timestamp": 1764185244,
+    "played": false
+  },
+  {
+    "id": "ff3c9d2a",
+    "type": "headline",
+    "main_heading": "Retail Discounts Delayed or Lessened",
+    "content_text": "A wave of retail earnings was reported over the past few weeks as some stores indicated uncertainty and some signaled consumer strength. On \"Bloomberg Markets\", Bloomberg Opinion Columnist Andrea Felsted says tariffs and the US economy are potentially delaying holiday discounts.",
+    "display_duration": 15,
+    "timestamp": 1764185244,
+    "played": false
+  },
+  {
+    "id": "d3d17eff",
+    "type": "headline",
+    "main_heading": "Biden Announces Climate Change Measures",
+    "content_text": "President Biden is set to unveil a series of executive actions aimed at combating climate change, including setting a target for the U.S. to reach net-zero emissions by 2050.",
+    "display_duration": 15,
+    "timestamp": 1764185244,
+    "played": false
+  },
+  {
+    "id": "b260b032",
+    "type": "headline",
+    "main_heading": "Japan PM to Visit White House in April",
+    "content_text": "Prime Minister Yoshihide Suga will travel to Washington, D.C., for a summit with President Joe Biden in April, according to Japanese government sources.",
+    "display_duration": 15,
+    "timestamp": 1764185244,
+    "played": false
+  },
+  {
+    "id": "d4846091",
+    "type": "headline",
+    "main_heading": "Hong Kong Tower Block Fire",
+    "content_text": "At least 36 dead, fire still raging. Hundreds missing.",
+    "display_duration": 15,
+    "timestamp": 1764185554,
+    "played": false
+  },
+  {
+    "id": "f13dfe6d",
+    "type": "headline",
+    "main_heading": "London Cyberattack",
+    "content_text": "Three councils disrupted, emergency plans activated.",
+    "display_duration": 15,
+    "timestamp": 1764185554,
+    "played": false
+  },
+  {
+    "id": "62175fc3",
+    "type": "headline",
+    "main_heading": "Syria Aftermath",
+    "content_text": "Government security deployments help avoid sectarian violence.",
+    "display_duration": 15,
+    "timestamp": 1764185554,
+    "played": false
+  },
+  {
+    "id": "1c17e578",
+    "type": "headline",
+    "main_heading": "Apple Sued Over DR Congo Minerals",
+    "content_text": "US group sues Apple over conflict minerals. Apple responds.",
+    "display_duration": 15,
+    "timestamp": 1764185554,
+    "played": false
+  },
+  {
+    "id": "8ba6cdfd",
+    "type": "headline",
+    "main_heading": "Tech Stocks Rise on Rate-Cut Bets",
+    "content_text": "Tech stocks climb, dollar slumps. Rising expectations for rate cuts.",
+    "display_duration": 15,
+    "timestamp": 1764185554,
+    "played": false
+  },
+  {
+    "id": "9d6ffed2",
+    "type": "headline",
+    "main_heading": "Muni Dynamics Shifted by ETF Demand",
+    "content_text": "Strong demand for municipal ETFs reshapes market dynamics.",
+    "display_duration": 15,
+    "timestamp": 1764185554,
+    "played": false
+  },
+  {
+    "id": "9ae11b2a",
+    "type": "headline",
+    "main_heading": "ChatGPT Updates Timeline",
+    "content_text": "Latest updates on ChatGPT product releases. Consistent updates throughout the year.",
+    "display_duration": 15,
+    "timestamp": 1764186180,
+    "played": false
+  },
+  {
+    "id": "ea678b5a",
+    "type": "headline",
+    "main_heading": "Economic Activity Stagnant",
+    "content_text": "Little change in US economic activity, except among high-end shoppers. Consumer spending declines.",
+    "display_duration": 15,
+    "timestamp": 1764186180,
+    "played": false
+  },
+  {
+    "id": "b54b4482",
+    "type": "headline",
+    "main_heading": "Tesla Model Y Leads EV Market",
+    "content_text": "Tesla Model Y sets new standards for range, performance, and affordability in the electric vehicle market.",
+    "display_duration": 15,
+    "timestamp": 1764186180,
+    "played": false
+  },
+  {
+    "id": "4c785613",
+    "type": "headline",
+    "main_heading": "Aftermath of Homs killings",
+    "content_text": "Syrian government security deployments helped avoid sectarian violence, unlike previous incidents this year.",
+    "display_duration": 15,
+    "timestamp": 1764186495,
+    "played": false
+  },
+  {
+    "id": "5eedbc24",
+    "type": "headline",
+    "main_heading": "US Group Sues Apple",
+    "content_text": "Apple instructed suppliers to halt sourcing of material from DR Congo and Rwanda.",
+    "display_duration": 15,
+    "timestamp": 1764186495,
+    "played": false
+  },
+  {
+    "id": "cda87533",
+    "type": "headline",
+    "main_heading": "ChatGPT Product Updates",
+    "content_text": "A timeline of ChatGPT product updates and releases, starting with the latest.",
+    "display_duration": 15,
+    "timestamp": 1764186495,
+    "played": false
+  },
+  {
+    "id": "4a845fca",
+    "type": "headline",
+    "main_heading": "Goldman Finances Jersey City Tower",
+    "content_text": "Goldman Sachs arranges over $200 million for a residential project in Jersey City, adding market-rate and affordable housing.",
+    "display_duration": 15,
+    "timestamp": 1764186495,
+    "played": false
+  },
+  {
+    "id": "5bc64b19",
+    "type": "headline",
+    "main_heading": "Deere Signals Ag Downturn",
+    "content_text": "Deere throws cold water on sentiment with a shaky outlook and a farm rebound still out of reach.",
+    "display_duration": 15,
+    "timestamp": 1764186495,
+    "played": false
+  },
+  {
+    "id": "97179755",
+    "type": "headline",
+    "main_heading": "Hong Kong Fire Death Toll Rises",
+    "content_text": "The death toll from a massive fire in Hong Kong has risen to 38, with hundreds still missing.",
+    "display_duration": 15,
+    "timestamp": 1764186495,
+    "played": false
+  },
+  {
+    "id": "987fcdac",
+    "type": "headline",
+    "main_heading": "Tesla Announces New Electric Semi Truck",
+    "content_text": "Elon Musk announces Tesla will be unveiling a new electric semi truck in September.",
+    "display_duration": 15,
+    "timestamp": 1764186495,
+    "played": false
+  },
+  {
+    "id": "41bec354",
+    "type": "headline",
+    "main_heading": "Hong Kong Tower Block Fire",
+    "content_text": "At least 36 dead, fire still burning.",
+    "display_duration": 15,
+    "timestamp": 1764186806,
+    "played": false
+  },
+  {
+    "id": "63d82289",
+    "type": "headline",
+    "main_heading": "Thailand Floods",
+    "content_text": "33 dead, thousands stranded.",
+    "display_duration": 15,
+    "timestamp": 1764186806,
+    "played": false
+  },
+  {
+    "id": "d12252b1",
+    "type": "headline",
+    "main_heading": "Jersey City Residential Tower",
+    "content_text": "Goldman Sachs finances $200 million construction.",
+    "display_duration": 15,
+    "timestamp": 1764186806,
+    "played": false
+  },
+  {
+    "id": "01da7263",
+    "type": "headline",
+    "main_heading": "Deere Outlook",
+    "content_text": "Shaky outlook signals severe ag downturn.",
+    "display_duration": 15,
+    "timestamp": 1764186806,
+    "played": false
+  },
+  {
+    "id": "649ed1a8",
+    "type": "headline",
+    "main_heading": "New iPhone 14 Pro Max",
+    "content_text": "Exciting new features unveiled.",
+    "display_duration": 15,
+    "timestamp": 1764186806,
+    "played": false
+  },
+  {
+    "id": "34910629",
+    "type": "headline",
+    "main_heading": "Neuralink Advancements",
+    "content_text": "Significant strides in brain-computer interface technology.",
+    "display_duration": 15,
+    "timestamp": 1764186806,
+    "played": false
+  },
+  {
+    "id": "2f105afd",
+    "type": "headline",
+    "main_heading": "Thailand Floods Leave Thousands Stranded",
+    "content_text": "Heavy rainfall in southern Thailand has caused flooding, leaving thousands stranded and at least 33 people dead.",
+    "display_duration": 15,
+    "timestamp": 1764187118,
+    "played": false
+  },
+  {
+    "id": "967ecc57",
+    "type": "headline",
+    "main_heading": "Hong Kong Tower Block Fire Ongoing",
+    "content_text": "Firefighters are struggling to put out the flames in Hong Kong tower blocks, with at least 36 dead and hundreds missing.",
+    "display_duration": 15,
+    "timestamp": 1764187118,
+    "played": false
+  },
+  {
+    "id": "45f9a0b1",
+    "type": "headline",
+    "main_heading": "Deere Shares Fall on Disappointing Outlook",
+    "content_text": "Deere's first profit outlook for 2026 fell short of expectations, impacting the agriculture sector.",
+    "display_duration": 15,
+    "timestamp": 1764187118,
+    "played": false
+  },
+  {
+    "id": "7cc28c42",
+    "type": "headline",
+    "main_heading": "Latin America Feels Impact of US-Venezuela Tensions",
+    "content_text": "Central and South American countries are looking for a diplomatic solution to increasing tensions between the US and Venezuela.",
+    "display_duration": 15,
+    "timestamp": 1764187118,
+    "played": false
+  },
+  {
+    "id": "ff29cd1c",
+    "type": "headline",
+    "main_heading": "Tesla Model Y: Electric Compact Crossover SUV",
+    "content_text": "The Tesla Model Y, an electric compact crossover SUV, has been making waves since its unveiling in March 2019.",
+    "display_duration": 15,
+    "timestamp": 1764187118,
+    "played": false
+  },
+  {
+    "id": "cc1274ff",
+    "type": "headline",
+    "main_heading": "Apple's New Privacy Features Impact Advertisers",
+    "content_text": "Apple has announced a series of new privacy features that will impact advertisers.",
+    "display_duration": 15,
+    "timestamp": 1764187118,
+    "played": false
+  },
+  {
+    "id": "09bcd441",
+    "type": "headline",
+    "main_heading": "ChatGPT Updates Timeline",
+    "content_text": "Latest updates on AI-powered chatbot, regularly updated throughout the year.",
+    "display_duration": 15,
+    "timestamp": 1764187427,
+    "played": false
+  },
+  {
+    "id": "b40dcade",
+    "type": "headline",
+    "main_heading": "NYC Pet Ferry Launch",
+    "content_text": "New service for transporting pets across NYC's waterways.",
+    "display_duration": 15,
+    "timestamp": 1764187427,
+    "played": false
+  },
+  {
+    "id": "c7f6a7cb",
+    "type": "headline",
+    "main_heading": "Apple's iOS 15 Privacy Changes",
+    "content_text": "Significant user privacy changes in Apple's upcoming operating system.",
+    "display_duration": 15,
+    "timestamp": 1764187427,
+    "played": false
+  },
+  {
+    "id": "da1d8e38",
+    "type": "headline",
+    "main_heading": "AI-Powered Chatbot Updates",
+    "content_text": "ChatGPT product updates and releases timeline. Latest updates have been updated throughout the year.",
+    "display_duration": 15,
+    "timestamp": 1764187739,
+    "played": false
+  },
+  {
+    "id": "df8ca8ab",
+    "type": "headline",
+    "main_heading": "Ukraine-Russia Prisoner Swap",
+    "content_text": "Ukrainian President Volodymyr Zelenskyy and Russian President Vladimir Putin agreed on a large-scale prisoner swap.",
+    "display_duration": 15,
+    "timestamp": 1764187739,
+    "played": false
+  },
+  {
+    "id": "43cb5c97",
+    "type": "headline",
+    "main_heading": "Ardern Wins Second Term",
+    "content_text": "Jacinda Ardern secures a majority for her Labour Party, ending nine years of rule by the National Party.",
+    "display_duration": 15,
+    "timestamp": 1764187739,
+    "played": false
+  },
+  {
+    "id": "909bb5af",
+    "type": "headline",
+    "main_heading": "Redwood Materials Staff Cut",
+    "content_text": "Redwood Materials, a battery recycling company founded by former Tesla CTO JB Straubel, cuts 5% of staff after raising $350M.",
+    "display_duration": 15,
+    "timestamp": 1764188358,
+    "played": false
+  },
+  {
+    "id": "86c68a81",
+    "type": "headline",
+    "main_heading": "ChatGPT Overview",
+    "content_text": "Timeline of updates and releases for ChatGPT, an AI-powered chatbot.",
+    "display_duration": 15,
+    "timestamp": 1764188358,
+    "played": false
+  },
+  {
+    "id": "d90d7d6e",
+    "type": "headline",
+    "main_heading": "India Examines Extradition Request",
+    "content_text": "Indian officials are examining Bangladesh's request to extradite convicted ex-PM Hasina.",
+    "display_duration": 15,
+    "timestamp": 1764188358,
+    "played": false
+  },
+  {
+    "id": "60b435de",
+    "type": "headline",
+    "main_heading": "Ireland Tightens Immigration Rules",
+    "content_text": "Ireland implements tough new measures to check population growth amid record asylum claims and immigration tensions.",
+    "display_duration": 15,
+    "timestamp": 1764188358,
+    "played": false
+  },
+  {
+    "id": "e340b812",
+    "type": "headline",
+    "main_heading": "Hong Kong Tower Block Fire",
+    "content_text": "At least 36 dead and hundreds missing as firefighters struggle to put out a blaze in Hong Kong tower blocks.",
+    "display_duration": 15,
+    "timestamp": 1764188358,
+    "played": false
+  },
+  {
+    "id": "ac458bc0",
+    "type": "headline",
+    "main_heading": "Hong Kong Apartment Fires Details",
+    "content_text": "Details about the Hong Kong apartment fires, where the death toll and number of missing individuals continue to increase.",
+    "display_duration": 15,
+    "timestamp": 1764188358,
+    "played": false
+  },
+  {
+    "id": "89c88ec5",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764194679,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4"
+    }
+  },
+  {
+    "id": "e1764e91",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764194721,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6149974/6149974-hd_1280_720_30fps.mp4"
+    }
+  }
+]

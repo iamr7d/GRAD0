@@ -1,0 +1,40 @@
+{
+    "segments": [
+        {
+            "ticker": "UBISOFT LAYOFFS CONTINUE",
+            "main_heading": "Ubisoft Faces More Layoffs",
+            "headlines": [
+                "Ubisoft shuts down support studio amidst industry-wide layoffs",
+                "Beyond Good & Evil 2 development continues amidst Ubisoft's staff cuts",
+                "Engadget reports on Ubisoft's recent layoffs and voluntary buyouts"
+            ],
+            "tts_script": [
+                "Ubisoft is facing more layoffs, with the shutdown of a support studio and ongoing development of Beyond Good & Evil 2 amidst industry-wide cuts. Learn more about this story on Engadget."
+            ]
+        },
+        {
+            "ticker": "DISNEY+ HULU BUNDLE DEAL",
+            "main_heading": "Disney+ and Hulu Bundle Now $5/Month",
+            "headlines": [
+                "Disney+ and Hulu bundle drops to $5 per month for one year for Black Friday",
+                "Stream Disney+ and Hulu for a discounted price this holiday season",
+                "Take advantage of the limited-time offer on the Disney+ and Hulu bundle"
+            ],
+            "tts_script": [
+                "This Black Friday, stream Disney+ and Hulu for just $5 per month for one year. Don't miss out on this limited-time offer."
+            ]
+        },
+        {
+            "ticker": "FIRE IN HONG KONG APARTMENTS",
+            "main_heading": "Fire in Hong Kong Apartments Leaves 36 Dead, Hundreds Missing",
+            "headlines": [
+                "Fire engulfs Hong Kong apartments, killing 36 and leaving hundreds missing",
+                "Investigation underway into building materials contributing to rapid fire spread",
+                "Hong Kong firefighters work to control blaze at Tai Po district apartment complex"
+            ],
+            "tts_script": [
+                "A fire in an apartment complex in Hong Kong's northern Tai Po district has left 36 dead and hundreds missing. Firefighters are working to control the blaze, with police investigating whether building materials contributed to its rapid spread."
+            ]
+        }
+    ]
+}

@@ -1,0 +1,94 @@
+{
+    "segments": [
+        {
+            "ticker": "UK MAN ARRESTED OVER TESLA THREAT",
+            "main_heading": "Tesla Threat Leads to Arrest in UK",
+            "headlines": [
+                "Man arrested for allegedly threatening Tesla employee over parking dispute",
+                "Suspect faces charges of making threats to kill",
+                "Investigation ongoing, more details to follow"
+            ],
+            "tts_script": "A man in the UK was arrested on suspicion of making threats to kill a Tesla employee after a parking dispute at a supercharger station. The suspect faces charges of making threats to kill and an investigation is ongoing."
+        },
+        {
+            "ticker": "BEYOND GOOD & EVIL 2 DEVELOPMENT CONTINUES",
+            "main_heading": "Beyond Good & Evil 2 Development Persists",
+            "headlines": [
+                "Ubisoft shuts down a support studio, but Beyond Good & Evil 2 is still in development",
+                "Game industry layoffs lead to questions about project's future",
+                "Stay tuned for updates on the game's progress"
+            ],
+            "tts_script": "With the gaming industry's recent rash of layoffs, Ubisoft shuts down a support studio. However, Beyond Good & Evil 2 is still in development."
+        },
+        {
+            "ticker": "DISNEY+ HULU BUNDLE DISCOUNT",
+            "main_heading": "Disney+ and Hulu Bundle on Sale for Black Friday",
+            "headlines": [
+                "Bundle drops to $5 per month for one year",
+                "Deal offers savings for streaming services",
+                "Take advantage of the limited-time offer"
+            ],
+            "tts_script": "The Disney+ and Hulu bundle drops to $5 per month for one year for Black Friday. This deal offers savings for streaming services."
+        },
+        {
+            "ticker": "NEW SOLAR SYSTEM OBJECTS DISCOVERED",
+            "main_heading": "Millions of New Solar System Objects Detected",
+            "headlines": [
+                "Astronomers reveal new research showing detection of millions of objects",
+                "New facility expected to come online later this year",
+                "Stay tuned for more details on the discovery"
+            ],
+            "tts_script": "Astronomers have revealed new research showing that millions of new solar system objects are likely to be detected by a brand-new facility, which is expected to come online later this year."
+        },
+        {
+            "ticker": "TELEHEALTH IMPROVES CAT HEALTH",
+            "main_heading": "Telehealth Improves Cat Health",
+            "headlines": [
+                "Researchers found telehealth visits can improve care for cats with feline arthritis",
+                "Telehealth offers convenience and accessibility for pet owners",
+                "Stay tuned for more information on the study's findings"
+            ],
+            "tts_script": "Researchers found that telehealth visits can improve care for cats with feline arthritis."
+        },
+        {
+            "ticker": "SMELL STUDY MODEL DEVELOPED",
+            "main_heading": "New Model Developed to Study Sense of Smell",
+            "headlines": [
+                "Three-dimensional model used to study regeneration of nerve tissue in the nose",
+                "One type of stem cell may play a more significant role than originally believed",
+                "Stay tuned for more information on the study's findings"
+            ],
+            "tts_script": "Using a newly devised, three-dimensional model to study the regeneration of nerve tissue in the nose, researchers have discovered that one type of stem cell thought to be dormant may play a more significant role in preserving the sense of smell than originally believed."
+        },
+        {
+            "ticker": "US STOCKS RISE ON FEDERAL RESERVE HOPES",
+            "main_heading": "US Stocks Rise on Federal Reserve Rate-Cut Hopes",
+            "headlines": [
+                "Stocks advanced on Wednesday as expectations for an interest-rate cut at the Federal Reserve's next meeting helped fuel gains before the Thanksgiving break",
+                "Rate-cut could boost economic growth and corporate profits",
+                "Stay tuned for more updates on the Federal Reserve's decision"
+            ],
+            "tts_script": "US stocks advanced on Wednesday as expectations for an interest-rate cut at the Federal Reserve's next meeting helped fuel gains before the Thanksgiving break."
+        },
+        {
+            "ticker": "BITCOIN PRICE SURGES",
+            "main_heading": "Bitcoin Price Surges Above $90,000",
+            "headlines": [
+                "Bitcoin climbed above $90,000 for the first time in almost a week",
+                "Climb comes after more than a month-long selloff",
+                "Stay tuned for updates on Bitcoin's price movement"
+            ],
+            "tts_script": "Bitcoin climbed above $90,000 for the first time in almost a week, clawing back ground after a more than a month-long selloff."
+        },
+        {
+            "ticker": "TOY TARIFFS INCREASE COSTS",
+            "main_heading": "Toy Tariffs Increase Costs and Constrain Supply",
+            "headlines": [
+                "Basic Fun CEO Jay Foreman says US toy tariffs have increased costs and constrained supply heading into the holiday season",
+                "Tariffs could impact consumer spending during the holiday season",
+                "Stay tuned for more information on the impact of toy tariffs"
+            ],
+            "tts_script": "Basic Fun CEO Jay Foreman says US toy tariffs have increased costs and constrained supply heading into the holiday season."
+        }
+    ]
+}

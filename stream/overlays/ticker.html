@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin: 0; overflow: hidden; background: transparent; font-family: "Arial", sans-serif; }
+        .ticker-wrap {
+            position: fixed; bottom: 0; width: 100%; height: 70px;
+            background: linear-gradient(90deg, #0a1428 0%, #1a253a 100%); 
+            border-top: 4px solid #e74c3c;
+            white-space: nowrap; overflow: hidden; box-sizing: border-box;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
+        }
+        .ticker {
+            display: inline-block; padding-left: 100%;
+            animation: ticker 45s linear infinite; /* Speed control */
+        }
+        .ticker-item {
+            display: inline-block; padding: 0 3rem;
+            font-size: 36px; color: #ecf0f1; font-weight: 800; text-transform: uppercase;
+            line-height: 62px; letter-spacing: 1px;
+        }
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="ticker-wrap">
+        <div class="ticker" id="ticker-content">
+            <div class="ticker-item">WAITING FOR AI SIGNAL...</div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchTicker() {
+            try {
+                // Fetch from the bucket path relative to server root
+                const res = await fetch('/bucket/news/ticker/latest.txt?v=' + Date.now());
+                const text = await res.text();
+                
+                const container = document.getElementById('ticker-content');
+                // Only update if content changed to prevent animation reset glitch
+                if (container.innerText !== text && text.length > 10) {
+                    container.innerHTML = `<div class="ticker-item">${text}</div>`;
+                }
+            } catch (e) { console.log("Waiting for news...", e); }
+        }
+        setInterval(fetchTicker, 3000); // Check every 3 seconds
+        fetchTicker();
+    </script>
+</body>
+</html>

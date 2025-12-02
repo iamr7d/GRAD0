@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PEN AI Broadcast | OBS Export 1080p</title>
+  <meta name="viewport" content="width=1920, initial-scale=1">
+  <style>
+    html, body {
+      margin: 0; padding: 0; width: 1920px; height: 1080px;
+      background: #000; overflow: hidden;
+    }
+    #obs-frame {
+      width: 1920px; height: 1080px; border: none; display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Embed the main broadcast overlay at full 1080p -->
+  <iframe id="obs-frame" src="/overlays/broadcast_screen.html" allow="autoplay; fullscreen" frameborder="0"></iframe>
+</body>
+</html>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OBS Output - Broadcast</title>
+  <style>
+    html,body{height:100%;margin:0;background:#000}
+    #root{width:100%;height:100%;position:relative;overflow:hidden}
+    video{width:100%;height:100%;object-fit:cover;filter:brightness(0.45);}
+    .overlay{position:absolute;right:40px;bottom:40px;width:380px;color:#fff;font-family:Inter,Arial,sans-serif}
+    .label{background:rgba(0,0,0,0.6);padding:8px 12px;border-radius:4px;font-weight:700;display:inline-block}
+    .headline{margin-top:12px;font-size:28px;line-height:1.1;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,0.6)}
+    .summary{margin-top:8px;font-size:14px;color:#cbd5e1}
+    .progress{position:absolute;left:0;bottom:0;height:4px;background:#fff;width:0%;transition:width linear}
+  </style>
+  </head>
+<body>
+  <div id="root">
+    <video id="bg" muted playsinline autoplay loop></video>
+    <div class="overlay">
+      <div class="label" id="live">LIVE</div>
+      <div class="headline" id="headline">Waiting for content...</div>
+      <div class="summary" id="summary">Initializing...</div>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <script>
+    // OBS Browser Source friendly output.
+    const DEFAULT_VIDEO = '/overlays/default_bg.mp4';
+    const bg = document.getElementById('bg');
+    const headlineEl = document.getElementById('headline');
+    const summaryEl = document.getElementById('summary');
+    const progress = document.getElementById('progress');
+
+    let queue = [];
+    let currentIndex = 0;
+
+    async function loadQueue(){
+      try{
+        const res = await fetch('/bucket/news/queue/run_of_show.json?v=' + Date.now());
+        const j = await res.json();
+        if (JSON.stringify(j) !== JSON.stringify(queue)){
+          queue = j; playIndex(0);
+        }
+      }catch(e){/* ignore */}
+    }
+
+    function shouldUseProxy(url){ try{ return new URL(url).hostname.includes('pexels.com')||new URL(url).hostname.includes('vimeo.com'); }catch(e){return false;} }
+
+    function setVideo(url){
+      let final = url || DEFAULT_VIDEO;
+      if(final && final.startsWith('http') && shouldUseProxy(final)) final = '/proxy_video?url=' + encodeURIComponent(final);
+      if(bg.src !== final){ bg.src = final; bg.load(); bg.play().catch(()=>{}); }
+    }
+
+    function playIndex(i){ if(!queue || queue.length===0) return; if(i>=queue.length) i=0; currentIndex=i; const it = queue[i]; headlineEl.innerText = it.main_heading || ''; summaryEl.innerText = it.content_text || ''; setVideo(it.extra_data && it.extra_data.video_url ? it.extra_data.video_url : null); const dur = (it.display_duration||15)*1000; progress.style.transition = 'none'; progress.style.width='0%'; setTimeout(()=>{ progress.style.transition = `width ${dur}ms linear`; progress.style.width='100%'; },50); setTimeout(()=>playIndex(i+1), dur+800); }
+
+    setInterval(loadQueue,3000); loadQueue();
+  </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+    "show_intro": "Good evening, tonight we cover 4 major stories from around the globe...",
+    "segments": [
+        {
+            "id": 1,
+            "ticker": "SPACEX SUCCESSFULLY CATCHES SUPER HEAVY BOOSTER IN HISTORIC FLIGHT",
+            "main_heading": "Starship Success",
+            "headlines": [
+                "Booster caught mid-air",
+                "NASA congratulates team",
+                "Mars goals closer"
+            ],
+            "tts_script": "SpaceX has achieved the impossible today by catching their Super Heavy booster mid-flight. NASA has congratulated the team on this historic achievement, bringing us one step closer to Mars."
+        },
+        {
+            "id": 2,
+            "ticker": "BIDEN SIGNS INFRASTRUCTURE BILL INTO LAW",
+            "main_heading": "Infrastructure Boost",
+            "headlines": [
+                "$1.2 trillion bill passed",
+                "Roads, bridges, broadband upgrades",
+                "Job creation expected"
+            ],
+            "tts_script": "President Biden has signed the Infrastructure Bill into law today. This $1.2 trillion investment will upgrade roads, bridges, and broadband across the country, creating millions of jobs."
+        },
+        {
+            "id": 3,
+            "ticker": "UK PRIME MINISTER BORIS JOHNSON SURVIVES NO-CONFIDENCE VOTE",
+            "main_heading": "Johnson Survives",
+            "headlines": [
+                "211 votes in favor",
+                "Opposition divided",
+                "Brexit plans continue"
+            ],
+            "tts_script": "UK Prime Minister Boris Johnson has survived a no-confidence vote today, with 211 votes in his favor. Despite opposition divisions, Johnson's Brexit plans are expected to move forward."
+        },
+        {
+            "id": 4,
+            "ticker": "TENSIONS RISE BETWEEN CHINA AND TAIWAN",
+            "main_heading": "China-Taiwan Tensions",
+            "headlines": [
+                "Military exercises",
+                "US condemns actions",
+                "Peace talks needed"
+            ],
+            "tts_script": "Tensions between China and Taiwan are on the rise today, with military exercises conducted by both sides. The US has strongly condemned these actions, calling for peace talks to prevent further escalation."
+        }
+    ],
+    "show_outro": "That is the news. Goodnight."
+}

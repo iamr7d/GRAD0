@@ -1,0 +1,50 @@
+{
+    "show_intro": "Good evening, tonight we cover 4 major stories from around the globe...",
+    "segments": [
+        {
+            "id": 1,
+            "ticker": "SPACEX SUCCESSFULLY CATCHES SUPER HEAVY BOOSTER IN HISTORIC FLIGHT",
+            "main_heading": "Starship Success",
+            "headlines": [
+                "Booster caught mid-air",
+                "NASA congratulates team",
+                "Mars goals closer"
+            ],
+            "tts_script": "SpaceX has achieved the impossible today, catching their Super Heavy booster in mid-air during a historic flight. NASA has congratulated the team on this monumental achievement, bringing us one step closer to Mars."
+        },
+        {
+            "id": 2,
+            "ticker": "TENSIONS RISE BETWEEN US AND CHINA OVER TAIWAN STRAIT",
+            "main_heading": "Taiwan Tensions",
+            "headlines": [
+                "US Navy ships sail through",
+                "China military drills",
+                "Calls for diplomacy"
+            ],
+            "tts_script": "Tensions between the US and China are escalating over the Taiwan Strait. The US Navy has sailed through the area, prompting Chinese military drills. Both sides are urging diplomatic dialogue to de-escalate the situation."
+        },
+        {
+            "id": 3,
+            "ticker": "CLIMATE ACTIVISTS BLOCK COAL TRANSPORT IN LONDON PROTEST",
+            "main_heading": "Coal Protest",
+            "headlines": [
+                "Protesters block railway",
+                "Police make arrests",
+                "Call for clean energy"
+            ],
+            "tts_script": "Climate activists have blocked a coal transport in London as part of a protest. Police have made several arrests, but the protesters are demanding a shift towards cleaner energy sources."
+        },
+        {
+            "id": 4,
+            "ticker": "RECORD-BREAKING SALE OF PICASSO PAINTING SETS NEW AUCTION RECORD",
+            "main_heading": "Picasso Record",
+            "headlines": [
+                "Le R\u00eave sold for $179.4 million",
+                "Previous record was $179.3 million",
+                "Art market booming"
+            ],
+            "tts_script": "A painting by Pablo Picasso, Le R\u00eave, has been sold at auction for a record-breaking $179.4 million, surpassing its previous record of $179.3 million. The art market continues to boom with such high-profile sales."
+        }
+    ],
+    "show_outro": "That is the news. Goodnight."
+}

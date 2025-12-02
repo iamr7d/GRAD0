@@ -1,0 +1,28 @@
+{
+    "final_production_data": {
+        "ticker": "US STOCKS RISE ON FEDERAL RESERVE HOPES",
+        "main_heading": "US Stocks Rise on Federal Reserve Rate-Cut Hopes",
+        "headlines": [
+            "Stocks advanced on Wednesday as expectations for an interest-rate cut at the Federal Reserve's next meeting helped fuel gains before the Thanksgiving break",
+            "Rate-cut could boost economic growth and corporate profits",
+            "Stay tuned for more updates on the Federal Reserve's decision"
+        ],
+        "tts_script": "US stocks advanced on Wednesday as expectations for an interest-rate cut at the Federal Reserve's next meeting helped fuel gains before the Thanksgiving break."
+    },
+    "validation_data": {
+        "bias": 1,
+        "politics": 2
+    },
+    "original_raw_news": {
+        "original_title": "US Stocks Rise as Rate-Cut Hopes Drive Gains Before Thanksgiving",
+        "original_summary": "US stocks advanced on Wednesday as expectations for an interest-rate cut at the Federal Reserve\u2019s next meeting helped fuel gains before the Thanksgiving break.",
+        "sources_count": 1,
+        "category": "Finance",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 1,
+            "politics": 2
+        },
+        "reason": "Safe"
+    }
+}

@@ -1,0 +1,652 @@
+[
+  {
+    "id": "75ce3ecd",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764629407,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "bfe56105",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764630008,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "0d8a09ce",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764630607,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "a45e1f7e",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764631208,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "b5cb74ef",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764631808,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "75e87537",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764632407,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "233cd1c3",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764633008,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "936eb26a",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764633608,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "8f20a12f",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764634207,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "74ee9e59",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764634808,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "286b3772",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764635407,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "dc7bc851",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764636008,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "3111f4d5",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764636608,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "ddbcb71f",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764637208,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "9b126c2b",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764637808,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "4d73cb31",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764638407,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "9cd32336",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764639008,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "db1c15ba",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764639607,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "b19bda5a",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764640208,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "4d4715f1",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764640807,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "4c01943f",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764641408,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "fb808ca1",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764642007,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "c7b4beda",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764642608,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "c81978ff",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764643207,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "5f677e29",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764643808,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "1b9d691e",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764644408,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "15b9ae10",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764645008,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "9ca87c55",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764645608,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "d9bd474e",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764646207,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "3032625f",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764646808,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "5e5c4e2d",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764647408,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "db275250",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764648007,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "2ff1a105",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764648608,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "6f406a09",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764649208,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "257f9e27",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764649808,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "a6f0696a",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764650407,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "f0de21a1",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764651007,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "4d19714b",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764651608,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "afd24146",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764652207,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "89973f5e",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764652808,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "fb95554f",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764653408,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "426f06c0",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764654008,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "441a9a94",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764654607,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "05c91f35",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764655208,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "58292f5a",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764655808,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "bb10b90f",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764656408,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "0e7791e8",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764657007,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "515b1051",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764657607,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "138b0749",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764658208,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  },
+  {
+    "id": "ab6ea86e",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764658808,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  }
+]

@@ -1,0 +1,28 @@
+{
+    "final_production_data": {
+        "ticker": "BITCOIN PRICE SURGES",
+        "main_heading": "Bitcoin Price Surges Above $90,000",
+        "headlines": [
+            "Bitcoin climbed above $90,000 for the first time in almost a week",
+            "Climb comes after more than a month-long selloff",
+            "Stay tuned for updates on Bitcoin's price movement"
+        ],
+        "tts_script": "Bitcoin climbed above $90,000 for the first time in almost a week, clawing back ground after a more than a month-long selloff."
+    },
+    "validation_data": {
+        "bias": 1,
+        "finance": 3
+    },
+    "original_raw_news": {
+        "original_title": "Bitcoin Tops $90,000 as Options Point Toward Shifting Sentiment",
+        "original_summary": "Bitcoin climbed above $90,000 for the first time in almost a week, clawing back ground after a more than a month-long selloff, as a broad rally in risk assets and easing volatility gave traders room to push higher.",
+        "sources_count": 1,
+        "category": "Finance",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 1,
+            "finance": 3
+        },
+        "reason": "Safe"
+    }
+}

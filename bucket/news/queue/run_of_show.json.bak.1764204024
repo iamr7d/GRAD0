@@ -1,0 +1,15 @@
+[
+  {
+    "id": "e7a3709e",
+    "type": "headline",
+    "main_heading": "Test AI News",
+    "content_text": "Automated test item",
+    "display_duration": 15,
+    "timestamp": 1764204023,
+    "extra_data": {
+      "video_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_url": "https://videos.pexels.com/video-files/6463890/6463890-hd_1280_720_25fps.mp4",
+      "media_type": "video"
+    }
+  }
+]

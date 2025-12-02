@@ -1,0 +1,30 @@
+{
+    "final_production_data": {
+        "ticker": "UBISOFT LAYOFFS CONTINUE",
+        "main_heading": "Ubisoft Faces More Layoffs",
+        "headlines": [
+            "Ubisoft shuts down support studio amidst industry-wide layoffs",
+            "Beyond Good & Evil 2 development continues amidst Ubisoft's staff cuts",
+            "Engadget reports on Ubisoft's recent layoffs and voluntary buyouts"
+        ],
+        "tts_script": [
+            "Ubisoft is facing more layoffs, with the shutdown of a support studio and ongoing development of Beyond Good & Evil 2 amidst industry-wide cuts. Learn more about this story on Engadget."
+        ]
+    },
+    "validation_data": {
+        "bias": 1,
+        "politics": 0
+    },
+    "original_raw_news": {
+        "original_title": "Beyond Good & Evil 2 is somehow still under development",
+        "original_summary": "<p>With the gaming industry's recent rash of <a class=\"link\" href=\"https://www.engadget.com/gaming/ubisoft-is-laying-off-more-workers-and-offering-voluntary-buyouts-120030931.html\" target=\"_blank\">layoffs</a>, <a class=\"link\" href=\"https://www.engadget.com/gaming/ubisoft-shuts-down-a-support-studio-",
+        "sources_count": 1,
+        "category": "Tech",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 1,
+            "politics": 0
+        },
+        "reason": "Safe"
+    }
+}

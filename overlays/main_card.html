@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* BROADCAST STYLE */
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;500&display=swap');
+        
+        body { margin: 0; padding: 50px; background: transparent; font-family: 'Roboto', sans-serif; }
+        
+        .news-container {
+            position: absolute; bottom: 120px; left: 50px; /* Above Ticker */
+            width: 600px;
+            opacity: 0; transform: translateX(-50px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .news-container.active { opacity: 1; transform: translateX(0); }
+        
+        .heading-box {
+            background: #c0392b; color: white;
+            padding: 10px 20px; font-family: 'Oswald', sans-serif;
+            font-size: 24px; text-transform: uppercase; letter-spacing: 1px;
+            display: inline-block; box-shadow: 5px 5px 0px rgba(0,0,0,0.5);
+        }
+        
+        .content-box {
+            background: rgba(16, 24, 40, 0.95); color: #ecf0f1;
+            padding: 25px; border-left: 6px solid #c0392b;
+            margin-top: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        h1 { margin: 0 0 15px 0; font-size: 42px; line-height: 1.1; font-weight: 700; color: #fff; }
+        p { margin: 0; font-size: 24px; line-height: 1.4; color: #bdc3c7; }
+    </style>
+</head>
+<body>
+    <div id="card" class="news-container">

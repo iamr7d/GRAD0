@@ -1,0 +1,28 @@
+{
+    "final_production_data": {
+        "ticker": "UK MAN ARRESTED OVER TESLA THREAT",
+        "main_heading": "Tesla Threat Leads to Arrest in UK",
+        "headlines": [
+            "Man arrested for allegedly threatening Tesla employee over parking dispute",
+            "Suspect faces charges of making threats to kill",
+            "Investigation ongoing, more details to follow"
+        ],
+        "tts_script": "A man in the UK was arrested on suspicion of making threats to kill a Tesla employee after a parking dispute at a supercharger station. The suspect faces charges of making threats to kill and an investigation is ongoing."
+    },
+    "validation_data": {
+        "bias": 2,
+        "politics": 1
+    },
+    "original_raw_news": {
+        "original_title": "A man in the UK was arrested for allegedly threatening to kill a Tesla employee over a parking dispute",
+        "original_summary": "A man in the UK was arrested on suspicion of making threats to kill a Tesla employee after a parking dispute at a supercharger station.",
+        "sources_count": 1,
+        "category": "Tech",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 2,
+            "politics": 1
+        },
+        "reason": "Safe"
+    }
+}

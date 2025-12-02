@@ -1,0 +1,28 @@
+{
+    "show_intro": "Good evening, tonight we cover 2 major stories from around the globe...",
+    "segments": [
+        {
+            "id": 1,
+            "ticker": "SPACEX SUCCESSFULLY CATCHES SUPER HEAVY BOOSTER IN HISTORIC FLIGHT",
+            "main_heading": "Starship Success",
+            "headlines": [
+                "Booster caught mid-air in groundbreaking moment",
+                "NASA praises SpaceX team for significant achievement",
+                "Mars mission goals move one step closer"
+            ],
+            "tts_script": "SpaceX has achieved the impossible today, catching their Super Heavy Booster mid-flight. NASA has praised the team for this significant achievement, bringing us one step closer to our Mars mission."
+        },
+        {
+            "id": 2,
+            "ticker": "GLOBAL LEADERS AGREE ON CLIMATE FINANCE AT COP26",
+            "main_heading": "Climate Finance Deal",
+            "headlines": [
+                "World leaders agree on climate finance at COP26 summit",
+                "Funds pledged to aid developing countries in transitioning to green energy",
+                "Agreement seen as crucial step towards global climate goals"
+            ],
+            "tts_script": "Global leaders have agreed on a climate finance deal at the COP26 summit. Funds have been pledged to aid developing countries in transitioning to green energy, which is seen as a crucial step towards our global climate goals."
+        }
+    ],
+    "show_outro": "That is the news. Goodnight."
+}

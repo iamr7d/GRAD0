@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI News Split Layout</title>
+    <style>
+        /* --- FONTS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@700;900&display=swap');
+        
+        /* --- LAYOUT RESET --- */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Roboto', sans-serif; }
+
+        /* --- GRID CONTAINER --- */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 60% 40%; /* Video gets 60%, Text gets 40% */
+            grid-template-rows: 75% 20% 5%; /* Main Content, Breaking Banner, Ticker */
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* --- ZONE 1: VIDEO PLAYER (The Green Area) --- */
+        .video-zone {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            border-right: 5px solid #fff;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures no black bars */
+            transition: opacity 0.5s ease;
+            opacity: 0;
+        }
+        video.active { opacity: 1; }
+
+        /* --- ZONE 2: INFO PANEL (The White Area) --- */
+        .info-zone {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-heading-box {
+            background-color: #ff0000; /* Bright Red */
+            color: white;
+            padding: 30px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 48px;
+            text-transform: uppercase;
+            font-weight: bold;
+            text-align: center;
+            flex: 0 0 auto; /* Don't stretch */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .story-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .headline-text {
+            color: #cc0000; /* Darker Red for text on white */
+            font-size: 55px;
+            line-height: 1.2;
+            font-weight: 900;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        .headline-text.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- ZONE 3: BREAKING NEWS BANNER (The Red Area) --- */
+        .breaking-zone {
+            grid-column: 1 / 3;
+            grid-row: 2 / 3;
+            background: linear-gradient(90deg, #cc0000 0%, #ff0000 50%, #cc0000 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 5px solid #fff;
+            border-bottom: 5px solid #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .breaking-text {
+            font-family: 'Oswald', sans-serif;
+            font-size: 110px; /* MASSIVE TEXT */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            /* GOLD GRADIENT TEXT */
+            background: linear-gradient(to bottom, #fff 0%, #FFD700 50%, #B8860B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 4px 0px rgba(0,0,0,0.3));
+            animation: pulse 2s infinite;
+        }
+
+        /* --- ZONE 4: TICKER (The Black Strip) --- */
+        .ticker-zone {
+            grid-column: 1 / 3;
+            grid-row: 3 / 4;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            border-top: 2px solid #333;
+        }
+
+        .ticker-wrap { width: 100%; white-space: nowrap; }
+        .ticker { display: inline-block; animation: ticker-scroll 40s linear infinite; padding-left: 100%; }
+        .ticker-item {
+            display: inline-block;
+            font-family: 'Oswald', sans-serif;
+            font-size: 32px;
+            font-weight: 400;
+            text-transform: uppercase;
+            padding-right: 50px;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        /* Progress Bar (Subtle at top of breaking banner) */
+        .progress {
+            position: absolute; top: 0; left: 0; height: 5px; background: #FFD700; width: 0%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-grid">
+        <!-- VIDEO ZONE -->
+        <div class="video-zone">
+            <video id="bg-video" muted playsinline loop></video>
+        </div>
+
+        <!-- INFO ZONE -->
+        <div class="info-zone">
+            <div class="top-heading-box" id="main-heading">TOP STORY</div>
+            <div class="story-content">
+                <div id="headline-text" class="headline-text">WAITING FOR AI SIGNAL...</div>
+            </div>
+        </div>
+
+        <!-- BREAKING BANNER -->
+        <div class="breaking-zone">
+            <div class="breaking-text">BREAKING NEWS</div>
+            <div id="progress-bar" class="progress"></div>
+        </div>
+
+        <!-- TICKER -->
+        <div class="ticker-zone">
+            <div class="ticker-wrap">
+                <div class="ticker" id="ticker-container">
+                    <div class="ticker-item">INITIALIZING SYSTEM...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const DEFAULT_VIDEO = "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.480p.vp9.webm"; 
+        
+        let queue = [];
+        let currentIndex = 0;
+        let currentTickerText = "";
+
+        // --- 1. SYNC ---
+        async function notifyServer(item) {
+            try {
+                await fetch('/sync', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        current_id: item.id,
+                        heading: item.main_heading,
+                        timestamp: Date.now()
+                    })
+                });
+            } catch(e) {}
+        }
+
+        // --- 2. CONTENT LOADER ---
+        async function loadContent() {
+            try {
+                // QUEUE
+                const qRes = await fetch('/bucket/news/queue/run_of_show.json?v=' + Date.now());
+                const qData = await qRes.json();
+                if (qData && qData.length > 0 && JSON.stringify(qData) !== JSON.stringify(queue)) {
+                    queue = qData;
+                    // If we aren't playing, start
+                    if (!document.getElementById('headline-text').classList.contains('visible')) playNextItem(0);
+                }
+
+                // TICKER
+                const tRes = await fetch('/bucket/news/ticker/latest.txt?v=' + Date.now());
+                const tText = await tRes.text();
+                if (tText !== currentTickerText && tText.length > 10) {
+                    currentTickerText = tText;
+                    document.getElementById('ticker-container').innerHTML = `<div class="ticker-item">${tText}</div>`;
+                }
+            } catch(e) {}
+        }
+
+        // --- 3. PLAYBACK ENGINE ---
+        function playNextItem(index) {
+            if (index >= queue.length) index = 0;
+            currentIndex = index;
+            const item = queue[index];
+
+            notifyServer(item);
+
+            const headingBox = document.getElementById('main-heading');
+            const headlineText = document.getElementById('headline-text');
+            const video = document.getElementById('bg-video');
+            const bar = document.getElementById('progress-bar');
+
+            // A. Transition OUT
+            headlineText.classList.remove('visible');
+
+            setTimeout(() => {
+                // B. Update Data
+                headlineText.innerText = item.main_heading; // Or use item.content_text for longer version
+                headingBox.innerText = (item.type === 'breaking') ? "URGENT UPDATE" : "TOP STORY";
+                headingBox.style.backgroundColor = (item.type === 'breaking') ? "#ff0000" : "#c0392b";
+
+                // C. Video Swap
+                let newVideoUrl = (item.extra_data && item.extra_data.video_url) ? item.extra_data.video_url : DEFAULT_VIDEO;
+
+                // Decide whether to route through local proxy to avoid CORS/hotlink issues
+                function shouldUseProxy(url) {
+                    try {
+                        const u = new URL(url);
+                        const host = u.hostname.toLowerCase();
+                        return host.includes('pexels.com') || host.includes('vimeo.com');
+                    } catch(e) { return false; }
+                }
+
+                // Handle video errors (try fallback)
+                video.onerror = function() { 
+                    console.log("Video error, fallback.");
+                    if (video.src !== DEFAULT_VIDEO) video.src = DEFAULT_VIDEO; 
+                };
+
+                // Use proxy for Pexels/Vimeo to avoid CORS/hotlink
+                let finalUrl = newVideoUrl;
+                if (newVideoUrl && newVideoUrl.startsWith('http') && shouldUseProxy(newVideoUrl)) {
+                    finalUrl = '/proxy_video?url=' + encodeURIComponent(newVideoUrl);
+                }
+
+                if (video.src !== finalUrl) {
+                    video.classList.remove('active');
+                    setTimeout(() => {
+                        video.crossOrigin = 'anonymous';
+                        video.preload = 'auto';
+                        video.src = finalUrl;
+                        video.muted = true; 
+                        var playPromise = video.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(_ => video.classList.add('active')).catch(e => {});
+                        }
+                    }, 500);
+                } else {
+                     // If same video, ensure it's visible
+                     video.classList.add('active');
+                }
+
+                // D. Transition IN
+                headlineText.classList.add('visible');
+
+                // E. Progress Bar
+                const duration = (item.display_duration || 15) * 1000;
+                bar.style.transition = 'none';
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.transition = `width ${duration}ms linear`;
+                    bar.style.width = '100%';
+                }, 50);
+
+                // F. Schedule Next
+                setTimeout(() => {
+                    playNextItem(currentIndex + 1);
+                }, duration + 1000);
+
+            }, 500);
+        }
+
+        // Boot
+        setInterval(loadContent, 3000);
+        loadContent();
+    </script>
+</body>
+</html>

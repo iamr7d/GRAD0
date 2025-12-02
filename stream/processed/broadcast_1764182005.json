@@ -1,0 +1,50 @@
+{
+    "show_intro": "Good evening and welcome to our live broadcast!",
+    "segments": [
+        {
+            "id": 1,
+            "ticker": "INDIA WINS FIRST T20 AGAINST SOUTH AFRICA",
+            "main_heading": "India vs South Africa T20 Series",
+            "headlines": [
+                "India wins the first T20 match by 6 wickets",
+                "Virat Kohli scores a half-century",
+                "South Africa struggles with batting and bowling"
+            ],
+            "tts_script": "Tonight, India has won the first T20 match against South Africa. Virat Kohli scored a half-century in this exciting encounter."
+        },
+        {
+            "id": 2,
+            "ticker": "SPORTS TECHNOLOGY INNOVATION REVOLUTIONIZES GAMEPLAY",
+            "main_heading": "Innovations in Sports Technology",
+            "headlines": [
+                "Virtual reality training for athletes",
+                "Smart helmets for safety and performance tracking",
+                "Augmented reality enhancing fan experience"
+            ],
+            "tts_script": "Sports technology is revolutionizing the way we play and watch sports. From virtual reality training to smart helmets, these innovations are transforming the game."
+        },
+        {
+            "id": 3,
+            "ticker": "LEFT-HANDED ATHLETES HAVE AN ADVANTAGE IN SPORTS",
+            "main_heading": "Left-Handed Advantage in Sports",
+            "headlines": [
+                "Study reveals left-handed athletes have an advantage in certain sports",
+                "Research suggests that left-handers are less predictable to right-handed opponents",
+                "Experts debate the impact of handedness on performance"
+            ],
+            "tts_script": "A new study suggests that left-handed athletes may have an advantage in certain sports. This is due to their unpredictability against right-handed opponents."
+        },
+        {
+            "id": 4,
+            "ticker": "NHRA MIDWEST NATIONALS BRINGS EXCITING RACING ACTION",
+            "main_heading": "NHRA Midwest Nationals",
+            "headlines": [
+                "Top racers compete for championship points",
+                "Fans enjoy high-speed racing action",
+                "Racing legend John Force aims for another victory"
+            ],
+            "tts_script": "The NHRA Midwest Nationals is bringing exciting racing action this weekend. Top racers are competing for championship points, and fans are eager to witness the high-speed action."
+        }
+    ],
+    "show_outro": "That's all for tonight! Goodnight and stay tuned for more updates!"
+}

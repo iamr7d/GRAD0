@@ -1,0 +1,19 @@
+{
+    "id": "204caff4",
+    "type": "headline",
+    "main_heading": "HONG KONG TOWER BLOCK FIRE",
+    "content_text": "At least 44 dead and hundreds missing after fire engulfs Hong Kong tower blocks.",
+    "display_duration": 15,
+    "timestamp": 1764205349,
+    "extra_data": {
+        "video_url": {
+            "url": "https://videos.pexels.com/video-files/6829953/6829953-uhd_2732_1440_30fps.mp4",
+            "type": "video",
+            "matched": true
+        },
+        "media_url": "https://videos.pexels.com/video-files/25792662/11910086_1280_720_30fps.mp4",
+        "media_type": "video",
+        "visual_keyword": "Hong Kong Fire Disaster",
+        "visual_matched": true
+    }
+}

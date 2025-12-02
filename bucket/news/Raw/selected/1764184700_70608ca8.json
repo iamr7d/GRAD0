@@ -1,0 +1,28 @@
+{
+    "final_production_data": {
+        "ticker": "NEW SOLAR SYSTEM OBJECTS DISCOVERED",
+        "main_heading": "Millions of New Solar System Objects Detected",
+        "headlines": [
+            "Astronomers reveal new research showing detection of millions of objects",
+            "New facility expected to come online later this year",
+            "Stay tuned for more details on the discovery"
+        ],
+        "tts_script": "Astronomers have revealed new research showing that millions of new solar system objects are likely to be detected by a brand-new facility, which is expected to come online later this year."
+    },
+    "validation_data": {
+        "bias": 0,
+        "politics": 0
+    },
+    "original_raw_news": {
+        "original_title": "Millions of new solar system objects to be found and 'filmed in technicolor' -- studies predict",
+        "original_summary": "Astronomers have revealed new research showing that millions of new solar system objects are likely to be detected by a brand-new facility, which is expected to come online later this year.",
+        "sources_count": 1,
+        "category": "Science",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 0,
+            "politics": 0
+        },
+        "reason": "Safe"
+    }
+}

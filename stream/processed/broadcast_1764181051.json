@@ -1,0 +1,26 @@
+{
+    "show_intro": "Welcome to the evening news...",
+    "segments": [
+        {
+            "id": 1,
+            "ticker": "SPACEX SCORES HISTORIC VICTORY WITH FIFTH STARSHIP TEST FLIGHT",
+            "main_heading": "Starship Triumph",
+            "headlines": [
+                "Booster caught mid-air",
+                "Engineering breakthrough"
+            ],
+            "tts_script": "Tonight, we bring you a groundbreaking achievement by SpaceX..."
+        },
+        {
+            "id": 2,
+            "ticker": "NVIDIA REPORTS STRONG EARNINGS FOR QUARTER FOUR",
+            "main_heading": "Nvidia Profits Soar",
+            "headlines": [
+                "Record-breaking earnings",
+                "Stock price surges"
+            ],
+            "tts_script": "In other business news, NVIDIA has reported impressive financial results..."
+        }
+    ],
+    "show_outro": "Goodnight. Stay tuned for more updates."
+}

@@ -1,0 +1,50 @@
+{
+    "show_intro": "Good evening and welcome to our sports update!",
+    "segments": [
+        {
+            "id": 1,
+            "ticker": "INDIA WINS FIRST T20 AGAINST SOUTH AFRICA",
+            "main_heading": "India vs South Africa T20",
+            "headlines": [
+                "India wins the first T20 match by 8 runs",
+                "KL Rahul scores a half-century",
+                "South Africa struggles with batting"
+            ],
+            "tts_script": "Tonight, India has won their first T20 match against South Africa. KL Rahul scored a half-century, but South Africa struggled with their batting."
+        },
+        {
+            "id": 2,
+            "ticker": "GEORGIA CULTIVATES SPORTS TECH INNOVATION",
+            "main_heading": "Georgia's Sports Tech Innovators",
+            "headlines": [
+                "Georgia is fostering the next generation of sports tech innovators",
+                "Program focuses on wearable technology and data analytics",
+                "Graduates are making an impact in professional sports"
+            ],
+            "tts_script": "In Georgia, a program is cultivating the next generation of sports tech innovators. The focus is on wearable technology and data analytics, with graduates already making an impact in professional sports."
+        },
+        {
+            "id": 3,
+            "ticker": "LEFT-HANDED ATHLETES MAY HAVE INNATE ADVANTAGE",
+            "main_heading": "Left-Handed Advantage in Sports",
+            "headlines": [
+                "Study suggests left-handed athletes may have an advantage in certain sports",
+                "Researchers believe it's due to rarity and opposing tendencies",
+                "Examples include tennis, baseball, and cricket"
+            ],
+            "tts_script": "A new study suggests that left-handed athletes may have an innate advantage in certain sports. Researchers believe this is due to the rarity of left-handers and their opposing tendencies, with examples including tennis, baseball, and cricket."
+        },
+        {
+            "id": 4,
+            "ticker": "TONY SCHUMACHER PREVIEWS NHRA MIDWEST NATIONALS",
+            "main_heading": "NHRA Midwest Nationals Preview",
+            "headlines": [
+                "Tony Schumacher previews the NHRA Midwest Nationals at World Wide Technology Raceway",
+                "Schumacher aims for his 87th career win",
+                "Race takes place this weekend"
+            ],
+            "tts_script": "Joining us now is Tony Schumacher, who previews the NHRA Midwest Nationals at World Wide Technology Raceway. He's aiming for his 87th career win, with the race taking place this weekend."
+        }
+    ],
+    "show_outro": "That's all for tonight's sports update. Goodnight!"
+}

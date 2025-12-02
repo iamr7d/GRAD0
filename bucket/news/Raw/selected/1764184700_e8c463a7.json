@@ -1,0 +1,28 @@
+{
+    "final_production_data": {
+        "ticker": "TOY TARIFFS INCREASE COSTS",
+        "main_heading": "Toy Tariffs Increase Costs and Constrain Supply",
+        "headlines": [
+            "Basic Fun CEO Jay Foreman says US toy tariffs have increased costs and constrained supply heading into the holiday season",
+            "Tariffs could impact consumer spending during the holiday season",
+            "Stay tuned for more information on the impact of toy tariffs"
+        ],
+        "tts_script": "Basic Fun CEO Jay Foreman says US toy tariffs have increased costs and constrained supply heading into the holiday season."
+    },
+    "validation_data": {
+        "bias": 1,
+        "abuse": 0
+    },
+    "original_raw_news": {
+        "original_title": "Tariffs Increasing Toy Costs: Basic Fun CEO",
+        "original_summary": "Basic Fun CEO Jay Foreman says US toy tariffs have increased costs and constrained supply heading into the holiday season on \"Bloomberg Markets\" with Vonnie Quinn.\n\n (Source: Bloomberg)",
+        "sources_count": 1,
+        "category": "Business",
+        "status": "APPROVED",
+        "scores": {
+            "bias": 1,
+            "abuse": 0
+        },
+        "reason": "Safe"
+    }
+}
