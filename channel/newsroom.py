@@ -68,13 +68,33 @@ def fetch_all():
     with ThreadPoolExecutor(8) as ex:
         stories = [s for batch in ex.map(lambda a: _fetch(*a), jobs) for s in batch]
     stories.sort(key=lambda s: -s["published"])
+    for s in stories:
+        s["source"] = _short_source(s["source"])
     # drop near-duplicates (same first words from different outlets)
     seen, unique = set(), []
     for s in stories:
         key = " ".join(re.findall(r"[a-z]+", s["title"].lower())[:5])
         if key not in seen:
             seen.add(key); unique.append(s)
-    return unique
+    # interleave outlets so one fast-posting site can't fill every slot
+    by_src = {}
+    for s in unique:
+        by_src.setdefault(s["source"], []).append(s)
+    mixed = []
+    while any(by_src.values()):
+        for src in list(by_src):
+            if by_src[src]:
+                mixed.append(by_src[src].pop(0))
+    return mixed
+
+
+SOURCE_NAMES = {"bbc": "BBC News", "al jazeera": "Al Jazeera", "npr": "NPR", "verge": "The Verge",
+                "ndtv": "NDTV", "the hindu": "The Hindu"}
+
+
+def _short_source(name):
+    low = name.lower()
+    return next((v for k, v in SOURCE_NAMES.items() if k in low), name.split("|")[0].split(" – ")[0].strip())
 
 
 def _ollama_script(story):
@@ -122,7 +142,7 @@ def update_queue(use_llm=True):
     queue = [q for q in queue if (q.get("extra_data") or {}).get("link")]   # drop old synthetic/test items
     have = {q["id"] for q in queue}
     new = []
-    for s in stories:
+    for s in stories:   # already interleaved across outlets
         item_id = hashlib.sha1(s["link"].encode() or s["title"].encode()).hexdigest()[:8]
         if item_id in have:
             continue
