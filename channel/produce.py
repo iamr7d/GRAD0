@@ -10,7 +10,7 @@ import argparse
 import json
 import time
 
-from . import pexels, tts
+from . import pexels, tts, unsplash
 from .config import QUEUE_FILE
 
 
@@ -47,6 +47,17 @@ def prepare(item, used_ids):
                              video_credit=clip["credit"], video_source=clip["source"])
                 changed = True
                 break
+        if not extra.get("video_local") and not extra.get("photo_url"):
+            try:
+                photo = unsplash.search(extra.get("visual_keyword") or item.get("main_heading", "news"))
+            except Exception as e:
+                print(f"Unsplash error: {e}")
+                photo = None
+            if photo:
+                unsplash.mark_used(photo)
+                extra.update(photo_url=photo["url"], media_url=photo["url"], media_type="image",
+                             media_credit=photo["credit"], media_credit_html=photo["credit_html"])
+                changed = True
     return changed
 
 
