@@ -97,6 +97,34 @@ def _short_source(name):
     return next((v for k, v in SOURCE_NAMES.items() if k in low), name.split("|")[0].split(" – ")[0].strip())
 
 
+def article_lead(url, max_words=110):
+    """Fetch the story page and return its opening paragraphs (the reporter's own lead), or ''."""
+    if not url:
+        return ""
+    try:
+        r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0 PrimeEarthNews/1.0"})
+        page = r.text
+    except Exception:
+        return ""
+    page = re.sub(r"(?is)<(script|style|nav|header|footer|aside|figure|figcaption)[^>]*>.*?</\1>", " ", page)
+    paras = [_clean(p) for p in re.findall(r"(?is)<p[^>]*>(.*?)</p>", page)]
+    junk = re.compile(r"(cookie|subscribe|sign up|newsletter|advertis|copyright|all rights reserved|follow us|read more|click here|javascript)", re.I)
+    good = [p for p in paras if len(p.split()) >= 12 and not junk.search(p)]
+    words, out = 0, []
+    for p in good[:6]:
+        out.append(p)
+        words += len(p.split())
+        if words >= max_words:
+            break
+    text = " ".join(out)
+    # trim to the last full sentence within the limit
+    w = text.split()
+    if len(w) > max_words + 30:
+        text = " ".join(w[: max_words + 30])
+        text = text[: text.rfind(".") + 1] or text
+    return text
+
+
 def _ollama_script(story):
     """Ask the local LLM for an anchor script grounded in the feed text. Returns dict or None."""
     prompt = (
@@ -118,14 +146,19 @@ def _ollama_script(story):
 
 def to_item(story, use_llm=True):
     sid = hashlib.sha1(story["link"].encode() or story["title"].encode()).hexdigest()[:8]
+    lead = article_lead(story["link"])
+    if len(lead.split()) > len(story["summary"].split()):
+        story = {**story, "summary": lead}
     llm = _ollama_script(story) if use_llm else None
-    script = (llm or {}).get("anchor_script") or f"{story['title']}. {story['summary']} That's according to {story['source']}."
+    body = story["summary"]
+    script = (llm or {}).get("anchor_script") or f"{story['title']}. {body} That's according to {story['source']}."
+    sentences = [x.strip() for x in re.split(r"(?<=[.!?])\s+", body) if 6 <= len(x.split()) <= 28]
     words = [w for w in re.findall(r"[A-Za-z]+", story["title"]) if len(w) > 3][:4]
     return {
         "id": sid, "type": "headline",
         "main_heading": story["title"],
-        "content_text": story["summary"][:220],
-        "headlines": (llm or {}).get("bullets", [])[:3],
+        "content_text": (sentences[0] if sentences else story["summary"])[:240],
+        "headlines": ((llm or {}).get("bullets") or sentences[1:4])[:3],
         "display_duration": 20,
         "timestamp": story["published"],
         "extra_data": {
