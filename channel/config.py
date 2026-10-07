@@ -10,8 +10,20 @@ VIDEO_DIR = MEDIA / "video"
 VOICE_DIR = MEDIA / "voice"
 MUSIC_DIR = MEDIA / "music"
 MODELS = ROOT / "channel" / "models"
-FFMPEG = os.getenv("FFMPEG", str(ROOT / "ffmpeg-git-20240629-amd64-static" / "ffmpeg"))
-FFPROBE = os.getenv("FFPROBE", str(ROOT / "ffmpeg-git-20240629-amd64-static" / "ffprobe"))
+def _tool(name):
+    """FFMPEG/FFPROBE env var, else the copy on PATH, else the bundled Linux build."""
+    import shutil, sys
+    env = os.getenv(name.upper())
+    if env:
+        return env
+    found = shutil.which(name)
+    if found or sys.platform == "win32":
+        return found or name
+    return str(ROOT / "ffmpeg-git-20240629-amd64-static" / name)
+
+
+FFMPEG = _tool("ffmpeg")
+FFPROBE = _tool("ffprobe")
 
 try:  # optional .env in the repo root (never committed)
     from dotenv import load_dotenv
