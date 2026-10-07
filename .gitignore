@@ -8,3 +8,7 @@ channel/models/
 # python
 __pycache__/
 *.pyc
+**/.env
+.cache/
+*.log
+*.out

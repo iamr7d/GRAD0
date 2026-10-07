@@ -35,7 +35,7 @@ PEXELS_API_KEY=...
 UNSPLASH_ACCESS_KEY=...
 ```
 The owner's Pexels and Unsplash keys were pasted in chat earlier → advise regenerating them.
-Old `news/main_graph.py` still has a hard-coded ElevenLabs + Pexels key (should be rotated and removed).
+The old ElevenLabs and Pexels keys that were committed in `news/main_graph.py` and `stream/.env` are removed from the code but remain in git history, so they must be revoked/rotated.
 
 ## How the owner runs it (Windows)
 Always `cd C:\Users\rahul\GRAD0` first (PowerShell often opens in `C:\WINDOWS\system32`). ffmpeg must be on PATH (`winget install ffmpeg`); config finds it automatically.
@@ -70,5 +70,5 @@ del bucket\news\queue\run_of_show.json; del bucket\news\queue\seen_stories.json 
 ## Possible next steps
 - Burn the 3-minute reel to MP4 automatically (headless browser capture + ffmpeg) instead of manual OBS recording.
 - Cloud hosting for a 24/7 stream.
-- Remove/retire the legacy `server.py`, `server_fastapi.py` (they expose the whole folder incl. `.env`) and `news/main_graph.py` (generates invented news).
+- Done: removed the legacy `server.py`, `server_fastapi.py`, `overlays/server.py` (exposed the whole folder incl. `.env`), `news/main_graph.py` (invented news), committed logs and caches.
 - Design previews (claude.ai artifacts) are separate from the repo; the repo page is the source of truth.
