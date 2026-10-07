@@ -54,7 +54,16 @@ python -m channel.refresh_footage         # forget clip choices so produce re-pi
 del bucket\news\queue\run_of_show.json; del bucket\news\queue\seen_stories.json   # start the queue fresh
 ```
 
-### Recording the 3-minute video
+### Rendering the 3-minute video to MP4 (no OBS)
+Double-click `render_reel.bat`, or:
+```powershell
+cd C:\Users\rahul\GRAD0; pip install playwright      # once; uses the installed Google Chrome
+python -m channel.render_reel                           # 3-minute reel -> renders\prime_earth_news_<time>.mp4
+python -m channel.render_reel --seconds 60 --show       # 1-minute reel, in a visible window
+```
+`channel/render_reel.py` opens `/?reel=180` in Chrome in the background, records the tab (picture via tab capture, sound mixed from the page's audio elements, so speakers aren't needed), stops after the logo end card and converts to 1920x1080 30 fps H.264/AAC MP4 with ffmpeg. It starts the broadcast server itself if it isn't running. Needs Google Chrome: Playwright's own Chromium can't play the MP4 footage or AAC audio. Takes about as long as the reel.
+
+### Recording the 3-minute video in OBS (manual alternative)
 1. Queue should have ≥ 9 stories with voice + footage (check: `python -c "import json;q=json.load(open('bucket/news/queue/run_of_show.json'));print(sum(1 for i in q if i['extra_data'].get('audio_url') and i['extra_data'].get('video_url')),'ready of',len(q))"`).
 2. OBS → Browser source: URL `http://127.0.0.1:8000/?autoplay=1&reel=180`, 1920×1080, tick "Control audio via OBS"; right-click → Transform → Fit to screen. Only one Browser source.
 3. Audio Mixer → ⋮ → Advanced Audio Properties → Browser → "Monitor and Output" to hear it.
@@ -68,7 +77,7 @@ del bucket\news\queue\run_of_show.json; del bucket\news\queue\seen_stories.json 
 - Development tested in a Linux sandbox that could NOT reach news sites, Pexels or Unsplash; real network runs only on the owner's PC.
 
 ## Possible next steps
-- Burn the 3-minute reel to MP4 automatically (headless browser capture + ffmpeg) instead of manual OBS recording.
+- Done: `python -m channel.render_reel` burns the reel to MP4 (see above).
 - Cloud hosting for a 24/7 stream.
 - Done: removed the legacy `server.py`, `server_fastapi.py`, `overlays/server.py` (exposed the whole folder incl. `.env`), `news/main_graph.py` (invented news), committed logs and caches.
 - Design previews (claude.ai artifacts) are separate from the repo; the repo page is the source of truth.
