@@ -44,3 +44,17 @@ GRAD0 is an automated AI system designed to produce TV-style news content. It ag
 - `tools/video_finder.py`: Main logic for video search and queue management.
 - `BreakingNode`: Analyzes urgency of incoming wire stories.
 - `CollectorNode`: Aggregates and summarizes trending topics.
+
+## Running the Prime Earth News channel
+
+```bash
+pip install -r requirements.txt
+# .env in the repo root (never commit it):
+#   PEXELS_API_KEY=...
+#   UNSPLASH_ACCESS_KEY=...
+python -m channel.run          # newsroom: real RSS news -> anchor voice -> Pexels video / Unsplash photo
+python -m channel.server       # playout page on http://127.0.0.1:8000/
+```
+
+In OBS add a Browser Source (1920x1080) pointing at `http://127.0.0.1:8000/?autoplay=1`.
+Optional music: put `bed.m4a` (loop) and `sting.m4a` (titles) in `bucket/media/music/`.
