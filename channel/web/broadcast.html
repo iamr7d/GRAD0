@@ -300,9 +300,10 @@ function sync(s) {
 const bgm = document.getElementById("bgm"), voice = document.getElementById("voice"), sting = document.getElementById("sting");
 const BED = .16, DUCK = .045;
 function fade(el, to, ms = 600) { const from = el.volume, t0 = performance.now(); const step = n => { const k = Math.min(1, (n - t0) / ms); el.volume = from + (to - from) * k; if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
-function speak(s, t) {
+function speak(s, t, cap = 0) {
   return new Promise(res => {
-    if (!s.audio) return setTimeout(res, s.dur);
+    if (cap) setTimeout(() => { voice.pause(); fade(bgm, BED); res(); }, cap);
+    if (!s.audio) return setTimeout(res, cap || s.dur);
     voice.src = s.audio; fade(bgm, DUCK);
     const done = () => { fade(bgm, BED); res(); };
     voice.onended = done; voice.onerror = () => setTimeout(done, s.dur);
@@ -339,10 +340,10 @@ async function headlines(t, list) {
   if (!live(t)) return;
   await sweep(() => { h.style.visibility = "hidden"; });
 }
-async function story(t, s) {
+async function story(t, s, cap = 0) {
   setMedia(s); sync(s);
-  ltIn(s, t, s.dur);
-  await speak(s, t); if (!live(t)) return;
+  ltIn(s, t, cap || s.dur);
+  await speak(s, t, cap); if (!live(t)) return;
   await wait(800);
   await ltOut();
 }
@@ -408,10 +409,26 @@ setInterval(() => {
 function tickClock() { const d = new Date(); $("clock").textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); }
 tickClock(); setInterval(tickClock, 1000);
 
+/* ?reel=1 : one fixed ~60 s showreel (titles, headlines, 3 stories, end titles), then holds on the logo.
+   Start OBS recording, then click start. */
+async function reel() {
+  const t = ++token;
+  const list = await loadQueue();
+  setTicker(list);
+  const picks = [...list.filter(s => s.media && s.audio), ...list.filter(s => !(s.media && s.audio))].slice(0, 3);
+  reset(); await titles(t);                     // ~7 s
+  reset(); await headlines(t, picks);           // ~10 s
+  for (const s of picks) { reset(); await story(t, s, 11000); }   // 3 x ~12 s
+  reset(); $("titles").style.visibility = "visible";              // end card ~6 s
+  if (has3d) window.PEN_GLASS.play();
+  fade(bgm, 0, 4000);
+  document.title = "REEL DONE";
+}
+
 function start() {
   document.getElementById("start").hidden = true;
   bgm.volume = BED; bgm.play().catch(() => {});
-  playout();
+  new URLSearchParams(location.search).get("reel") ? reel() : playout();
 }
 if (new URLSearchParams(location.search).get("autoplay")) start();
 else document.getElementById("start").addEventListener("click", start);
