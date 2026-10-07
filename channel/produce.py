@@ -10,7 +10,7 @@ import argparse
 import json
 import time
 
-from . import pexels, tts, unsplash
+from . import pexels, tts, unsplash, visuals
 from .config import QUEUE_FILE
 
 
@@ -33,7 +33,9 @@ def prepare(item, used_ids):
             item["display_duration"] = max(8, round(voice["seconds"] + 1.5))
             changed = True
     if not extra.get("video_local"):
-        for q in [extra.get("visual_keyword"), item.get("main_heading"), "world news city"]:
+        queries = ([extra["visual_keyword"]] if extra.get("visual_source") == "llm" else []) + \
+                  visuals.search_terms(item.get("main_heading", ""), item.get("content_text", ""), extra.get("category", "World"))
+        for q in queries:
             if not q:
                 continue
             try:
@@ -49,7 +51,7 @@ def prepare(item, used_ids):
                 break
         if not extra.get("video_local") and not extra.get("photo_url"):
             try:
-                photo = unsplash.search(extra.get("visual_keyword") or item.get("main_heading", "news"))
+                photo = unsplash.search(visuals.search_terms(item.get("main_heading", ""), item.get("content_text", ""), extra.get("category", "World"))[0])
             except Exception as e:
                 print(f"Unsplash error: {e}")
                 photo = None

@@ -131,7 +131,8 @@ def to_item(story, use_llm=True):
         "extra_data": {
             "category": story["category"], "source": story["source"], "link": story["link"],
             "anchor_script": script,
-            "visual_keyword": (llm or {}).get("visual_keyword") or " ".join(words) or story["category"],
+            "visual_keyword": (llm or {}).get("visual_keyword") or "",
+            "visual_source": "llm" if (llm or {}).get("visual_keyword") else "rules",
         },
     }
 
