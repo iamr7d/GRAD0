@@ -192,9 +192,9 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 <body>
 <div id="stage"></div>
 <button id="start" type="button">Click to start the broadcast with sound</button>
-<audio id="bgm" src="/bucket/media/music/bed.m4a" loop preload="auto"></audio>
+<audio id="bgm" src="/audio/bed.m4a" loop preload="auto"></audio>
 <audio id="voice" preload="auto"></audio>
-<audio id="sting" src="/bucket/media/music/sting.m4a" preload="auto"></audio>
+<audio id="sting" src="/audio/sting.m4a" preload="auto"></audio>
 <!-- Glass title engine: three.js (MIT) with Montserrat (SIL OFL 1.1). Source: channel/web/src/glass3d.js -->
 <script src="glass3d.js"></script>
 <script>
@@ -298,13 +298,13 @@ function sync(s) {
 
 /* ---------- audio ---------- */
 const bgm = document.getElementById("bgm"), voice = document.getElementById("voice"), sting = document.getElementById("sting");
-const BED = .16, DUCK = .045;
+const BED = .55, DUCK = .14;   // music bed level, and while the anchor speaks (voice plays at 1.0)
 function fade(el, to, ms = 600) { const from = el.volume, t0 = performance.now(); const step = n => { const k = Math.min(1, (n - t0) / ms); el.volume = from + (to - from) * k; if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
 function speak(s, t, cap = 0) {
   return new Promise(res => {
     if (cap) setTimeout(() => { voice.pause(); fade(bgm, BED); res(); }, cap);
     if (!s.audio) return setTimeout(res, cap || s.dur);
-    voice.src = s.audio; fade(bgm, DUCK);
+    voice.volume = 1; voice.src = s.audio; fade(bgm, DUCK, 400);
     const done = () => { fade(bgm, BED); res(); };
     voice.onended = done; voice.onerror = () => setTimeout(done, s.dur);
     voice.play().catch(() => setTimeout(done, s.dur));
@@ -315,7 +315,7 @@ function speak(s, t, cap = 0) {
 /* ---------- scenes ---------- */
 async function titles(t) {
   const ti = $("titles"); ti.style.visibility = "visible";
-  sting.currentTime = 0; sting.play().catch(() => {}); fade(bgm, 0, 300);
+  sting.volume = .9; sting.currentTime = 0; sting.play().catch(() => {}); fade(bgm, 0, 300);
   if (has3d) window.PEN_GLASS.play();
   else A(ti.querySelector(".fallback .fb-logo"), [{ opacity: 0, transform: "translateY(-1cqw) scale(1.08)", filter: "blur(1cqw)" }, { opacity: 1, transform: "translateY(-3cqw)", filter: "blur(0)" }], { duration: 1600 });
   await wait(6200); if (!live(t)) return;
@@ -409,17 +409,20 @@ setInterval(() => {
 function tickClock() { const d = new Date(); $("clock").textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); }
 tickClock(); setInterval(tickClock, 1000);
 
-/* ?reel=1 : one fixed ~60 s showreel (titles, headlines, 3 stories, end titles), then holds on the logo.
-   Start OBS recording, then click start. */
-async function reel() {
+/* ?reel=SECONDS : one fixed showreel of about that length (e.g. reel=60, reel=180), then holds on the logo.
+   Titles + headlines + N stories + end card. Start OBS recording, then refresh the source. */
+async function reel(total) {
   const t = ++token;
   const list = await loadQueue();
   setTicker(list);
-  const picks = [...list.filter(s => s.media && s.audio), ...list.filter(s => !(s.media && s.audio))].slice(0, 3);
+  const PER = total >= 120 ? 17000 : 11000;                       // time per story, ms (+~1 s transition)
+  const n = Math.max(1, Math.min(list.length, Math.round((total - 24) / (PER / 1000 + 1.2))));
+  const picks = [...list.filter(s => s.media && s.audio), ...list.filter(s => !(s.media && s.audio))].slice(0, n);
   reset(); await titles(t);                     // ~7 s
   reset(); await headlines(t, picks);           // ~10 s
-  for (const s of picks) { reset(); await story(t, s, 11000); }   // 3 x ~12 s
-  reset(); $("titles").style.visibility = "visible";              // end card ~6 s
+  for (const s of picks) { reset(); await story(t, s, PER); }
+  reset(); $("titles").style.visibility = "visible";              // end card
+  sting.currentTime = 0; sting.play().catch(() => {});
   if (has3d) window.PEN_GLASS.play();
   fade(bgm, 0, 4000);
   document.title = "REEL DONE";
@@ -428,7 +431,7 @@ async function reel() {
 function start() {
   document.getElementById("start").hidden = true;
   bgm.volume = BED; bgm.play().catch(() => {});
-  new URLSearchParams(location.search).get("reel") ? reel() : playout();
+  (r => r ? reel(r === "1" ? 60 : Math.max(30, +r || 60)) : playout())(new URLSearchParams(location.search).get("reel"));
 }
 if (new URLSearchParams(location.search).get("autoplay")) start();
 else document.getElementById("start").addEventListener("click", start);

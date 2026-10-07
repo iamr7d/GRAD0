@@ -19,6 +19,8 @@ KOKORO_FILES = {
     "voices-v1.0.bin": "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin",
 }
 _kokoro = None
+# broadcast loudness for speech: -16 LUFS, peaks under -1.5 dBTP, light high-pass and compression
+LOUDNORM = "highpass=f=80,acompressor=threshold=-20dB:ratio=3:attack=5:release=120,loudnorm=I=-16:TP=-1.5:LRA=7"
 
 
 def _ensure_models():
@@ -65,20 +67,23 @@ def duration(path):
 
 def speak(text):
     """Synthesize `text`; returns {"path": url, "seconds": float, "engine": name} or None."""
-    key = hashlib.sha1(f"{TTS_VOICE}|{text}".encode()).hexdigest()[:12]
+    key = hashlib.sha1(f"v2|{TTS_VOICE}|{text}".encode()).hexdigest()[:12]   # v2: normalised audio
     mp3 = VOICE_DIR / f"{key}.mp3"
     if not mp3.exists():
         engine = "kokoro"
         try:
             wav = mp3.with_suffix(".wav")
             _kokoro_say(text, wav)
-            subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(wav), "-ac", "1", "-b:a", "128k", str(mp3)], check=True)
+            subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(wav), "-af", LOUDNORM, "-ar", "44100", "-ac", "1", "-b:a", "128k", str(mp3)], check=True)
             wav.unlink(missing_ok=True)
         except Exception as e:
             print(f"Kokoro failed ({e}); trying Edge TTS")
             engine = "edge"
             try:
-                _edge_say(text, mp3)
+                raw = mp3.with_suffix(".raw.mp3")
+                _edge_say(text, raw)
+                subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(raw), "-af", LOUDNORM, "-ar", "44100", "-ac", "1", "-b:a", "128k", str(mp3)], check=True)
+                raw.unlink(missing_ok=True)
             except Exception as e2:
                 print(f"Edge TTS failed too: {e2}")
                 return None
