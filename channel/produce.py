@@ -61,30 +61,34 @@ def prepare(item, used_ids):
     return changed
 
 
+def _save(item):
+    """Write one finished item back, re-reading first so nothing the newsroom added is lost."""
+    latest = json.loads(QUEUE_FILE.read_text())
+    for i, q in enumerate(latest):
+        if q.get("id") == item["id"]:
+            latest[i] = item
+    tmp = QUEUE_FILE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(latest, indent=2))
+    tmp.replace(QUEUE_FILE)
+
+
 def run_once():
     if not QUEUE_FILE.exists():
         print("No run of show yet.")
         return
     queue = json.loads(QUEUE_FILE.read_text())
     used = {str((i.get("extra_data") or {}).get("video_url", "")).split("/")[-1].removesuffix(".mp4") for i in queue}
-    changed = False
+    done = 0
     for item in queue:
         if "Test AI News" in item.get("main_heading", ""):
             continue
         try:
-            changed |= prepare(item, used)
+            if prepare(item, used):
+                _save(item)          # save each story as soon as it is ready
+                done += 1
         except Exception as e:
             print(f"Could not prepare '{item.get('main_heading')}': {e}")
-    if changed:
-        # re-read so we don't clobber items the newsroom added meanwhile
-        latest = {i["id"]: i for i in json.loads(QUEUE_FILE.read_text())}
-        for i in queue:
-            if i["id"] in latest:
-                latest[i["id"]] = i
-        tmp = QUEUE_FILE.with_suffix(".tmp")
-        tmp.write_text(json.dumps(list(latest.values()), indent=2))
-        tmp.replace(QUEUE_FILE)
-        print("Run of show updated.")
+    print(f"Produced {done} stories.")
 
 
 if __name__ == "__main__":
