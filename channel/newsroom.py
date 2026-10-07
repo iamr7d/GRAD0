@@ -136,24 +136,34 @@ def to_item(story, use_llm=True):
     }
 
 
+SEEN_FILE = QUEUE_FILE.parent / "seen_stories.json"
+
+
 def update_queue(use_llm=True):
     stories = fetch_all()
     queue = json.loads(QUEUE_FILE.read_text()) if QUEUE_FILE.exists() else []
     queue = [q for q in queue if (q.get("extra_data") or {}).get("link")]   # drop old synthetic/test items
-    have = {q["id"] for q in queue}
+    try:
+        seen = set(json.loads(SEEN_FILE.read_text()))
+    except Exception:
+        seen = set()
+    seen |= {q["id"] for q in queue}
     new = []
-    for s in stories:   # already interleaved across outlets
+    for s in stories:
         item_id = hashlib.sha1(s["link"].encode() or s["title"].encode()).hexdigest()[:8]
-        if item_id in have:
+        if item_id in seen:          # already aired or already queued
             continue
+        seen.add(item_id)
         new.append(to_item(s, use_llm))
-        if len(new) >= 8:          # cap per cycle so voice/footage production keeps up
+        if len(new) >= 8:            # cap per cycle so voice/footage production keeps up
             break
-    queue = sorted(new + queue, key=lambda q: -q["timestamp"])[:MAX_QUEUE]
+    # newest stories first; when full, the oldest ones drop off the end
+    queue = (new + queue)[:MAX_QUEUE]
     QUEUE_FILE.parent.mkdir(parents=True, exist_ok=True)
     tmp = QUEUE_FILE.with_suffix(".tmp")
     tmp.write_text(json.dumps(queue, indent=2))
     tmp.replace(QUEUE_FILE)
+    SEEN_FILE.write_text(json.dumps(sorted(seen)[-5000:]))
     print(f"Newsroom: {len(new)} new, {len(queue)} in run of show.")
     return new
 
