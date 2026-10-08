@@ -25,6 +25,17 @@ def _tool(name):
 FFMPEG = _tool("ffmpeg")
 FFPROBE = _tool("ffprobe")
 
+
+def check_ffmpeg():
+    """Fail early with a clear message when ffmpeg/ffprobe can't be started (no voice or render without them)."""
+    import subprocess
+    for exe in (FFMPEG, FFPROBE):
+        try:
+            subprocess.run([exe, "-version"], capture_output=True, check=True)
+        except (OSError, subprocess.CalledProcessError) as e:
+            raise SystemExit(f"Can't run '{exe}' ({e}). Install ffmpeg (Windows: winget install ffmpeg, then open a new "
+                             "window) or set FFMPEG and FFPROBE to the full paths of ffmpeg.exe and ffprobe.exe.")
+
 try:  # optional .env in the repo root (never committed)
     from dotenv import load_dotenv
     load_dotenv(ROOT / ".env")

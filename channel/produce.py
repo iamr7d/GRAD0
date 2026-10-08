@@ -90,7 +90,11 @@ def run_once():
                 done += 1
         except Exception as e:
             print(f"Could not prepare '{item.get('main_heading')}': {e}")
-    print(f"Produced {done} stories.")
+    latest = json.loads(QUEUE_FILE.read_text())
+    ready = sum(1 for i in latest if (i.get("extra_data") or {}).get("audio_url")
+                and ((i.get("extra_data") or {}).get("video_url") or (i.get("extra_data") or {}).get("photo_url")))
+    # 0 here is normal when nothing new arrived: finished stories are not redone
+    print(f"Produced {done} stories; {ready} of {len(latest)} ready for air (voice + footage).")
 
 
 if __name__ == "__main__":
