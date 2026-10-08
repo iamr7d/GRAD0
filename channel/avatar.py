@@ -68,8 +68,9 @@ def render(voice: Path, out: Path, max_seconds=0):
         subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(voice), *cut, "-ac", "1", "-ar", "16000", str(wav)], check=True)
         cmd = [str(py), "inference.py", "--driven_audio", str(wav), "--source_image", str(img),
                "--result_dir", tmp, "--preprocess", "full", "--still", "--size", "256", "--expression_scale", "1.0"]
-        if os.getenv("PEN_ANCHOR_ENHANCE", "1") != "0":
-            cmd += ["--enhancer", "gfpgan"]   # sharper face; set PEN_ANCHOR_ENHANCE=0 if it's too slow
+        enhance = os.getenv("PEN_ANCHOR_ENHANCE")   # sharper face; set 0 if it's too slow
+        if enhance == "1" or (enhance is None and (st / "gfpgan" / "weights" / "GFPGANv1.4.pth").exists()):
+            cmd += ["--enhancer", "gfpgan"]
         subprocess.run(cmd, cwd=st, check=True)
         made = sorted(Path(tmp).rglob("*.mp4"), key=lambda p: p.stat().st_mtime)
         if not made:
