@@ -36,7 +36,7 @@ RESTART_HOURS = 6  # restart Chrome now and then so a 24/7 stream doesn't slowly
 
 def ffmpeg_cmd(hd, rtmp):
     w, h, kbps = (1920, 1080, 6000) if hd else (1280, 720, 3000)
-    hls = ("hls_time=2:hls_list_size=12:hls_flags=delete_segments+independent_segments+omit_endlist"
+    hls = ("hls_time=4:hls_list_size=20:hls_flags=delete_segments+independent_segments+omit_endlist"
            ":hls_start_number_source=epoch:hls_segment_filename=seg_%d.ts")
     cmd = [FFMPEG, "-loglevel", "error", "-fflags", "+genpts", "-i", "pipe:0",
            "-vf", f"fps={FPS},scale={w}:{h}:flags=bicubic,format=yuv420p",

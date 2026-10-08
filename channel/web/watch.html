@@ -27,6 +27,10 @@ header .name span { color: var(--ink-2); font-weight: 600; }
 .offair h2 { margin: 12px 0 4px; font-size: clamp(18px, 3vw, 26px); }
 .offair p { margin: 0; color: var(--ink-2); }
 .offair svg { width: min(180px, 30vw); }
+.buffering { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.25); pointer-events: none; opacity: 0; transition: opacity .3s; }
+.buffering.on { opacity: 1; }
+.buffering i { width: 48px; height: 48px; border-radius: 50%; border: 4px solid rgba(255,255,255,.25); border-top-color: #fff; animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 .sound { position: absolute; left: 16px; bottom: 16px; padding: 10px 16px; border: 0; border-radius: 999px; background: rgba(255,255,255,.92); color: #0b0d12; font: 700 14px "Plus Jakarta Sans", sans-serif; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
 .sound[hidden] { display: none; }
 h3 { margin: 32px 0 12px; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
@@ -48,6 +52,7 @@ footer { color: var(--ink-2); font-size: 13px; padding: 28px 0 40px; }
 
   <div class="player">
     <video id="video" playsinline muted autoplay></video>
+    <div class="buffering" id="buffering" aria-hidden="true"><i></i></div>
     <button class="sound" id="sound" hidden>🔊 Tap for sound</button>
     <div class="offair" id="offair">
       <div>
@@ -83,9 +88,16 @@ async function connect() {
   try { const r = await fetch(SRC, { cache: "no-store" }); if (!r.ok) throw 0; } catch { onAir(false); return later(); }
   if (window.Hls && Hls.isSupported()) {
     if (hls) hls.destroy();
-    hls = new Hls({ liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 8, manifestLoadingMaxRetry: 2 });
+    // Play ~16 s behind live and keep up to a minute buffered, so short hiccups never reach the picture.
+    hls = new Hls({ liveSyncDurationCount: 4, liveMaxLatencyDurationCount: 12, maxBufferLength: 40, maxMaxBufferLength: 60,
+                    backBufferLength: 30, startFragPrefetch: true, lowLatencyMode: false,
+                    manifestLoadingMaxRetry: 2, fragLoadingMaxRetry: 6, levelLoadingMaxRetry: 6 });
     hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => {}); onAir(true); });
-    hls.on(Hls.Events.ERROR, (_, d) => { if (d.fatal) { hls.destroy(); hls = null; onAir(false); later(); } });
+    hls.on(Hls.Events.ERROR, (_, d) => {
+      if (!d.fatal) return;
+      if (d.type === Hls.ErrorTypes.MEDIA_ERROR) return hls.recoverMediaError();   // glitch: recover in place
+      hls.destroy(); hls = null; onAir(false); later();
+    });
     hls.loadSource(SRC); hls.attachMedia(video);
   } else if (video.canPlayType("application/vnd.apple.mpegurl")) {   // Safari / iPhone
     video.src = SRC; video.play().catch(() => {});
@@ -96,6 +108,9 @@ async function connect() {
     document.getElementById("offText").textContent = "Try Chrome, Edge, Firefox or Safari.";
   }
 }
+const buffering = document.getElementById("buffering"); let bufT = null;
+video.addEventListener("waiting", () => { clearTimeout(bufT); bufT = setTimeout(() => buffering.classList.add("on"), 400); });
+["playing", "canplay", "seeked"].forEach(e => video.addEventListener(e, () => { clearTimeout(bufT); buffering.classList.remove("on"); }));
 sound.onclick = () => { video.muted = false; video.volume = 1; video.play(); sound.hidden = true; };
 video.addEventListener("volumechange", () => { sound.hidden = !video.muted || offair.hidden === false; });
 
