@@ -341,15 +341,19 @@ const BED = .55, DUCK = .14;   // music bed level, and while the anchor speaks (
 function fade(el, to, ms = 600) { const from = el.volume, t0 = performance.now(); const step = n => { const k = Math.min(1, (n - t0) / ms); el.volume = from + (to - from) * k; if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
 function speak(s, t, cap = 0) {
   return new Promise(res => {
-    if (cap) setTimeout(() => { voice.pause(); fade(bgm, BED); res(); }, cap);
-    if (!s.audio) return setTimeout(res, cap || s.dur);
+    // timers are cleared when this story finishes, so a late one can't pause the next story's voice
+    const timers = [];
+    let over = false;
+    const done = () => { if (over) return; over = true; timers.forEach(clearTimeout); fade(bgm, BED); res(); };
+    const stop = () => { if (!over) voice.pause(); done(); };
+    if (cap) timers.push(setTimeout(stop, cap));
+    if (!s.audio) return timers.push(setTimeout(done, cap || s.dur));
     voice.volume = 1; voice.src = s.audio; fade(bgm, DUCK, 400);
     loadLip(s.audio);
     anchorVideo(s.anchorVideo);
-    const done = () => { fade(bgm, BED); res(); };
-    voice.onended = done; voice.onerror = () => setTimeout(done, s.dur);
-    voice.play().catch(() => setTimeout(done, s.dur));
-    setTimeout(() => { if (!live(t)) { voice.pause(); done(); } }, s.dur + 30000);
+    voice.onended = done; voice.onerror = () => timers.push(setTimeout(done, s.dur));
+    voice.play().catch(() => timers.push(setTimeout(done, s.dur)));
+    timers.push(setTimeout(() => { if (!live(t)) stop(); }, s.dur + 30000));
   });
 }
 
