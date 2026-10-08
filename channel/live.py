@@ -11,12 +11,14 @@ watch page at http://127.0.0.1:8000/watch.
 
 Keep the newsroom running too (python -m channel.run, or start_channel.bat) so the news stays fresh.
 --public needs cloudflared once: winget install --id Cloudflare.cloudflared
-The address it prints (https://<words>.trycloudflare.com/watch) changes each time it starts.
+Without your own domain the address (https://<words>.trycloudflare.com/watch) changes each time;
+run python -m channel.setup_domain live.example.com once for a permanent address.
 Stop with Ctrl+C.
 """
 import argparse
 import asyncio
 import base64
+import json
 import re
 import shutil
 import subprocess
@@ -25,6 +27,7 @@ import threading
 import time
 
 from .config import BUCKET, FFMPEG
+from .setup_domain import TUNNEL_FILE
 from .render_reel import DEFAULT_BASE, FPS, H, RECORD_JS, W, check_ready, ensure_server, launch_browser
 
 LIVE = BUCKET / "live"
@@ -97,25 +100,34 @@ async def session(base, hd, rtmp, show, hours):
 
 
 def start_tunnel(base):
-    """Free public https address via Cloudflare's quick tunnel (no account needed)."""
+    """Public https address: your own domain if channel.setup_domain was run, else a free random one."""
     exe = shutil.which("cloudflared")
     if not exe:
         sys.exit("--public needs cloudflared. Install it once with:  winget install --id Cloudflare.cloudflared\n"
                  "then open a new PowerShell window and run this again.")
-    proc = subprocess.Popen([exe, "tunnel", "--no-autoupdate", "--url", base.rstrip("/")],
-                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace")
+    named = json.loads(TUNNEL_FILE.read_text()) if TUNNEL_FILE.exists() else None
+    if named:
+        cmd = [exe, "tunnel", "--no-autoupdate", "run", "--url", base.rstrip("/"), named["name"]]
+    else:
+        cmd = [exe, "tunnel", "--no-autoupdate", "--url", base.rstrip("/")]
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace")
     found = threading.Event()
 
     def read():
         for line in proc.stdout:  # keep draining so cloudflared never blocks on a full pipe
+            if found.is_set():
+                continue
+            if named and "Registered tunnel connection" in line:
+                found.set()
+                print(f"\nPUBLIC WATCH PAGE:  https://{named['host']}/\n")
             m = re.search(r"https://[a-z0-9-]+\.trycloudflare\.com", line)
-            if m and not found.is_set():
+            if not named and m:
                 found.set()
                 print(f"\nPUBLIC WATCH PAGE:  {m.group(0)}/watch\n(share this link; it changes each time you start)\n")
 
     threading.Thread(target=read, daemon=True).start()
     if not found.wait(30):
-        print("Cloudflare tunnel hasn't given an address yet; it will print here when it does.")
+        print("Cloudflare tunnel isn't connected yet; the address will print here when it is.")
     return proc
 
 

@@ -20,7 +20,7 @@ import argparse
 import json
 import time
 
-from flask import Flask, abort, jsonify, request, send_from_directory
+from flask import Flask, abort, jsonify, redirect, request, send_from_directory
 
 from .config import BUCKET, ROOT
 
@@ -34,6 +34,8 @@ app = Flask(__name__)
 @app.before_request
 def public_guard():
     # Cloudflare's tunnel adds this header to every visitor's request; local OBS/Chrome requests don't have it.
+    if request.headers.get("Cf-Connecting-Ip") and request.path == "/":
+        return redirect("/watch")  # the bare domain opens the watch page
     if request.headers.get("Cf-Connecting-Ip") and not request.path.startswith(PUBLIC):
         abort(404)
     if request.headers.get("Cf-Connecting-Ip") and request.method != "GET":
