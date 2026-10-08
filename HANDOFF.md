@@ -28,6 +28,11 @@ channel/web/broadcast.html = the on-air page (OBS browser source)
 - Audio: `channel/web/audio/bed.m4a` (original synthesized music bed, -20 LUFS) ducks under the anchor voice; `sting.m4a` on titles/end card.
 - URL params: `?autoplay=1` (no click needed – use in OBS), `?reel=60` or `?reel=180` (fixed showreel then ends on logo, `document.title` becomes "REEL DONE"). No `reel` = continuous loop.
 
+### AI anchor and multiple shots
+- Anchor: illustrated presenter (inline SVG in `broadcast.html`) in a glass box on the right during every story; mouth driven by `<voice>.lip.json` (loudness per 40 ms, `channel/lipsync.py`, written automatically by `tts.py`; backfill old voices with `python -m channel.lipsync`). No lip file → generic mouth movement. `?anchor=0` hides it.
+- Shots: `produce.py` stores up to 3 Pexels clips per story in `extra_data.clips` (`pexels.fetch_many`, one search per query; `clips_tried` stops re-searching). The page cross-fades between them on two video layers every 4.5 to 8 s, updating the credit.
+- Realistic face later: the owner's laptop has an RTX 3050 (4 GB), enough for SadTalker/MuseTalk at roughly 1 to 3 min per story.
+
 ### Secrets
 `.env` in repo root (gitignored), never commit or paste keys:
 ```
