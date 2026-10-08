@@ -31,7 +31,8 @@ channel/web/broadcast.html = the on-air page (OBS browser source)
 ### AI anchor and multiple shots
 - Anchor: illustrated presenter (inline SVG in `broadcast.html`) in a glass box on the right during every story; mouth driven by `<voice>.lip.json` (loudness per 40 ms, `channel/lipsync.py`, written automatically by `tts.py`; backfill old voices with `python -m channel.lipsync`). No lip file → generic mouth movement. `?anchor=0` hides it.
 - Shots: `produce.py` stores up to 3 Pexels clips per story in `extra_data.clips` (`pexels.fetch_many`, one search per query; `clips_tried` stops re-searching). The page cross-fades between them on two video layers every 4.5 to 8 s, updating the credit.
-- Realistic face later: the owner's laptop has an RTX 3050 (4 GB), enough for SadTalker/MuseTalk at roughly 1 to 3 min per story.
+- Realistic anchor: `channel/avatar.py` runs SadTalker (separate checkout + venv, paths in `.env`: PEN_SADTALKER_DIR, PEN_SADTALKER_PYTHON; photo at `bucket/media/anchor/anchor.png`) for each story with a voice, newest first, writing `bucket/media/anchor/<voice>.mp4` and `extra_data.anchor_url`. Run `python -m channel.avatar --watch` in its own window. The page plays the clip in the anchor box locked to the voice (re-syncs every 250 ms); stories without a clip use the illustration. Use an AI-generated face or the owner's own, never a real person's likeness.
+- Realistic face, hardware note: the owner's laptop has an RTX 3050 (4 GB), enough for SadTalker/MuseTalk at roughly 1 to 3 min per story.
 
 ### Own music
 Drop a track at `bucket/media/music/news_bed.mp3` (or `.m4a`) and optionally `news_sting.mp3`; the server serves them in place of `channel/web/audio/bed.m4a` / `sting.m4a` (same ducking). They stay out of git, since stock-music licences (e.g. Pixabay) don't allow re-distributing the files. Delete them to go back to the channel's own synthesised music.
