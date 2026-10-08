@@ -57,12 +57,15 @@ def _voice_file(audio_url):
     return ROOT / audio_url.lstrip("/")
 
 
-def render(voice: Path, out: Path):
-    """Run SadTalker for one voice track; writes `out` (H.264 MP4 with the voice as its audio)."""
+def render(voice: Path, out: Path, max_seconds=0):
+    """Run SadTalker for one voice track; writes `out` (H.264 MP4 with the voice as its audio).
+    max_seconds > 0 animates only the start of the voice (the 3-minute reel plays ~17 s per story);
+    the page shows the illustrated anchor once a short clip runs out."""
     st, py, img = _settings()
     with tempfile.TemporaryDirectory() as tmp:
         wav = Path(tmp) / "voice.wav"
-        subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(voice), "-ac", "1", "-ar", "16000", str(wav)], check=True)
+        cut = ["-t", str(max_seconds)] if max_seconds else []
+        subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(voice), *cut, "-ac", "1", "-ar", "16000", str(wav)], check=True)
         cmd = [str(py), "inference.py", "--driven_audio", str(wav), "--source_image", str(img),
                "--result_dir", tmp, "--preprocess", "full", "--still", "--size", "256", "--expression_scale", "1.0"]
         if os.getenv("PEN_ANCHOR_ENHANCE", "1") != "0":
@@ -88,13 +91,17 @@ def _save(item_id, url):
     tmp.replace(QUEUE_FILE)
 
 
-def run_once(limit=None):
+def run_once(limit=None, max_seconds=0, ready_only=False):
     try:
         queue = json.loads(QUEUE_FILE.read_text())
     except (OSError, ValueError):
         return 0
-    todo = [q for q in queue if (q.get("extra_data") or {}).get("audio_url") and not q["extra_data"].get("anchor_url")]
-    todo.sort(key=lambda q: -(q.get("timestamp") or 0))           # newest stories first
+    voiced = [q for q in queue if (q.get("extra_data") or {}).get("audio_url")]
+    if ready_only:   # the first `limit` stories with footage, in run-of-show order: the ones a reel plays
+        voiced = [q for q in voiced if q["extra_data"].get("video_url") or q["extra_data"].get("photo_url")][:limit]
+    else:
+        voiced.sort(key=lambda q: -(q.get("timestamp") or 0))     # newest stories first
+    todo = [q for q in voiced if not q["extra_data"].get("anchor_url")]
     done = 0
     for item in todo[:limit]:
         voice = _voice_file(item["extra_data"]["audio_url"])
@@ -105,7 +112,7 @@ def run_once(limit=None):
             if not out.exists():
                 t0 = time.time()
                 print(f"Anchor clip for: {item.get('main_heading', '')[:70]}")
-                render(voice, out)
+                render(voice, out, max_seconds)
                 print(f"  done in {time.time() - t0:.0f} s")
             _save(item["id"], media_url(out))
             done += 1
@@ -118,6 +125,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--watch", action="store_true", help="keep going as new stories arrive")
     ap.add_argument("--once", action="store_true", help="make what's waiting, then stop")
+    ap.add_argument("--limit", type=int, default=None, help="at most this many clips per pass (newest first)")
+    ap.add_argument("--max-seconds", type=float, default=float(os.getenv("PEN_ANCHOR_MAX_SECONDS", "0")),
+                    help="animate only the first N seconds of each voice (e.g. 18 for the 3-minute reel)")
     a = ap.parse_args()
     problems = check()
     if problems:
@@ -125,7 +135,7 @@ def main():
     if not shutil.which(FFMPEG) and not Path(FFMPEG).exists():
         sys.exit("ffmpeg not found")
     while True:
-        n = run_once()
+        n = run_once(a.limit, a.max_seconds, ready_only=bool(a.limit))
         if not a.watch:
             print(f"Made {n} anchor clips.")
             break

@@ -200,6 +200,21 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 .credit a { color: inherit; }
 .ltsrc { color: var(--ink-3); font-weight: 600; }
 
+/* realistic anchor: a larger portrait picture-in-picture */
+.anchor.real { width: 18cqw; aspect-ratio: 4 / 5; }
+.anchor.real video { object-position: 50% 22%; }
+/* lower third: red light bar draws first, then the glass card opens from it */
+.lt .card .lbar { position: absolute; left: 0; top: 12%; bottom: 12%; width: .32cqw; border-radius: 99px; background: linear-gradient(180deg, var(--accent-hi), var(--accent)); box-shadow: 0 0 1.2cqw rgba(232,0,11,.55); transform-origin: 50% 50%; }
+.lt .tag .cat { padding: .25cqw .7cqw; border-radius: 99px; background: var(--ink); color: #fff; font-size: .85cqw; letter-spacing: .16em; text-transform: uppercase; }
+/* between stories: a red glass slab with the logo sweeps across and reveals the next story */
+.bw { inset: 0; z-index: 4; pointer-events: none; overflow: hidden; visibility: hidden; }
+.bw .g, .bw .r { position: absolute; top: -10%; bottom: -10%; left: -15%; right: -15%; transform: translateX(125%) skewX(-10deg); }
+.bw .g { background: linear-gradient(90deg, rgba(255,255,255,.55), rgba(255,255,255,.85)); -webkit-backdrop-filter: blur(26px) saturate(1.7); backdrop-filter: blur(26px) saturate(1.7); }
+.bw .r { left: -12%; right: -12%; background: linear-gradient(115deg, #ff2a2a 0%, #e8000b 45%, #9c0008 100%); box-shadow: inset .25cqw 0 0 rgba(255,255,255,.55); }
+.bw .lg { position: absolute; left: 50%; top: 50%; width: 20cqw; transform: translate(-50%, -50%); opacity: 0; display: grid; justify-items: center; gap: 1.1cqw; }
+.bw .lg svg { width: 100%; height: auto; display: block; border-radius: .5cqw; box-shadow: 0 1.6cqw 4cqw rgba(60,0,4,.45); }
+.bw .lg span { font-weight: 700; font-size: 1.2cqw; letter-spacing: .4em; padding-left: .4em; color: rgba(255,255,255,.92); text-transform: uppercase; white-space: nowrap; }
+
 </style></head>
 <body>
 <div id="stage"></div>
@@ -226,13 +241,14 @@ tv.innerHTML = `
   <div class="bug abs"><div class="cube"><div class="face f-front"><svg class="logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div><div class="face f-right"><svg class="logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div><div class="face f-back"><svg class="logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div><div class="face f-left"><svg class="logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div><div class="face f-top"></div><div class="face f-bottom"></div></div><div class="cube-shadow"></div></div>
   <div class="anchor glass abs" id="anchor"><svg viewBox="0 0 200 220" aria-label="AI news anchor"><defs><radialGradient id="aBg" cx="70%" cy="20%" r="90%"><stop offset="0" stop-color="#7a1018"/><stop offset=".45" stop-color="#2a1a2a"/><stop offset="1" stop-color="#101626"/></radialGradient><linearGradient id="aSuit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26355a"/><stop offset="1" stop-color="#141d33"/></linearGradient></defs><rect width="200" height="220" fill="url(#aBg)"/><g opacity=".35" fill="none" stroke="#fff" stroke-width=".6"><path d="M0 60 H200 M0 120 H200"/><path d="M40 0 V220 M160 0 V220"/></g><path d="M14 220 C20 172 58 160 100 158 C142 160 180 172 186 220 Z" fill="url(#aSuit)"/><path d="M84 160 L100 200 L116 160 Z" fill="#f2f4f8"/><path d="M96 166 L104 166 L108 203 L100 214 L92 203 Z" fill="#e8000b"/><path d="M95 160 L105 160 L104 168 L96 168 Z" fill="#b8000a"/><path d="M84 160 L72 168 L96 214 Z M116 160 L128 168 L104 214 Z" fill="#1b2744"/><rect x="88" y="126" width="24" height="38" rx="9" fill="#cf9877"/><g id="aHead"><ellipse cx="66" cy="96" rx="6" ry="9" fill="#d9a585"/><ellipse cx="134" cy="96" rx="6" ry="9" fill="#d9a585"/><ellipse cx="100" cy="92" rx="34" ry="42" fill="#e3b391"/><path d="M64 90 C60 54 82 40 102 42 C126 42 142 58 136 92 C133 74 124 64 103 62 C84 62 70 70 64 90 Z" fill="#2a1d17"/><path d="M78 76 Q86 72 94 75 M106 75 Q114 72 122 76" stroke="#2a1d17" stroke-width="3" stroke-linecap="round" fill="none"/><g id="aEyes"><ellipse cx="86" cy="88" rx="7" ry="4.2" fill="#fff"/><ellipse cx="114" cy="88" rx="7" ry="4.2" fill="#fff"/><circle cx="86" cy="88" r="3.4" fill="#2b2420"/><circle cx="114" cy="88" r="3.4" fill="#2b2420"/></g><path d="M100 92 Q95 105 99 108 Q101 109 104 107" stroke="#b47c62" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse id="aMouth" cx="100" cy="120" rx="10" ry="1.4" fill="#5b1d1f"/><path id="aLip" d="M89 119 Q100 116 111 119" stroke="#a65a4c" stroke-width="2.2" fill="none" stroke-linecap="round"/></g></svg><video id="aVid" muted playsinline preload="auto"></video><div class="atag">AI ANCHOR</div></div>
   <div class="hls abs" id="hls"><h2><i></i>The headlines</h2><div class="cards" id="cards"></div></div>
-  <div class="lt abs" id="lt"><div class="tag glass"><b id="ltKey">LIVE</b><span id="ltLoc"></span></div>
-    <div class="card glass sheen"><div class="head" id="ltHead"></div><div class="sub" id="ltSub"></div><div class="prog"><i id="prog"></i></div></div></div>
+  <div class="lt abs" id="lt"><div class="tag glass"><b id="ltKey">LIVE</b><span class="cat" id="ltCat"></span><span id="ltLoc"></span></div>
+    <div class="card glass sheen"><i class="lbar"></i><div class="head" id="ltHead"></div><div class="sub" id="ltSub"></div><div class="prog"><i id="prog"></i></div></div></div>
   <div class="tick glass abs"><span class="lab"><span class="fl" style="position:static">Latest</span><span class="fl" id="clock">--:--</span><span class="fl live-fl">LIVE</span></span><div class="trk"><div class="mv" id="tickMv"></div></div></div>
   <div class="brk-wall abs" id="brk"><div class="flash"></div><div class="panel sheen"><div class="glow"></div><div class="bt-row"><span class="pill">BREAKING NEWS</span><span class="meta"><span id="brkLoc"></span> · <b id="brkTime"></b></span></div><div class="bh" id="brkHead"></div><div class="bar"><i></i></div></div></div>
   <div class="titles abs" id="titles"><canvas id="gl"></canvas><div class="fallback"><svg class="fb-logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div>
     </div>
-  <div class="wipe abs"><i></i></div>`;
+  <div class="wipe abs"><i></i></div>
+  <div class="bw abs" id="bw"><div class="g"></div><div class="r"></div><div class="lg"><svg viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg><span id="bwCat"></span></div></div>`;
 document.getElementById("stage").append(tv);
 const $ = id => tv.querySelector("#" + id);
 
@@ -254,6 +270,11 @@ function playClip(c) {   // cross-fade to the next shot on whichever video layer
   try { next.currentTime = 0; } catch (e) {}
   next.play().catch(() => {});
   next.classList.add("on");
+  if (!reduce) {   // slow Ken Burns move on every shot, in a random direction
+    const dx = (Math.random() * 2 - 1) * 1.6, dy = (Math.random() * 2 - 1) * 1;
+    const zin = Math.random() < .7, a0 = "scale(1) translate(0,0)", a1 = `scale(1.08) translate(${dx.toFixed(2)}%, ${dy.toFixed(2)}%)`;
+    next.animate([{ transform: zin ? a0 : a1 }, { transform: zin ? a1 : a0 }], { duration: 11000, easing: "linear", fill: "both" });
+  }
   if (cur && cur !== next) setTimeout(() => cur.classList.remove("on"), 60);
   $("credit").innerHTML = esc(c.credit || "");
 }
@@ -276,6 +297,24 @@ function setMedia(s) {
   else gr.classList.add("on");
   $("credit").innerHTML = s.creditHtml || (s.credit ? esc(s.credit) : "");
 }
+/* between stories: frosted glass then the red slab sweep in from the right, the logo flashes up while
+   `mid` swaps the footage underneath, then both carry on out to the left revealing the next story */
+async function brandWipe(label, mid) {
+  if (reduce) { mid && mid(); return; }
+  const b = $("bw"), g = b.querySelector(".g"), r = b.querySelector(".r"), lg = b.querySelector(".lg");
+  $("bwCat").textContent = label || "";
+  b.style.visibility = "visible";
+  const sk = " skewX(-10deg)";
+  A(g, [{ transform: "translateX(125%)" + sk }, { transform: "translateX(0)" + sk }], { duration: 560, easing: IO });
+  await A(r, [{ transform: "translateX(130%)" + sk }, { transform: "translateX(0)" + sk }], { duration: 560, delay: 90, easing: IO });
+  A(lg, [{ opacity: 0, transform: "translate(-50%, -50%) scale(.86)", filter: "blur(.8cqw)" }, { opacity: 1, transform: "translate(-50%, -50%) scale(1)", filter: "blur(0)" }], { duration: 420, easing: SPRING });
+  mid && mid();
+  await wait(520);
+  A(lg, [{ opacity: 1, transform: "translate(-50%, -50%) scale(1)" }, { opacity: 0, transform: "translate(-50%, -50%) scale(1.06)" }], { duration: 260, easing: IO });
+  A(r, [{ transform: "translateX(0)" + sk }, { transform: "translateX(-135%)" + sk }], { duration: 600, delay: 120, easing: IO });
+  await A(g, [{ transform: "translateX(0)" + sk }, { transform: "translateX(-135%)" + sk }], { duration: 600, delay: 220, easing: IO });
+  b.style.visibility = "hidden";
+}
 const rerun = () => { tv.classList.remove("run"); void tv.offsetWidth; tv.classList.add("run"); };
 function sweep(mid) { A(tv.querySelector(".wipe i"), [{ left: "-60%" }, { left: "130%" }], { duration: 1100, easing: IO }); return wait(480).then(() => { mid && mid(); return wait(620); }); }
 
@@ -285,14 +324,17 @@ function ltIn(s, t, dur, brk = false) {
   const lt = $("lt"); lt.classList.toggle("brk", brk); lt.style.visibility = "visible";
   anchorOn(true);
   $("ltKey").textContent = brk ? "BREAKING" : "LIVE"; $("ltLoc").textContent = s.loc;
+  $("ltCat").textContent = s.cat && s.cat !== s.loc ? s.cat : ""; $("ltCat").hidden = !$("ltCat").textContent;
   $("ltHead").innerHTML = words(esc(s.head));
   $("ltSub").innerHTML = s.subs.map((x, i) => `<span style="${i ? "opacity:0" : ""}">${esc(x)}</span>`).join("");
   rerun();
   const tag = lt.querySelector(".tag"), card = lt.querySelector(".card");
-  A(card, [{ opacity: 0, transform: "translateY(2.2cqw) scale(.96)", filter: "blur(.6cqw)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { duration: 900, easing: SPRING, delay: 80 });
-  A(tag, [{ opacity: 0, transform: "translateY(1cqw) scale(.9)" }, { opacity: 1, transform: "none" }], { duration: 800, easing: SPRING, delay: 260 });
-  [...lt.querySelectorAll(".head .w > span")].forEach((w, i) => A(w, [{ transform: "translateY(105%)", filter: "blur(.3cqw)" }, { transform: "none", filter: "blur(0)" }], { duration: 850, delay: 300 + i * 40 }));
-  A($("ltSub").firstElementChild, [{ opacity: 0 }, { opacity: 1 }], { duration: 600, delay: 700 });
+  // the red light bar draws first, then the glass card opens out of it to the right
+  A(card.querySelector(".lbar"), [{ transform: "scaleY(0)", opacity: 0 }, { transform: "scaleY(1)", opacity: 1 }], { duration: 420, easing: OUT });
+  A(card, [{ opacity: 0, clipPath: "inset(0 100% 0 0 round 1.5cqw)", transform: "translateX(-1.5cqw)" }, { opacity: 1, clipPath: "inset(0 0% 0 0 round 1.5cqw)", transform: "none" }], { duration: 950, easing: OUT, delay: 220 });
+  A(tag, [{ opacity: 0, transform: "translateX(-2cqw)", filter: "blur(.4cqw)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { duration: 800, easing: SPRING, delay: 480 });
+  [...lt.querySelectorAll(".head .w > span")].forEach((w, i) => A(w, [{ transform: "translateY(105%)", opacity: 0, filter: "blur(.3cqw)" }, { transform: "none", opacity: 1, filter: "blur(0)" }], { duration: 850, delay: 520 + i * 45 }));
+  A($("ltSub").firstElementChild, [{ opacity: 0, transform: "translateX(-1cqw)" }, { opacity: 1, transform: "none" }], { duration: 700, delay: 950 });
   A($("prog"), [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], { duration: dur, easing: "linear", delay: 500 });
   let k = 0; const spans = [...$("ltSub").children]; clearInterval(subTimer);
   subTimer = setInterval(() => {
@@ -376,6 +418,9 @@ setInterval(() => {   // keep picture and voice together (and pause with the voi
   const v = $("aVid");
   if (!v.getAttribute("src")) return;
   if (voice.paused) { if (!v.paused) v.pause(); return; }
+  if (v.duration && voice.currentTime > v.duration - .08) {   // clip shorter than the voice: hand over to the illustration
+    $("anchor").classList.remove("real"); v.pause(); v.removeAttribute("src"); return;
+  }
   if (Math.abs(v.currentTime - voice.currentTime) > .12) v.currentTime = voice.currentTime;
   if (v.paused) v.play().catch(() => {});
 }, 250);
@@ -428,8 +473,10 @@ async function headlines(t, list) {
   if (!live(t)) return;
   await sweep(() => { h.style.visibility = "hidden"; });
 }
-async function story(t, s, cap = 0) {
-  setMedia(s); sync(s);
+async function story(t, s, cap = 0, wipe = false) {
+  if (wipe) await brandWipe(s.cat, () => setMedia(s)); else setMedia(s);
+  if (!live(t)) return;
+  sync(s);
   ltIn(s, t, cap || s.dur);
   await speak(s, t, cap); if (!live(t)) return;
   await wait(800);
@@ -476,10 +523,10 @@ async function playout() {
     reset(); await headlines(t, list);
     // newest unplayed stories first, then repeat the rest
     const block = [...list.filter(s => !played.has(s.id)), ...list.filter(s => played.has(s.id))].slice(0, STORIES_PER_BLOCK);
-    for (const s of block) {
+    for (const [i, s] of block.entries()) {
       if (!live(t)) return;
       reset();
-      await (s.type === "breaking" ? breaking(t, s) : story(t, s));
+      await (s.type === "breaking" ? breaking(t, s) : story(t, s, 0, i > 0));
       played.add(s.id);
     }
     if (played.size > 200) played = new Set([...played].slice(-100));
@@ -509,7 +556,7 @@ async function reel(total) {
   const picks = [...list.filter(s => s.media && s.audio), ...list.filter(s => !(s.media && s.audio))].slice(0, n);
   reset(); await titles(t);                     // ~7 s
   reset(); await headlines(t, picks);           // ~10 s
-  for (const s of picks) { reset(); await story(t, s, PER); }
+  for (const [i, s] of picks.entries()) { reset(); await story(t, s, PER, i > 0); }
   reset(); $("titles").style.visibility = "visible";              // end card
   sting.currentTime = 0; sting.play().catch(() => {});
   if (has3d) window.PEN_GLASS.play();
