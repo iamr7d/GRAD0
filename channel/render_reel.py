@@ -28,7 +28,7 @@ W, H, FPS = 1920, 1080, 30
 DEFAULT_BASE = "http://127.0.0.1:8000/"
 
 # Runs inside the page: capture this tab, start the recorder, then start the reel.
-RECORD_JS = """async ({w, h, fps}) => {
+RECORD_JS = """async ({w, h, fps, slice = 1000, vbps = 16e6, waitSting = true}) => {
   document.getElementById("start").hidden = true;   // no click-to-start card in the recording
   document.getElementById("titles").style.visibility = "visible";   // open on the red title background
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(r, 200))));
@@ -43,7 +43,7 @@ RECORD_JS = """async ({w, h, fps}) => {
   const stream = new MediaStream([...screen.getVideoTracks(), ...mix.stream.getAudioTracks()]);
   const types = ["video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
   const mimeType = types.find(t => MediaRecorder.isTypeSupported(t));
-  const rec = new MediaRecorder(stream, {mimeType, videoBitsPerSecond: 16e6, audioBitsPerSecond: 192e3});
+  const rec = new MediaRecorder(stream, {mimeType, videoBitsPerSecond: vbps, audioBitsPerSecond: 192e3});
   let saving = Promise.resolve();   // chunks are handed to Python one after another, in order
   rec.ondataavailable = e => {
     if (!e.data.size) return;
@@ -55,12 +55,12 @@ RECORD_JS = """async ({w, h, fps}) => {
   };
   window.penStop = () => new Promise(r => { rec.onstop = () => r(saving); rec.stop(); });
   const t0 = performance.now();
-  rec.start(1000);
+  rec.start(slice);
   await new Promise(r => setTimeout(r, 300));
   start();
   // seconds before the reel starts (its sting begins); trimmed off when converting
   const sting = document.getElementById("sting");
-  while (sting.paused) await new Promise(r => setTimeout(r, 10));
+  while (waitSting && sting.paused) await new Promise(r => setTimeout(r, 10));
   return {mimeType, lead: Math.max(0, (performance.now() - t0) / 1000 - 0.05)};
 }"""
 
@@ -74,12 +74,12 @@ def reachable(base):
 
 
 def ensure_server(base, can_start):
-    """Use the running broadcast server, or start one for the length of the render."""
+    """Use the running broadcast server, or start one for as long as this program runs."""
     if reachable(base):
         return None
     if not can_start:
         sys.exit(f"Can't reach {base}.")
-    print("Broadcast server isn't running; starting it for this render.")
+    print("Broadcast server isn't running; starting it.")
     proc = subprocess.Popen([sys.executable, "-m", "channel.server"], cwd=ROOT,
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     for _ in range(30):
@@ -101,21 +101,26 @@ def check_ready():
         sys.exit("Nothing ready to air yet. Leave the newsroom running until stories have voice and footage.")
 
 
+async def launch_browser(p, show=False):
+    """Google Chrome (plays the H.264 footage and AAC audio), else Playwright's Chromium."""
+    args = ["--autoplay-policy=no-user-gesture-required", "--auto-accept-this-tab-capture",
+            "--auto-select-tab-capture-source-by-title=Prime", "--hide-scrollbars"]
+    opts = dict(headless=not show, args=args, ignore_default_args=["--mute-audio"])
+    exe = os.getenv("PEN_CHROME")  # optional: path to a specific Chrome/Chromium
+    try:
+        if exe:
+            return await p.chromium.launch(executable_path=exe, **opts)
+        return await p.chromium.launch(channel="chrome", **opts)
+    except Exception:
+        print("Google Chrome not found, using Playwright's Chromium (it can't play MP4 footage; install Chrome for the real look).")
+        return await p.chromium.launch(**opts)
+
+
 async def record(url, raw, seconds, show):
     from playwright.async_api import async_playwright
 
-    args = ["--autoplay-policy=no-user-gesture-required", "--auto-accept-this-tab-capture",
-            "--auto-select-tab-capture-source-by-title=Prime", "--hide-scrollbars"]
     async with async_playwright() as p:
-        exe = os.getenv("PEN_CHROME")  # optional: path to a specific Chrome/Chromium
-        try:
-            if exe:
-                browser = await p.chromium.launch(executable_path=exe, headless=not show, args=args, ignore_default_args=["--mute-audio"])
-            else:
-                browser = await p.chromium.launch(channel="chrome", headless=not show, args=args, ignore_default_args=["--mute-audio"])
-        except Exception:
-            print("Google Chrome not found, using Playwright's Chromium (it can't play MP4 footage; install Chrome for the real look).")
-            browser = await p.chromium.launch(headless=not show, args=args, ignore_default_args=["--mute-audio"])
+        browser = await launch_browser(p, show)
         page = await browser.new_page(viewport={"width": W, "height": H})
         page.on("crash", lambda _: print("\nThe page crashed while recording."))
         out = open(raw, "wb")
