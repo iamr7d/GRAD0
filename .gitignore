@@ -13,3 +13,5 @@ __pycache__/
 *.log
 *.out
 renders/
+bucket/live/
+tunnel.json

@@ -28,6 +28,15 @@ channel/web/broadcast.html = the on-air page (OBS browser source)
 - Audio: `channel/web/audio/bed.m4a` (original synthesized music bed, -20 LUFS) ducks under the anchor voice; `sting.m4a` on titles/end card.
 - URL params: `?autoplay=1` (no click needed – use in OBS), `?reel=60` or `?reel=180` (fixed showreel then ends on logo, `document.title` becomes "REEL DONE"). No `reel` = continuous loop.
 
+### AI anchor and multiple shots
+- Anchor: illustrated presenter (inline SVG in `broadcast.html`) in a glass box on the right during every story; mouth driven by `<voice>.lip.json` (loudness per 40 ms, `channel/lipsync.py`, written automatically by `tts.py`; backfill old voices with `python -m channel.lipsync`). No lip file → generic mouth movement. `?anchor=0` hides it.
+- Shots: `produce.py` stores up to 3 Pexels clips per story in `extra_data.clips` (`pexels.fetch_many`, one search per query; `clips_tried` stops re-searching). The page cross-fades between them on two video layers every 4.5 to 8 s, updating the credit.
+- Realistic anchor: `channel/avatar.py` runs SadTalker (separate checkout + venv, paths in `.env`: PEN_SADTALKER_DIR, PEN_SADTALKER_PYTHON; photo at `bucket/media/anchor/anchor.png`) for each story with a voice, newest first, writing `bucket/media/anchor/<voice>.mp4` and `extra_data.anchor_url`. Run `python -m channel.avatar --watch` in its own window. The page plays the clip in the anchor box locked to the voice (re-syncs every 250 ms); stories without a clip use the illustration. Use an AI-generated face or the owner's own, never a real person's likeness.
+- Realistic face, hardware note: the owner's laptop has an RTX 3050 (4 GB), enough for SadTalker/MuseTalk at roughly 1 to 3 min per story.
+
+### Own music
+Drop a track at `bucket/media/music/news_bed.mp3` (or `.m4a`) and optionally `news_sting.mp3`; the server serves them in place of `channel/web/audio/bed.m4a` / `sting.m4a` (same ducking). They stay out of git, since stock-music licences (e.g. Pixabay) don't allow re-distributing the files. Delete them to go back to the channel's own synthesised music.
+
 ### Secrets
 `.env` in repo root (gitignored), never commit or paste keys:
 ```
@@ -63,6 +72,14 @@ python -m channel.render_reel --seconds 60 --show       # 1-minute reel, in a vi
 ```
 `channel/render_reel.py` opens `/?reel=180` in Chrome in the background, records the tab (picture via tab capture, sound mixed from the page's audio elements, so speakers aren't needed), stops after the logo end card and converts to 1920x1080 30 fps H.264/AAC MP4 with ffmpeg. It starts the broadcast server itself if it isn't running. Needs Google Chrome: Playwright's own Chromium can't play the MP4 footage or AAC audio. Takes about as long as the reel.
 
+### Live stream on a website
+Double-click `go_live.bat` (starts the newsroom, then the stream), or:
+```powershell
+winget install --id Cloudflare.cloudflared            # once, for the public link; then open a new PowerShell
+cd C:\Users\rahul\GRAD0; python -m channel.live --public
+```
+`channel/live.py` plays the channel (`/` without `reel`, so it loops forever) in background Chrome, captures it like `render_reel`, and pipes it into ffmpeg, which writes a 720p30 3 Mbps HLS live stream to `bucket/live/` (`--hd` = 1080p 6 Mbps). `channel/server.py` serves it with the watch page at `/watch` (`channel/web/watch.html`, hls.js vendored as `channel/web/hls.min.js`; headlines list with source links from the run of show). `--public` runs a free Cloudflare quick tunnel and prints `https://<random>.trycloudflare.com/watch`; the address changes on every start. Visitors through the tunnel (requests carrying `Cf-Connecting-Ip`) can only GET `/watch`, `/live/*`, `/hls.min.js` and the run of show; the studio page, media files and `/sync` stay local. `--rtmp rtmp://a.rtmp.youtube.com/live2/<key>` also pushes the same encode to YouTube Live (key goes on the command line, never in chat or git). The stream restarts itself after a failure and every 6 hours. Permanent address on an own domain (DNS on Cloudflare): run once `python -m channel.setup_domain live.example.com` (browser login, creates tunnel `prime-earth-news`, routes DNS, writes gitignored `tunnel.json`); after that `--public`/`go_live.bat` use that address and the bare domain redirects to `/watch`. It only runs while the PC is on; 24/7 needs a cloud VM (next step).
+
 ### Recording the 3-minute video in OBS (manual alternative)
 1. Queue should have ≥ 9 stories with voice + footage (check: `python -c "import json;q=json.load(open('bucket/news/queue/run_of_show.json'));print(sum(1 for i in q if i['extra_data'].get('audio_url') and i['extra_data'].get('video_url')),'ready of',len(q))"`).
 2. OBS → Browser source: URL `http://127.0.0.1:8000/?autoplay=1&reel=180`, 1920×1080, tick "Control audio via OBS"; right-click → Transform → Fit to screen. Only one Browser source.
@@ -78,6 +95,6 @@ python -m channel.render_reel --seconds 60 --show       # 1-minute reel, in a vi
 
 ## Possible next steps
 - Done: `python -m channel.render_reel` burns the reel to MP4 (see above).
-- Cloud hosting for a 24/7 stream.
+- Cloud VM for a 24/7 stream that doesn't need the PC on.
 - Done: removed the legacy `server.py`, `server_fastapi.py`, `overlays/server.py` (exposed the whole folder incl. `.env`), `news/main_graph.py` (invented news), committed logs and caches.
 - Design previews (claude.ai artifacts) are separate from the repo; the repo page is the source of truth.

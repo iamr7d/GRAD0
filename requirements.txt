@@ -7,5 +7,5 @@ kokoro-onnx      # local anchor voice
 edge-tts         # fallback voice
 # broadcast server
 flask
-# MP4 render (python -m channel.render_reel)
+# MP4 render and live stream (python -m channel.render_reel, python -m channel.live)
 playwright

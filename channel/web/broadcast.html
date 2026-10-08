@@ -111,6 +111,18 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 .w > span { display: inline-block; }
 
 /* ticker */
+/* AI anchor: illustrated presenter, mouth driven by the voice track's lip-sync data */
+.anchor { right: 3.2cqw; bottom: 23.5cqw; z-index: 5; width: 17cqw; aspect-ratio: 200 / 220; padding: .35cqw; border-radius: 1.6cqw; opacity: 0; transform: translateY(1.2cqw) scale(.95); transition: opacity .6s ease, transform .9s var(--spring); }
+.anchor.on { opacity: 1; transform: none; }
+.anchor svg { display: block; width: 100%; height: 100%; border-radius: 1.3cqw; }
+.anchor video { position: absolute; inset: .35cqw; width: calc(100% - .7cqw); height: calc(100% - .7cqw); object-fit: cover; object-position: 50% 30%; border-radius: 1.3cqw; opacity: 0; transition: opacity .4s ease; background: #101626; }
+.anchor.real video { opacity: 1; }
+.anchor.real { width: 19cqw; }
+.anchor .atag { position: absolute; left: 1cqw; bottom: 1cqw; display: flex; align-items: center; gap: .45cqw; padding: .35cqw .8cqw; border-radius: 99px; background: rgba(255,255,255,.92); font-weight: 700; font-size: .9cqw; letter-spacing: .12em; color: var(--ink); }
+.anchor .atag::before { content: ""; width: .5cqw; height: .5cqw; border-radius: 50%; background: var(--accent); animation: pulse 1.8s ease-in-out infinite; }
+#aHead { transform-box: view-box; transform-origin: 100px 150px; }
+#aEyes { transform-box: fill-box; transform-origin: center; }
+.no-anchor .anchor { display: none; }
 .tick { left: 3.2cqw; right: 3.2cqw; bottom: 2.4cqw; height: 3.2cqw; z-index: 5; display: flex; align-items: center; gap: 1cqw; padding: 0 .35cqw; border-radius: 99px; }
 .tick .lab { flex: none; height: 2.5cqw; display: flex; align-items: center; padding: 0 1.1cqw; border-radius: 99px; background: var(--ink); color: #fff; font-weight: 700; font-size: 1.05cqw; letter-spacing: .1em; text-transform: uppercase; }
 .tick .lab { position: relative; overflow: hidden; min-width: 7.4cqw; justify-content: center; }
@@ -209,9 +221,10 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 const tv = document.createElement("div");
 tv.className = "tv"; tv.setAttribute("aria-hidden", "true");
 tv.innerHTML = `
-  <div class="foot"><div class="f a on"></div><video class="f" id="vid" muted loop playsinline></video><img class="f" id="img" alt=""></div><div class="credit abs" id="credit"></div>
+  <div class="foot"><div class="f a on"></div><video class="f" id="vid" muted loop playsinline></video><video class="f" id="vid2" muted loop playsinline></video><img class="f" id="img" alt=""></div><div class="credit abs" id="credit"></div>
   <div class="vig"></div>
   <div class="bug abs"><div class="cube"><div class="face f-front"><svg class="logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div><div class="face f-right"><svg class="logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div><div class="face f-back"><svg class="logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div><div class="face f-left"><svg class="logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div><div class="face f-top"></div><div class="face f-bottom"></div></div><div class="cube-shadow"></div></div>
+  <div class="anchor glass abs" id="anchor"><svg viewBox="0 0 200 220" aria-label="AI news anchor"><defs><radialGradient id="aBg" cx="70%" cy="20%" r="90%"><stop offset="0" stop-color="#7a1018"/><stop offset=".45" stop-color="#2a1a2a"/><stop offset="1" stop-color="#101626"/></radialGradient><linearGradient id="aSuit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26355a"/><stop offset="1" stop-color="#141d33"/></linearGradient></defs><rect width="200" height="220" fill="url(#aBg)"/><g opacity=".35" fill="none" stroke="#fff" stroke-width=".6"><path d="M0 60 H200 M0 120 H200"/><path d="M40 0 V220 M160 0 V220"/></g><path d="M14 220 C20 172 58 160 100 158 C142 160 180 172 186 220 Z" fill="url(#aSuit)"/><path d="M84 160 L100 200 L116 160 Z" fill="#f2f4f8"/><path d="M96 166 L104 166 L108 203 L100 214 L92 203 Z" fill="#e8000b"/><path d="M95 160 L105 160 L104 168 L96 168 Z" fill="#b8000a"/><path d="M84 160 L72 168 L96 214 Z M116 160 L128 168 L104 214 Z" fill="#1b2744"/><rect x="88" y="126" width="24" height="38" rx="9" fill="#cf9877"/><g id="aHead"><ellipse cx="66" cy="96" rx="6" ry="9" fill="#d9a585"/><ellipse cx="134" cy="96" rx="6" ry="9" fill="#d9a585"/><ellipse cx="100" cy="92" rx="34" ry="42" fill="#e3b391"/><path d="M64 90 C60 54 82 40 102 42 C126 42 142 58 136 92 C133 74 124 64 103 62 C84 62 70 70 64 90 Z" fill="#2a1d17"/><path d="M78 76 Q86 72 94 75 M106 75 Q114 72 122 76" stroke="#2a1d17" stroke-width="3" stroke-linecap="round" fill="none"/><g id="aEyes"><ellipse cx="86" cy="88" rx="7" ry="4.2" fill="#fff"/><ellipse cx="114" cy="88" rx="7" ry="4.2" fill="#fff"/><circle cx="86" cy="88" r="3.4" fill="#2b2420"/><circle cx="114" cy="88" r="3.4" fill="#2b2420"/></g><path d="M100 92 Q95 105 99 108 Q101 109 104 107" stroke="#b47c62" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse id="aMouth" cx="100" cy="120" rx="10" ry="1.4" fill="#5b1d1f"/><path id="aLip" d="M89 119 Q100 116 111 119" stroke="#a65a4c" stroke-width="2.2" fill="none" stroke-linecap="round"/></g></svg><video id="aVid" muted playsinline preload="auto"></video><div class="atag">AI ANCHOR</div></div>
   <div class="hls abs" id="hls"><h2><i></i>The headlines</h2><div class="cards" id="cards"></div></div>
   <div class="lt abs" id="lt"><div class="tag glass"><b id="ltKey">LIVE</b><span id="ltLoc"></span></div>
     <div class="card glass sheen"><div class="head" id="ltHead"></div><div class="sub" id="ltSub"></div><div class="prog"><i id="prog"></i></div></div></div>
@@ -233,11 +246,33 @@ const A = (el, kf, o = {}) => el ? el.animate(kf, { duration: 700, easing: OUT, 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const words = s => s.split(" ").map(w => `<span class="w"><span>${w}</span></span>`).join(" ");
 const stopAll = () => tv.getAnimations({ subtree: true }).forEach(a => { if (a instanceof CSSAnimation || a instanceof CSSTransition) return; const el = a.effect && a.effect.target; if (el && el.closest && el.closest(".tick")) return; a.cancel(); });
+let clipTimer = null;
+function playClip(c) {   // cross-fade to the next shot on whichever video layer is free
+  const a = $("vid"), b = $("vid2"), cur = a.classList.contains("on") ? a : b.classList.contains("on") ? b : null;
+  const next = cur === a ? b : a;
+  if (next.getAttribute("src") !== c.url) next.src = c.url;
+  try { next.currentTime = 0; } catch (e) {}
+  next.play().catch(() => {});
+  next.classList.add("on");
+  if (cur && cur !== next) setTimeout(() => cur.classList.remove("on"), 60);
+  $("credit").innerHTML = esc(c.credit || "");
+}
 function setMedia(s) {
-  const v = $("vid"), im = $("img"), gr = tv.querySelector(".foot div.f");
-  v.classList.remove("on"); im.classList.remove("on"); gr.classList.remove("on");
-  if (s.media && s.mediaType === "video") { if (v.getAttribute("src") !== s.media) { v.src = s.media; v.play().catch(() => {}); } v.classList.add("on"); }
-  else if (s.media) { im.src = s.media; im.classList.add("on"); }
+  const v = $("vid"), v2 = $("vid2"), im = $("img"), gr = tv.querySelector(".foot div.f");
+  clearInterval(clipTimer);
+  im.classList.remove("on"); gr.classList.remove("on");
+  if (s.media && s.mediaType === "video") {
+    const clips = s.clips.length ? s.clips : [{ url: s.media, credit: s.credit }];
+    playClip(clips[0]);
+    if (s.creditHtml && clips.length === 1) $("credit").innerHTML = s.creditHtml;
+    if (clips.length > 1) {   // several shots per story: cut every few seconds
+      let k = 0;
+      clipTimer = setInterval(() => playClip(clips[++k % clips.length]), Math.min(8000, Math.max(4500, s.dur / clips.length)));
+    }
+    return;
+  }
+  v.classList.remove("on"); v2.classList.remove("on");
+  if (s.media) { im.src = s.media; im.classList.add("on"); }
   else gr.classList.add("on");
   $("credit").innerHTML = s.creditHtml || (s.credit ? esc(s.credit) : "");
 }
@@ -248,6 +283,7 @@ function sweep(mid) { A(tv.querySelector(".wipe i"), [{ left: "-60%" }, { left: 
 let subTimer = null;
 function ltIn(s, t, dur, brk = false) {
   const lt = $("lt"); lt.classList.toggle("brk", brk); lt.style.visibility = "visible";
+  anchorOn(true);
   $("ltKey").textContent = brk ? "BREAKING" : "LIVE"; $("ltLoc").textContent = s.loc;
   $("ltHead").innerHTML = words(esc(s.head));
   $("ltSub").innerHTML = s.subs.map((x, i) => `<span style="${i ? "opacity:0" : ""}">${esc(x)}</span>`).join("");
@@ -268,6 +304,7 @@ function ltIn(s, t, dur, brk = false) {
 }
 function ltOut() {
   clearInterval(subTimer);
+  anchorOn(false);
   return A($("lt"), [{ opacity: 1, transform: "none", filter: "blur(0)" }, { opacity: 0, transform: "translateY(1cqw) scale(.98)", filter: "blur(.4cqw)" }], { duration: 450, easing: IO });
 }
 
@@ -282,6 +319,8 @@ function toStory(q) {
     media: x.video_url && x.video_local ? x.video_url : (x.photo_url || x.media_url || ""),
     mediaType: x.video_url && x.video_local ? "video" : (x.media_type || (x.photo_url ? "image" : "video")),
     credit: x.video_credit || x.media_credit || "", creditHtml: x.media_credit_html || "",
+    clips: (x.clips || []).filter(c => c && c.url),
+    anchorVideo: x.anchor_url || "",
     audio: x.audio_url || "", dur: Math.max(8, q.display_duration || 15) * 1000,
   };
 }
@@ -305,12 +344,61 @@ function speak(s, t, cap = 0) {
     if (cap) setTimeout(() => { voice.pause(); fade(bgm, BED); res(); }, cap);
     if (!s.audio) return setTimeout(res, cap || s.dur);
     voice.volume = 1; voice.src = s.audio; fade(bgm, DUCK, 400);
+    loadLip(s.audio);
+    anchorVideo(s.anchorVideo);
     const done = () => { fade(bgm, BED); res(); };
     voice.onended = done; voice.onerror = () => setTimeout(done, s.dur);
     voice.play().catch(() => setTimeout(done, s.dur));
     setTimeout(() => { if (!live(t)) { voice.pause(); done(); } }, s.dur + 30000);
   });
 }
+
+/* ---------- AI anchor ---------- */
+const ANCHOR = new URLSearchParams(location.search).get("anchor") !== "0";   // ?anchor=0 hides it
+if (!ANCHOR) tv.classList.add("no-anchor");
+let lip = null;                                          // {fps, v} for the voice now playing
+function loadLip(audio) {
+  lip = null;
+  const url = audio.replace(/\.[^./]+$/, ".lip.json");
+  fetch(url).then(r => r.ok ? r.json() : null).then(d => { if (d && voice.src.endsWith(audio)) lip = d; }).catch(() => {});
+}
+/* realistic anchor: a talking-head clip made for this voice (channel/avatar.py), kept in step with the voice */
+function anchorVideo(url) {
+  const v = $("aVid"), box = $("anchor");
+  box.classList.toggle("real", !!url);
+  if (!url) { v.removeAttribute("src"); return; }
+  v.src = url; v.currentTime = 0;
+  const go = () => { v.currentTime = voice.currentTime; v.play().catch(() => {}); };
+  voice.addEventListener("playing", go, { once: true });
+  v.onerror = () => box.classList.remove("real");   // missing file: fall back to the illustration
+}
+setInterval(() => {   // keep picture and voice together (and pause with the voice)
+  const v = $("aVid");
+  if (!v.getAttribute("src")) return;
+  if (voice.paused) { if (!v.paused) v.pause(); return; }
+  if (Math.abs(v.currentTime - voice.currentTime) > .12) v.currentTime = voice.currentTime;
+  if (v.paused) v.play().catch(() => {});
+}, 250);
+const anchorOn = on => { $("anchor").classList.toggle("on", on && ANCHOR); if (!on) $("aVid").pause(); };
+(function animateAnchor() {
+  const now = performance.now() / 1000, talking = !voice.paused && !voice.ended && voice.currentTime > 0;
+  let amp = 0;
+  if (talking) {
+    if (lip) amp = (+lip.v[Math.floor(voice.currentTime * lip.fps)] || 0) / 9;
+    else amp = Math.max(0, .45 + .35 * Math.sin(now * 17) * Math.sin(now * 5.3));   // no data: plausible chatter
+  }
+  $("aMouth").setAttribute("ry", (1.4 + amp * 7.5).toFixed(2));
+  $("aMouth").setAttribute("rx", (10 - amp * 2).toFixed(2));
+  $("aLip").setAttribute("d", `M89 ${119 - amp} Q100 ${116 - amp * 1.5} 111 ${119 - amp}`);
+  const tilt = Math.sin(now * .9) * 1.2 + (talking ? Math.sin(now * 2.3) * amp * 1.6 : 0);
+  $("aHead").setAttribute("transform", `translate(0 ${(9 + amp * .8).toFixed(2)}) rotate(${tilt.toFixed(2)} 100 150)`);
+  requestAnimationFrame(animateAnchor);
+})();
+(function blink() {
+  const e = $("aEyes");
+  e.animate([{ transform: "scaleY(1)" }, { transform: "scaleY(.1)" }, { transform: "scaleY(1)" }], { duration: 160 });
+  setTimeout(blink, 2500 + Math.random() * 3500);
+})();
 
 /* ---------- scenes ---------- */
 async function titles(t) {
@@ -373,6 +461,7 @@ function setTicker(list) {
 /* ---------- playout loop ---------- */
 function reset() {
   stopAll(); clearInterval(subTimer);
+  anchorOn(false);
   ["titles", "hls", "brk"].forEach(id => $(id).style.visibility = "hidden");
   $("lt").style.visibility = "hidden"; $("lt").classList.remove("brk");
 }

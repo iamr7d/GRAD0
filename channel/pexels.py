@@ -66,34 +66,45 @@ def search(query, min_seconds=8, max_seconds=60, per_page=20):
     return out
 
 
+def _download(cand, query, idx):
+    vid = str(cand["video"]["id"])
+    path = VIDEO_DIR / f"{vid}.mp4"
+    if not path.exists():
+        tmp = path.with_suffix(".part")
+        with requests.get(cand["file"]["link"], stream=True, timeout=60) as resp:
+            resp.raise_for_status()
+            with open(tmp, "wb") as fh:
+                for chunk in resp.iter_content(1 << 16):
+                    fh.write(chunk)
+        tmp.replace(path)
+    user = cand["video"].get("user") or {}
+    entry = {
+        "id": vid, "query": query, "path": media_url(path),
+        "width": cand["file"]["width"], "height": cand["file"]["height"],
+        "duration": cand["video"].get("duration"),
+        "credit": f"Video: {user.get('name', 'Pexels')} / Pexels", "source": cand["video"].get("url"),
+        "fetched": int(time.time()),
+    }
+    idx[vid] = entry
+    _save_index(idx)
+    return entry
+
+
+def fetch_many(query, n, min_seconds=8, avoid_ids=()):
+    """Download (or reuse) up to `n` different matching clips with one search. Returns a list of entries."""
+    idx, out = _load_index(), []
+    for cand in search(query, min_seconds=min_seconds):
+        if len(out) >= n:
+            break
+        if str(cand["video"]["id"]) not in avoid_ids:
+            out.append(_download(cand, query, idx))
+    return out
+
+
 def fetch(query, min_seconds=8, avoid_ids=()):
     """Download (or reuse) the best matching clip. Returns a dict for the run-of-show, or None."""
-    idx = _load_index()
-    for cand in search(query, min_seconds=min_seconds):
-        vid = str(cand["video"]["id"])
-        if vid in avoid_ids:
-            continue
-        path = VIDEO_DIR / f"{vid}.mp4"
-        if not path.exists():
-            tmp = path.with_suffix(".part")
-            with requests.get(cand["file"]["link"], stream=True, timeout=60) as resp:
-                resp.raise_for_status()
-                with open(tmp, "wb") as fh:
-                    for chunk in resp.iter_content(1 << 16):
-                        fh.write(chunk)
-            tmp.replace(path)
-        user = cand["video"].get("user") or {}
-        entry = {
-            "id": vid, "query": query, "path": media_url(path),
-            "width": cand["file"]["width"], "height": cand["file"]["height"],
-            "duration": cand["video"].get("duration"),
-            "credit": f"Video: {user.get('name', 'Pexels')} / Pexels", "source": cand["video"].get("url"),
-            "fetched": int(time.time()),
-        }
-        idx[vid] = entry
-        _save_index(idx)
-        return entry
-    return None
+    got = fetch_many(query, 1, min_seconds, avoid_ids)
+    return got[0] if got else None
 
 
 if __name__ == "__main__":

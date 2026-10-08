@@ -57,5 +57,6 @@ python -m channel.server       # playout page on http://127.0.0.1:8000/
 ```
 
 In OBS add a Browser Source (1920x1080) pointing at `http://127.0.0.1:8000/?autoplay=1`.
+To stream live to a public web page: `python -m channel.live --public` (or double-click `go_live.bat`), then share the printed `.../watch` link.
 To get a finished 3-minute MP4 without OBS: `python -m channel.render_reel` (or double-click `render_reel.bat`); it lands in `renders/`.
 Optional music: put `bed.m4a` (loop) and `sting.m4a` (titles) in `bucket/media/music/`.

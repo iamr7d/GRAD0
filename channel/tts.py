@@ -87,6 +87,12 @@ def speak(text):
             except Exception as e2:
                 print(f"Edge TTS failed too: {e2}")
                 return None
+    try:
+        from . import lipsync
+        if not lipsync.lip_path(mp3).exists():
+            lipsync.write(mp3)   # mouth movement for the on-screen anchor
+    except Exception as e:
+        print(f"Lip-sync data failed ({e}); the anchor will still talk, just less precisely")
     return {"path": media_url(mp3), "seconds": round(duration(mp3), 2)}
 
 
