@@ -33,6 +33,9 @@ channel/web/broadcast.html = the on-air page (OBS browser source)
 - Shots: `produce.py` stores up to 3 Pexels clips per story in `extra_data.clips` (`pexels.fetch_many`, one search per query; `clips_tried` stops re-searching). The page cross-fades between them on two video layers every 4.5 to 8 s, updating the credit.
 - Realistic face later: the owner's laptop has an RTX 3050 (4 GB), enough for SadTalker/MuseTalk at roughly 1 to 3 min per story.
 
+### Own music
+Drop a track at `bucket/media/music/news_bed.mp3` (or `.m4a`) and optionally `news_sting.mp3`; the server serves them in place of `channel/web/audio/bed.m4a` / `sting.m4a` (same ducking). They stay out of git, since stock-music licences (e.g. Pixabay) don't allow re-distributing the files. Delete them to go back to the channel's own synthesised music.
+
 ### Secrets
 `.env` in repo root (gitignored), never commit or paste keys:
 ```

@@ -22,7 +22,7 @@ import time
 
 from flask import Flask, abort, jsonify, redirect, request, send_from_directory
 
-from .config import BUCKET, ROOT
+from .config import BUCKET, MUSIC_DIR, ROOT
 
 WEB = ROOT / "channel" / "web"
 LIVE = BUCKET / "live"
@@ -78,6 +78,11 @@ def bucket(area, name):
 def web(name):
     if name.startswith("src/"):
         abort(404)
+    if name in ("audio/bed.m4a", "audio/sting.m4a"):
+        # your own music wins: bucket/media/music/news_bed.mp3 (or .m4a) and news_sting.mp3, kept out of git
+        stem = "news_bed" if name.endswith("bed.m4a") else "news_sting"
+        for f in sorted(MUSIC_DIR.glob(stem + ".*")):
+            return send_from_directory(MUSIC_DIR, f.name, conditional=True)
     return send_from_directory(WEB, name)
 
 
