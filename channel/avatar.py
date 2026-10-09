@@ -13,6 +13,8 @@ Settings in .env (paths on this PC):
     PEN_SADTALKER_DIR=C:\\Users\\rahul\\SadTalker            # the SadTalker checkout (with checkpoints/)
     PEN_SADTALKER_PYTHON=C:\\Users\\rahul\\SadTalker\\venv\\Scripts\\python.exe
     PEN_ANCHOR_IMAGE=bucket/media/anchor/anchor.png         # front-facing presenter photo (default)
+    PEN_ANCHOR_EXPRESSION=1.6                               # mouth/face movement strength (SadTalker default 1.0)
+    PEN_ANCHOR_PREPROCESS=full                              # or "crop" for a face-only clip
 """
 import argparse
 import json
@@ -67,7 +69,8 @@ def render(voice: Path, out: Path, max_seconds=0):
         cut = ["-t", str(max_seconds)] if max_seconds else []
         subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(voice), *cut, "-ac", "1", "-ar", "16000", str(wav)], check=True)
         cmd = [str(py), "inference.py", "--driven_audio", str(wav), "--source_image", str(img),
-               "--result_dir", tmp, "--preprocess", "full", "--still", "--size", "256", "--expression_scale", "1.0"]
+               "--result_dir", tmp, "--preprocess", os.getenv("PEN_ANCHOR_PREPROCESS", "full"), "--still",
+               "--size", "256", "--expression_scale", os.getenv("PEN_ANCHOR_EXPRESSION", "1.6")]   # >1 opens the mouth wider
         enhance = os.getenv("PEN_ANCHOR_ENHANCE")   # sharper face; set 0 if it's too slow
         if enhance == "1" or (enhance is None and (st / "gfpgan" / "weights" / "GFPGANv1.4.pth").exists()):
             cmd += ["--enhancer", "gfpgan"]
@@ -77,7 +80,7 @@ def render(voice: Path, out: Path, max_seconds=0):
             raise RuntimeError("SadTalker made no video")
         part = out.with_suffix(".part.mp4")
         subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(made[-1]), "-c:v", "libx264", "-crf", "20",
-                        "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k",
+                        "-preset", "medium", "-g", "15",   # keyframe every 0.5 s so the page can resync without freezing "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k",
                         "-movflags", "+faststart", str(part)], check=True)
         part.replace(out)
 
