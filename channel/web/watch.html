@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prime Earth News.AI · Live</title>
+<meta name="description" content="Prime Earth News.AI: an automated English news channel, live.">
+<meta name="theme-color" content="#0b0d12">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Montserrat:wght@900&display=swap">
+<style>
+:root { --bg: #0b0d12; --panel: #141821; --line: #232a37; --ink: #f2f4f8; --ink-2: #a3acbd; --red: #ff0000; --red-2: #e8000b; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 "Plus Jakarta Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+header { display: flex; align-items: center; gap: 14px; padding: 18px 0; }
+header svg { width: 64px; height: auto; display: block; border-radius: 3px; }
+header .name { font-weight: 800; font-size: 18px; letter-spacing: -.01em; }
+header .name span { color: var(--ink-2); font-weight: 600; }
+.badge { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: 13px; letter-spacing: .08em; white-space: nowrap; background: var(--line); color: var(--ink-2); }
+.badge i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.badge.on { background: var(--red-2); color: #fff; }
+.badge.on i { animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+.player { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.45); }
+.player video { width: 100%; height: 100%; display: block; background: #000; }
+.offair { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; background: radial-gradient(70% 70% at 50% 40%, #3a0003, #0b0d12); }
+.offair[hidden] { display: none; }
+.offair h2 { margin: 12px 0 4px; font-size: clamp(18px, 3vw, 26px); }
+.offair p { margin: 0; color: var(--ink-2); }
+.offair svg { width: min(180px, 30vw); }
+.buffering { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.25); pointer-events: none; opacity: 0; transition: opacity .3s; }
+.buffering.on { opacity: 1; }
+.buffering i { width: 48px; height: 48px; border-radius: 50%; border: 4px solid rgba(255,255,255,.25); border-top-color: #fff; animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.sound { position: absolute; left: 16px; bottom: 16px; padding: 10px 16px; border: 0; border-radius: 999px; background: rgba(255,255,255,.92); color: #0b0d12; font: 700 14px "Plus Jakarta Sans", sans-serif; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+.sound[hidden] { display: none; }
+h3 { margin: 32px 0 12px; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.news { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.news li { background: var(--panel); padding: 14px 16px; display: grid; gap: 2px; }
+.news a { font-weight: 700; text-decoration: none; }
+.news a:hover { text-decoration: underline; }
+.news .meta { color: var(--ink-2); font-size: 13px; }
+footer { color: var(--ink-2); font-size: 13px; padding: 28px 0 40px; }
+@media (max-width: 600px) { header .name span { display: none; } .player { border-radius: 8px; margin: 0 -4px; } }
+</style>
+</head><body>
+<div class="wrap">
+  <header>
+    <svg viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg>
+    <div class="name">Prime Earth News.AI <span>· world news, around the clock</span></div>
+    <div class="badge" id="badge"><i></i><b id="badgeText">OFF AIR</b></div>
+  </header>
+
+  <div class="player">
+    <video id="video" playsinline muted autoplay></video>
+    <div class="buffering" id="buffering" aria-hidden="true"><i></i></div>
+    <button class="sound" id="sound" hidden>🔊 Tap for sound</button>
+    <div class="offair" id="offair">
+      <div>
+        <svg viewBox="0 0 604 432" aria-hidden="true"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g></svg>
+        <h2 id="offTitle">Connecting to the live stream…</h2>
+        <p id="offText">This page joins automatically when the channel is on air.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>In this bulletin</h3>
+  <ul class="news" id="news"><li><span class="meta">Loading headlines…</span></li></ul>
+
+  <footer>Stories come from public news feeds and are read by an AI anchor; each links to its original source. Footage is illustrative stock video.</footer>
+</div>
+
+<!-- hls.js 1.5.17 (Apache-2.0), served from this folder so the page needs no CDN -->
+<script src="/hls.min.js"></script>
+<script>
+const SRC = "/live/stream.m3u8";
+const video = document.getElementById("video"), offair = document.getElementById("offair");
+const badge = document.getElementById("badge"), badgeText = document.getElementById("badgeText"), sound = document.getElementById("sound");
+let hls = null, retry = null;
+
+function onAir(on) {
+  badge.classList.toggle("on", on); badgeText.textContent = on ? "LIVE" : "OFF AIR";
+  offair.hidden = on;
+  if (!on) { document.getElementById("offTitle").textContent = "We're off air right now"; document.getElementById("offText").textContent = "This page reconnects by itself as soon as the channel is back."; }
+  sound.hidden = !on || !video.muted;
+}
+function later() { clearTimeout(retry); retry = setTimeout(connect, 8000); }
+async function connect() {
+  try { const r = await fetch(SRC, { cache: "no-store" }); if (!r.ok) throw 0; } catch { onAir(false); return later(); }
+  if (window.Hls && Hls.isSupported()) {
+    if (hls) hls.destroy();
+    // Play ~16 s behind live and keep up to a minute buffered, so short hiccups never reach the picture.
+    hls = new Hls({ liveSyncDurationCount: 4, liveMaxLatencyDurationCount: 12, maxBufferLength: 40, maxMaxBufferLength: 60,
+                    backBufferLength: 30, startFragPrefetch: true, lowLatencyMode: false,
+                    manifestLoadingMaxRetry: 2, fragLoadingMaxRetry: 6, levelLoadingMaxRetry: 6 });
+    hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => {}); onAir(true); });
+    hls.on(Hls.Events.ERROR, (_, d) => {
+      if (!d.fatal) return;
+      if (d.type === Hls.ErrorTypes.MEDIA_ERROR) return hls.recoverMediaError();   // glitch: recover in place
+      hls.destroy(); hls = null; onAir(false); later();
+    });
+    hls.loadSource(SRC); hls.attachMedia(video);
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {   // Safari / iPhone
+    video.src = SRC; video.play().catch(() => {});
+    video.onloadedmetadata = () => onAir(true);
+    video.onerror = () => { onAir(false); later(); };
+  } else {
+    document.getElementById("offTitle").textContent = "This browser can't play the live stream";
+    document.getElementById("offText").textContent = "Try Chrome, Edge, Firefox or Safari.";
+  }
+}
+const buffering = document.getElementById("buffering"); let bufT = null;
+video.addEventListener("waiting", () => { clearTimeout(bufT); bufT = setTimeout(() => buffering.classList.add("on"), 400); });
+["playing", "canplay", "seeked"].forEach(e => video.addEventListener(e, () => { clearTimeout(bufT); buffering.classList.remove("on"); }));
+sound.onclick = () => { video.muted = false; video.volume = 1; video.play(); sound.hidden = true; };
+video.addEventListener("volumechange", () => { sound.hidden = !video.muted || offair.hidden === false; });
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+async function headlines() {
+  try {
+    const q = await (await fetch("/bucket/news/queue/run_of_show.json", { cache: "no-store" })).json();
+    const items = q.filter(i => i.main_heading && (i.extra_data || {}).link).slice(0, 12);
+    if (!items.length) throw 0;
+    document.getElementById("news").innerHTML = items.map(i => {
+      const x = i.extra_data, safe = /^https?:\/\//.test(x.link) ? x.link : "#";
+      return `<li><a href="${esc(safe)}" target="_blank" rel="noopener">${esc(i.main_heading)}</a><span class="meta">${esc(x.source || "")}${x.category ? " · " + esc(x.category) : ""}</span></li>`;
+    }).join("");
+  } catch { document.getElementById("news").innerHTML = '<li><span class="meta">Headlines appear here when the channel is on air.</span></li>'; }
+}
+connect(); headlines(); setInterval(headlines, 60000);
+</script>
+</body></html>
