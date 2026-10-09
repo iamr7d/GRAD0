@@ -400,7 +400,10 @@ function speak(s, t, cap = 0) {
 }
 
 /* ---------- AI anchor ---------- */
-const ANCHOR = new URLSearchParams(location.search).get("anchor") !== "0";   // ?anchor=0 hides it
+const ANCHOR_P = new URLSearchParams(location.search).get("anchor");
+const ANCHOR = ANCHOR_P !== "0";   // ?anchor=0 hides it
+const ANCHOR_ALL = ANCHOR_P === "all";   // default: the anchor opens the bulletin only; ?anchor=all keeps it on every story
+let anchorHere = true;                   // whether the story now playing shows the anchor
 if (!ANCHOR) tv.classList.add("no-anchor");
 let lip = null;                                          // {fps, v} for the voice now playing
 function loadLip(audio) {
@@ -411,6 +414,7 @@ function loadLip(audio) {
 /* realistic anchor: a talking-head clip made for this voice (channel/avatar.py), kept in step with the voice */
 function anchorVideo(url) {
   const v = $("aVid"), box = $("anchor");
+  if (!anchorHere) url = "";
   box.classList.toggle("real", !!url);
   if (!url) { v.removeAttribute("src"); return; }
   v.src = url; v.currentTime = 0;
@@ -425,10 +429,13 @@ setInterval(() => {   // keep picture and voice together (and pause with the voi
   if (v.duration && voice.currentTime > v.duration - .08) {   // clip shorter than the voice: hand over to the illustration
     $("anchor").classList.remove("real"); v.pause(); v.removeAttribute("src"); return;
   }
-  if (Math.abs(v.currentTime - voice.currentTime) > .12) v.currentTime = voice.currentTime;
+  // nudge the speed for small drift; seeking every few frames stalls the decoder and freezes the face
+  const drift = voice.currentTime - v.currentTime;
+  if (Math.abs(drift) > .5) { v.currentTime = voice.currentTime; v.playbackRate = 1; }
+  else v.playbackRate = Math.abs(drift) > .05 ? 1 + Math.max(-.15, Math.min(.15, drift)) : 1;
   if (v.paused) v.play().catch(() => {});
 }, 250);
-const anchorOn = on => { $("anchor").classList.toggle("on", on && ANCHOR); if (!on) $("aVid").pause(); };
+const anchorOn = on => { $("anchor").classList.toggle("on", on && ANCHOR && anchorHere); if (!on) $("aVid").pause(); };
 (function animateAnchor() {
   const now = performance.now() / 1000, talking = !voice.paused && !voice.ended && voice.currentTime > 0;
   let amp = 0;
@@ -478,6 +485,7 @@ async function headlines(t, list) {
   await sweep(() => { h.style.visibility = "hidden"; });
 }
 async function story(t, s, cap = 0, wipe = false) {
+  anchorHere = ANCHOR_ALL || !wipe;   // the first story of a bulletin has no wipe before it
   if (wipe) await brandWipe(s.cat, () => setMedia(s)); else setMedia(s);
   if (!live(t)) return;
   sync(s);
@@ -487,6 +495,7 @@ async function story(t, s, cap = 0, wipe = false) {
   await ltOut();
 }
 async function breaking(t, s) {
+  anchorHere = ANCHOR_ALL;
   const b = $("brk"); b.style.visibility = "visible"; $("lt").style.visibility = "hidden";
   setMedia(s); sync(s);
   $("brkLoc").textContent = s.loc; $("brkTime").textContent = new Date().toTimeString().slice(0, 5);
