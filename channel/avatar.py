@@ -80,7 +80,8 @@ def render(voice: Path, out: Path, max_seconds=0):
             raise RuntimeError("SadTalker made no video")
         part = out.with_suffix(".part.mp4")
         subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(made[-1]), "-c:v", "libx264", "-crf", "20",
-                        "-preset", "medium", "-g", "15",   # keyframe every 0.5 s so the page can resync without freezing "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k",
+                        "-preset", "medium", "-g", "15",   # keyframe every 0.5 s so the page can resync without freezing
+                        "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k",
                         "-movflags", "+faststart", str(part)], check=True)
         part.replace(out)
 
