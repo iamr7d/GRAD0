@@ -1,4 +1,4 @@
-"""Realistic AI anchor: turn one presenter photo + each story's voice into a talking-head video.
+﻿"""Realistic AI anchor: turn one presenter photo + each story's voice into a talking-head video.
 
 Uses SadTalker (open source, runs on an NVIDIA GPU; about 1-2 minutes per story on an RTX 3050)
 in its own folder and Python environment. For every story in the run of show that has a voice
@@ -29,7 +29,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from .config import FFMPEG, MEDIA, QUEUE_FILE, ROOT, media_url
+from .config import FFMPEG, FFPROBE, MEDIA, QUEUE_FILE, ROOT, media_url
 
 ANCHOR_DIR = MEDIA / "anchor"
 ANCHOR_DIR.mkdir(parents=True, exist_ok=True)
@@ -156,7 +156,49 @@ def import_presenter(src: Path, kind: str):
     print(f"Presenter {kind}: {out}")
 
 
+# the order the lines are read in a single take (the script in HANDOFF.md); --split cuts them apart
+TAKE_ORDER = ("intro", "world", "business", "tech", "science", "india", "breaking", "outro")
+
+
+def split_take(src: Path, gap=1.0):
+    """One presenter video with every line read in TAKE_ORDER, separated by pauses of ~2 s:
+    find the pauses, cut the take into its lines and import each like --intro/--world/... ."""
+    r = subprocess.run([FFMPEG, "-hide_banner", "-nostats", "-i", str(src), "-af", f"silencedetect=noise=-38dB:d={gap}",
+                        "-vn", "-f", "null", "-"], capture_output=True, text=True)
+    import re
+    starts = [float(x) for x in re.findall(r"silence_start: ([\d.]+)", r.stderr)]
+    ends = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", r.stderr)]
+    dur = float(subprocess.run([FFPROBE, "-v", "error", "-show_entries", "format=duration",
+                                "-of", "csv=p=0", str(src)], capture_output=True, text=True).stdout.strip() or 0)
+    silences = list(zip(starts, ends + [dur] * (len(starts) - len(ends))))   # a pause running to the end has no end mark
+    lines, t = [], 0.0   # speech = what lies between the pauses
+    for s, e in silences + [(dur, dur)]:
+        if s - t > .6:
+            lines.append((t, s))
+        t = e
+    if len(lines) != len(TAKE_ORDER):
+        print(f"Found {len(lines)} spoken lines, expected {len(TAKE_ORDER)} ({', '.join(TAKE_ORDER)}):")
+        for a, b in lines:
+            print(f"  {a:6.2f}s - {b:6.2f}s")
+        sys.exit("Make the pauses between lines longer (about 2 s), or try --gap 0.6 / 1.5.")
+    with tempfile.TemporaryDirectory() as tmp:
+        for kind, (a, b) in zip(TAKE_ORDER, lines):
+            a, b = max(0, a - .25), min(dur, b + .35)   # keep a breath either side
+            piece = Path(tmp) / f"{kind}{src.suffix}"
+            subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-ss", f"{a:.2f}", "-to", f"{b:.2f}", "-i", str(src),
+                            "-c:v", "libx264", "-crf", "16", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", str(piece)]
+                           if src.suffix.lower() != ".webm" else
+                           [FFMPEG, "-y", "-loglevel", "error", "-c:v", "libvpx-vp9", "-ss", f"{a:.2f}", "-to", f"{b:.2f}", "-i", str(src),
+                            "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p", "-b:v", "0", "-crf", "20", "-c:a", "libopus", str(piece)], check=True)
+            print(f"  {kind:9s} {a:6.2f}s - {b:6.2f}s")
+            import_presenter(piece, kind)
+
+
 def main():
+    if len(sys.argv) >= 3 and sys.argv[1] == "--split":
+        # python -m channel.avatar --split Downloads\anchor_take.mp4 [--gap 1.0]
+        gap = float(sys.argv[sys.argv.index("--gap") + 1]) if "--gap" in sys.argv else 1.0
+        return split_take(Path(sys.argv[2]), gap)
     if len(sys.argv) >= 3 and sys.argv[1][2:] in PRESENTER_KINDS:
         # python -m channel.avatar --intro Downloads\heygen_intro.mp4   (no SadTalker needed)
         return import_presenter(Path(sys.argv[2]), sys.argv[1][2:])
