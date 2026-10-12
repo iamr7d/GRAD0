@@ -22,11 +22,11 @@ import requests
 from .config import QUEUE_FILE
 
 FEEDS = {
-    "World": ["https://feeds.bbci.co.uk/news/world/rss.xml", "https://www.aljazeera.com/xml/rss/all.xml",
-              "https://feeds.npr.org/1004/rss.xml"],
-    "Business": ["https://feeds.bbci.co.uk/news/business/rss.xml"],
-    "Tech": ["https://feeds.bbci.co.uk/news/technology/rss.xml", "https://www.theverge.com/rss/index.xml"],
-    "Science": ["https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"],
+    # no BBC feeds: the owner doesn't want the BBC name on the channel
+    "World": ["https://www.aljazeera.com/xml/rss/all.xml", "https://feeds.npr.org/1004/rss.xml"],
+    "Business": ["https://feeds.npr.org/1006/rss.xml"],
+    "Tech": ["https://www.theverge.com/rss/index.xml", "https://feeds.arstechnica.com/arstechnica/index"],
+    "Science": ["https://feeds.npr.org/1007/rss.xml", "https://www.sciencedaily.com/rss/top/science.xml"],
     "India": ["https://feeds.feedburner.com/ndtvnews-top-stories", "https://www.thehindu.com/news/national/feeder/default.rss"],
 }
 MAX_AGE_H = 12          # ignore older stories
@@ -88,7 +88,7 @@ def fetch_all():
     return mixed
 
 
-SOURCE_NAMES = {"bbc": "BBC News", "al jazeera": "Al Jazeera", "npr": "NPR", "verge": "The Verge",
+SOURCE_NAMES = {"ars technica": "Ars Technica", "sciencedaily": "ScienceDaily", "al jazeera": "Al Jazeera", "npr": "NPR", "verge": "The Verge",
                 "ndtv": "NDTV", "the hindu": "The Hindu"}
 
 
