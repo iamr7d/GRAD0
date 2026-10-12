@@ -650,9 +650,51 @@ async function reel(total) {
   document.title = "REEL DONE";
 }
 
+/* ?show=1 : a presenter-led segment prepared by `python -m channel.show SPEC` (bucket/media/anchor/show.json):
+   titles, then the presenter in the anchor box while footage and lower thirds follow his cues, then the end card */
+async function show() {
+  const t = ++token;
+  let spec;
+  try { spec = await (await fetch("/bucket/media/anchor/show.json?v=" + Date.now())).json(); }
+  catch (e) { console.warn("No show.json, playing the reel instead", e); return reel(60); }
+  const heads = spec.cues.filter(c => c.head);
+  setTicker(heads.map(c => ({ head: c.head })));
+  reset(); await titles(t);
+  reset(); anchorHere = true;
+  HG.show = spec.clip;
+  const done = heygen("show", t);
+  const v = $("hgVid"), last = spec.cues.length - 1;
+  let k = -1, cur = null;
+  const cue = () => {
+    const now = v.currentTime || 0;
+    let j = k;
+    while (j < last && now >= spec.cues[j + 1].t) j++;
+    if (j === k) return;
+    k = j; const c = spec.cues[k];
+    const next = c.keep && cur ? cur : { loc: c.cat || "", cat: "", head: c.head || "", subs: [c.sub || " "] };
+    setMedia({ ...next, media: c.media, mediaType: "video", clips: [], credit: c.credit, creditHtml: "" });
+    if (next !== cur) {                                   // new item: lower third in again
+      const end = spec.cues.slice(k + 1).find(x => !x.keep);
+      ltIn(next, t, ((end ? end.t : v.duration || 30) - c.t) * 1000);
+      cur = next;
+    }
+  };
+  const timer = setInterval(cue, 80);
+  await done; clearInterval(timer);
+  if (!live(t)) return;
+  clearInterval(subTimer);
+  await A($("lt"), [{ opacity: 1 }, { opacity: 0, transform: "translateY(1cqw)" }], { duration: 450, easing: IO });
+  reset(); $("titles").style.visibility = "visible";              // end card
+  sting.currentTime = 0; sting.play().catch(() => {});
+  if (has3d) window.PEN_GLASS.play();
+  fade(bgm, 0, 4000);
+  document.title = "REEL DONE";
+}
+
 function start() {
   document.getElementById("start").hidden = true;
   bgm.volume = BED; bgm.play().catch(() => {});
+  if (new URLSearchParams(location.search).get("show")) return show();
   (r => r ? reel(r === "1" ? 60 : Math.max(30, +r || 60)) : playout())(new URLSearchParams(location.search).get("reel"));
 }
 if (new URLSearchParams(location.search).get("autoplay")) start();
