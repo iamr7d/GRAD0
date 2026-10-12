@@ -370,7 +370,7 @@ function toStory(q) {
     credit: x.video_credit || x.media_credit || "", creditHtml: x.media_credit_html || "",
     clips: (x.clips || []).filter(c => c && c.url),
     anchorVideo: x.anchor_url || "",
-    audio: x.audio_url || "", dur: Math.max(8, q.display_duration || 15) * 1000,
+    audio: x.audio_url || "", audioSec: +x.audio_seconds || 0, dur: Math.max(8, q.display_duration || 15) * 1000,
   };
 }
 async function loadQueue() {
@@ -624,12 +624,24 @@ async function reel(total) {
   const list = await loadQueue();
   setTicker(list);
   await hgReady;
-  const PER = total >= 120 ? 17000 : 11000;                       // time per story, ms (+~1 s transition)
-  const n = Math.max(1, Math.min(list.length, Math.round((total - 24 - (HG.outro ? 9 : 0)) / (PER / 1000 + 1.2 + (HG_LINKS.some(k => HG[k]) ? 3 : 0)))));
-  const picks = [...list.filter(s => s.media && s.audio), ...list.filter(s => !(s.media && s.audio))].slice(0, n);
+  // each story runs as long as its own voice (whole sentences, never cut off), up to 30 s; stories are added
+  // until the time left after titles, headlines and sign-off (~24 s) is used up
+  const GAP = 2.8 + (HG_LINKS.some(k => HG[k]) ? 3 : 0);          // wipe + lower-third out (+ section link), s
+  const len = s => Math.min(30, s.audioSec ? s.audioSec + .4 : (total >= 120 ? 17 : 11));
+  let budget = total - 24 - (HG.outro ? 9 : 0);
+  let pool = [...list.filter(s => s.media && s.audio), ...list.filter(s => !(s.media && s.audio))]
+    .filter(s => !s.audioSec || s.audioSec <= 30);                // never cut a read off: skip the long ones
+  if (total < 120) pool = pool.slice(0, 12).sort((a, b) => (a.audioSec || 99) - (b.audioSec || 99));   // short reel: brisk reads
+  const picks = [];
+  for (const s of pool) {
+    if (len(s) + GAP > budget + 6) continue;                      // too long for what's left: try a shorter story
+    picks.push(s); budget -= len(s) + GAP;
+    if (budget < 6) break;
+  }
+  if (!picks.length && list.length) picks.push(pool[0] || list[0]);
   reset(); await titles(t);                     // ~7 s
   reset(); await Promise.all([headlines(t, picks), heygen("intro", t)]);   // ~10 s
-  for (const [i, s] of picks.entries()) { reset(); await story(t, s, PER, i > 0); }
+  for (const [i, s] of picks.entries()) { reset(); await story(t, s, len(s) * 1000, i > 0); }
   reset(); await heygen("outro", t);                               // HeyGen sign-off, if there is one
   reset(); $("titles").style.visibility = "visible";              // end card
   sting.currentTime = 0; sting.play().catch(() => {});

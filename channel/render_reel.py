@@ -160,6 +160,7 @@ def main():
     ap.add_argument("--base", default=DEFAULT_BASE, help="broadcast server address")
     ap.add_argument("--out", help="output MP4 path (default renders/prime_earth_news_<time>.mp4)")
     ap.add_argument("--show", action="store_true", help="record in a visible window instead of in the background")
+    ap.add_argument("--params", default="", help="extra page options, e.g. anchor=0 (no anchor box) or anchor=all")
     a = ap.parse_args()
 
     check_ready()
@@ -169,7 +170,7 @@ def main():
     mp4 = a.out or OUT_DIR / f"prime_earth_news_{stamp}.mp4"
     raw = OUT_DIR / f"raw_{stamp}.webm"
     try:
-        lead = asyncio.run(record(f"{a.base.rstrip('/')}/?reel={a.seconds}", raw, a.seconds, a.show))
+        lead = asyncio.run(record(f"{a.base.rstrip('/')}/?reel={a.seconds}" + (f"&{a.params.lstrip('&?')}" if a.params else ""),raw, a.seconds, a.show))
     finally:
         if server:
             server.terminate()

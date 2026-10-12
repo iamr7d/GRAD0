@@ -40,6 +40,35 @@ def _clean(text):
     return re.sub(r"\s+", " ", text).strip()
 
 
+# page furniture that article pages put inside <p> tags: bylines, share buttons, paywalls, outlet notices
+_PREFIX = [r"^.*?\bPublished On \d{1,2} \w+ \d{4}(?: \d{1,2} \w+ \d{4})?\s*",   # Al Jazeera share bar + byline
+           r"^Unlock these with Subscription\s*", r"^File \| Photo Credit:[\s:-]*",
+           r"^.*?\bhide caption\s*(?:[A-Z ,.]+?\s[–—-]\s)?"]   # NPR photo caption + dateline
+_JUNK = re.compile(r"\b\d{1,2}:\d{2} ?(AM|PM) (UTC|GMT|ET|IST)\b|Link Share|Gift Image|\bImage: |Photo Credit|"
+                   r"\bis an? (\w+[- ])*(reporter|writer|editor|correspondent)\b|^Previously, (he|she|they) |"
+                   r"^(He|She|They|[A-Z][a-z]+) (joined|spent \d+ years|has written|covers|started (his|her|their) career|began (his|her|their) career)\b|"
+                   r"^FILE\b|"
+                   r"\bstarted out at\b|^Before [A-Z][\w ]+, (he|she|they) |Account subscription|Premium Stories|"
+                   r"Unlock these|does not offer or accept money|not an? \w+ employee|whatsapp|copylink|"
+                   r"Add [\w ]+ on Google|^By [\w ]+ Staff|Read more:|Sign up|Newsletter", re.I)
+_SENT = re.compile(r"(?<!\bMr)(?<!\bMs)(?<!\bDr)(?<!\bSt)(?<!\bMrs)(?<!\bJr)(?<=[.!?])\s+(?=[\"“'‘A-Z0-9])")
+
+
+def sentences(text):
+    return [x.strip() for x in _SENT.split(text or "") if x.strip()]
+
+
+def tidy(text):
+    """Keep only the reporting: drop byline, share-bar, paywall and outlet-notice sentences."""
+    out = []
+    for s in sentences(text):
+        for p in _PREFIX:
+            s = re.sub(p, "", s, flags=re.I).strip()
+        if len(s.split()) >= 4 and not _JUNK.search(s):   # fragments like "23, 2026." are caption leftovers
+            out.append(s)
+    return " ".join(out)
+
+
 def _fetch(url, category):
     try:
         r = requests.get(url, timeout=10, headers={"User-Agent": "PrimeEarthNews/1.0"})
@@ -116,7 +145,7 @@ def article_lead(url, max_words=110):
         words += len(p.split())
         if words >= max_words:
             break
-    text = " ".join(out)
+    text = tidy(" ".join(out))
     # trim to the last full sentence within the limit
     w = text.split()
     if len(w) > max_words + 30:
@@ -144,21 +173,33 @@ def _ollama_script(story):
     return None
 
 
+def anchor_read(title, body, source, max_words=55):
+    """What the anchor says without the LLM: the headline, then whole sentences of the lead up to about
+    20 seconds of speech, then the attribution."""
+    out, n = [], 0
+    for s in sentences(body):
+        if out and n + len(s.split()) > max_words:
+            break
+        out.append(s); n += len(s.split())
+    head = title.rstrip(" .?!") + ("?" if title.rstrip().endswith("?") else ".")
+    return f"{head} {' '.join(out)} That's according to {source}.".replace("  ", " ")
+
+
 def to_item(story, use_llm=True):
     sid = hashlib.sha1(story["link"].encode() or story["title"].encode()).hexdigest()[:8]
     lead = article_lead(story["link"])
     if len(lead.split()) > len(story["summary"].split()):
         story = {**story, "summary": lead}
+    story = {**story, "summary": tidy(story["summary"])}
     llm = _ollama_script(story) if use_llm else None
     body = story["summary"]
-    script = (llm or {}).get("anchor_script") or f"{story['title']}. {body} That's according to {story['source']}."
-    sentences = [x.strip() for x in re.split(r"(?<=[.!?])\s+", body) if 6 <= len(x.split()) <= 28]
-    words = [w for w in re.findall(r"[A-Za-z]+", story["title"]) if len(w) > 3][:4]
+    script = (llm or {}).get("anchor_script") or anchor_read(story["title"], body, story["source"])
+    sents = [x for x in sentences(body) if 6 <= len(x.split()) <= 28]
     return {
         "id": sid, "type": "headline",
         "main_heading": story["title"],
-        "content_text": (sentences[0] if sentences else story["summary"])[:240],
-        "headlines": ((llm or {}).get("bullets") or sentences[1:4])[:3],
+        "content_text": (sents[0] if sents else story["summary"])[:240],
+        "headlines": ((llm or {}).get("bullets") or sents[1:4])[:3],
         "display_duration": 20,
         "timestamp": story["published"],
         "extra_data": {
