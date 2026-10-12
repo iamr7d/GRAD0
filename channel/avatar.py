@@ -8,6 +8,8 @@ with the voice; stories without one fall back to the illustrated anchor.
 
     python -m channel.avatar --watch      # keep making anchor clips as stories arrive (own window)
     python -m channel.avatar --once       # do what's waiting, then stop
+    python -m channel.avatar --intro FILE.mp4   # use a HeyGen (or any) presenter video as the bulletin opening
+    python -m channel.avatar --outro FILE.mp4   # ... and as the sign-off before the end card
 
 Settings in .env (paths on this PC):
     PEN_SADTALKER_DIR=C:\\Users\\rahul\\SadTalker            # the SadTalker checkout (with checkpoints/)
@@ -126,7 +128,33 @@ def run_once(limit=None, max_seconds=0, ready_only=False):
     return done
 
 
+def import_presenter(src: Path, kind: str):
+    """Bring in a presenter video made elsewhere (e.g. HeyGen) as the bulletin's opening or sign-off.
+    A transparent .webm is kept as WebM (VP9 with alpha); anything else (e.g. an .mp4 on green) becomes
+    bucket/media/anchor/heygen_<kind>.mp4. Either way the voice is brought to -16 LUFS like the TTS.
+    The page plays it in the anchor box with its own sound, over the headlines (intro) or before the end card (outro)."""
+    webm = src.suffix.lower() == ".webm"
+    out = ANCHOR_DIR / f"heygen_{kind}.{'webm' if webm else 'mp4'}"
+    for old in ANCHOR_DIR.glob(f"heygen_{kind}.*"):   # the page prefers .webm, so never leave a stale one behind
+        old.unlink()
+    part = ANCHOR_DIR / f"heygen_{kind}.part{out.suffix}"
+    audio = ["-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000"]
+    if webm:   # libvpx-vp9 keeps the alpha channel (decoder forced so ffmpeg reads it)
+        cmd = [FFMPEG, "-y", "-loglevel", "error", "-c:v", "libvpx-vp9", "-i", str(src), "-c:v", "libvpx-vp9",
+               "-pix_fmt", "yuva420p", "-b:v", "0", "-crf", "30", "-g", "15", *audio, "-c:a", "libopus", "-b:a", "128k", str(part)]
+    else:
+        cmd = [FFMPEG, "-y", "-loglevel", "error", "-i", str(src), "-vf", "scale=-2:1080:flags=lanczos,fps=30",
+               "-c:v", "libx264", "-crf", "19", "-preset", "medium", "-g", "15", "-pix_fmt", "yuv420p",
+               *audio, "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(part)]
+    subprocess.run(cmd, check=True)
+    part.replace(out)
+    print(f"Presenter {kind}: {out}")
+
+
 def main():
+    if len(sys.argv) >= 3 and sys.argv[1] in ("--intro", "--outro"):
+        # python -m channel.avatar --intro Downloads\heygen_intro.mp4   (no SadTalker needed)
+        return import_presenter(Path(sys.argv[2]), sys.argv[1][2:])
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--watch", action="store_true", help="keep going as new stories arrive")
     ap.add_argument("--once", action="store_true", help="make what's waiting, then stop")
