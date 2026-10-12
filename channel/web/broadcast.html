@@ -206,6 +206,40 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 /* HeyGen anchor clips (opening / closing): transparent WebM shown as is, green-screen MP4 keyed onto a canvas */
 .anchor #hgVid, .anchor #hgCan { position: absolute; inset: .35cqw; width: calc(100% - .7cqw); height: calc(100% - .7cqw); object-fit: cover; object-position: 50% 25%; border-radius: 1.3cqw; display: none; }
 .anchor.hg { width: 18cqw; aspect-ratio: 4 / 5; }
+/* presenter show stages: full (anchor fills the screen over the animated studio), split (headlines left,
+   anchor right), pip (footage full screen, anchor in the side box). The box glides between them. */
+.tv.show .anchor.hg { right: auto; bottom: auto; aspect-ratio: auto; transform: none;
+  transition: opacity .6s ease, top .9s var(--io), left .9s var(--io), width .9s var(--io), height .9s var(--io), border-radius .9s var(--io), padding .9s var(--io), background .6s ease, box-shadow .6s ease; }
+.tv.show.st-pip .anchor.hg { top: 10.25cqw; left: 78.8cqw; width: 18cqw; height: 22.5cqw; }
+.tv.show .anchor.hg #hgCan { background: radial-gradient(70% 60% at 70% 20%, #4a0d18, transparent 70%), radial-gradient(80% 70% at 20% 90%, #0c2a5a, transparent 70%), #0d1326; }
+.tv.show.st-full .anchor.hg #hgCan, .tv.show.st-split .anchor.hg #hgCan { background: transparent; }
+.tv.show.st-full .anchor.hg, .tv.show.st-split .anchor.hg { top: 0; height: 56.25cqw; padding: 0; border-radius: 0; background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.tv.show.st-full .anchor.hg { left: 0; width: 100cqw; }
+.tv.show.st-split .anchor.hg { left: 46cqw; width: 54cqw; }
+.tv.show.st-full .anchor.hg #hgCan, .tv.show.st-split .anchor.hg #hgCan { inset: 0; width: 100%; height: 100%; border-radius: 0; object-position: 50% 50%; }
+.tv.show.st-full .anchor .atag, .tv.show.st-split .anchor .atag { opacity: 0; }
+/* animated studio backdrop behind the full-size anchor */
+.studio { inset: 0; z-index: 4; opacity: 0; transition: opacity .9s ease; overflow: hidden; pointer-events: none;
+  background: radial-gradient(60% 80% at 75% 35%, #3a0a14 0%, transparent 60%), radial-gradient(70% 90% at 15% 80%, #0c2a5a 0%, transparent 65%), linear-gradient(160deg, #0a0f1f 0%, #121a33 50%, #1a0610 100%); }
+.tv.show.st-full .studio, .tv.show.st-split .studio { opacity: 1; }
+.studio i { position: absolute; border-radius: 50%; filter: blur(5cqw); opacity: .55; animation: drift 14s ease-in-out infinite alternate; }
+.studio i:nth-child(1) { width: 40cqw; height: 40cqw; left: 55cqw; top: -8cqw; background: #e8000b; }
+.studio i:nth-child(2) { width: 46cqw; height: 46cqw; left: -10cqw; top: 18cqw; background: #1d4ed8; animation-duration: 18s; animation-direction: alternate-reverse; }
+.studio i:nth-child(3) { width: 26cqw; height: 26cqw; left: 30cqw; top: 30cqw; background: #7c3aed; opacity: .35; animation-duration: 11s; }
+@keyframes drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(-6cqw, 4cqw) scale(1.15); } }
+.studio .grid { position: absolute; inset: -20%; background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 4cqw 4cqw; transform: perspective(60cqw) rotateX(58deg) translateY(18cqw); animation: gridmove 6s linear infinite; -webkit-mask-image: linear-gradient(transparent 30%, #000 70%); mask-image: linear-gradient(transparent 30%, #000 70%); }
+@keyframes gridmove { to { background-position: 0 4cqw; } }
+.studio .beam { position: absolute; top: -30%; bottom: -30%; width: 12cqw; left: -20cqw; transform: skewX(-18deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); animation: beam 7s ease-in-out infinite; }
+@keyframes beam { 0%, 30% { left: -20cqw; } 70%, 100% { left: 115cqw; } }
+.studio .mark { position: absolute; left: 4cqw; top: 3.4cqw; font-family: "Montserrat", "Arial Black", sans-serif; font-weight: 900; font-size: 11cqw; line-height: .9; letter-spacing: -.02em; color: rgba(255,255,255,.04); }
+/* split stage: "coming up" panel on the left */
+.cu { left: 3.2cqw; top: 9cqw; width: 42cqw; z-index: 6; display: grid; gap: 1.1cqw; visibility: hidden; }
+.cu h3 { margin: 0 0 .4cqw; display: flex; align-items: center; gap: .8cqw; font-weight: 800; font-size: 2.6cqw; letter-spacing: -.02em; color: #fff; }
+.cu h3 i { width: .75cqw; height: .75cqw; border-radius: 50%; background: var(--accent); box-shadow: 0 0 1.2cqw rgba(232,0,11,.7); }
+.cu .it { border-radius: 1.2cqw; padding: 1.1cqw 1.4cqw; display: grid; gap: .35cqw; opacity: 0; transition: transform .6s var(--spring), box-shadow .5s ease, background .5s ease; }
+.cu .it b { font-weight: 700; font-size: .9cqw; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
+.cu .it span { font-weight: 700; font-size: 1.9cqw; line-height: 1.18; letter-spacing: -.015em; color: var(--ink); }
+.cu .it.on { transform: translateX(1cqw); box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), inset .3cqw 0 0 var(--accent), 0 2cqw 4cqw rgba(0,0,0,.35); }
 .anchor.hg svg, .anchor.hg #aVid { visibility: hidden; }
 .anchor.hg #hgVid { display: block; }
 .anchor.hg.key #hgVid { display: none; }
@@ -254,6 +288,8 @@ tv.innerHTML = `
   <div class="brk-wall abs" id="brk"><div class="flash"></div><div class="panel sheen"><div class="glow"></div><div class="bt-row"><span class="pill">BREAKING NEWS</span><span class="meta"><span id="brkLoc"></span> · <b id="brkTime"></b></span></div><div class="bh" id="brkHead"></div><div class="bar"><i></i></div></div></div>
   <div class="titles abs" id="titles"><canvas id="gl"></canvas><div class="fallback"><svg class="fb-logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div>
     </div>
+  <div class="studio abs"><i></i><i></i><i></i><div class="grid"></div><div class="beam"></div><div class="mark">PRIME<br>EARTH<br>NEWS</div></div>
+  <div class="cu abs" id="cu"><h3><i></i>Coming up</h3></div>
   <div class="wipe abs"><i></i></div>
   <div class="bw abs" id="bw"><div class="g"></div><div class="r"></div><div class="lg"><svg viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg><span id="bwCat"></span></div></div>`;
 document.getElementById("stage").append(tv);
@@ -471,7 +507,8 @@ function heygen(name, t, voiceOnly = false) {   // plays in the anchor box (or j
     if (key && !voiceOnly) (function draw() {   // knock out the green screen, softening green spill on the edges
       if (over) return;
       if (v.videoWidth) {
-        c.width = 640; c.height = Math.round(640 * v.videoHeight / v.videoWidth);
+        const cw = tv.classList.contains("show") ? Math.min(v.videoWidth, 1280) : 640;   // full-size presenter needs full resolution
+        if (c.width !== cw) { c.width = cw; c.height = Math.round(cw * v.videoHeight / v.videoWidth); }
         g.drawImage(v, 0, 0, c.width, c.height);
         const f = g.getImageData(0, 0, c.width, c.height), d = f.data;
         for (let i = 0; i < d.length; i += 4) {
@@ -659,31 +696,50 @@ async function show() {
   catch (e) { console.warn("No show.json, playing the reel instead", e); return reel(60); }
   const heads = spec.cues.filter(c => c.head);
   setTicker(heads.map(c => ({ head: c.head })));
+  const stageTo = st => { tv.classList.remove("st-full", "st-split", "st-pip"); tv.classList.add("st-" + st); };
+  tv.classList.add("show"); stageTo(spec.cues[0].stage || "pip");   // the titles sweep off onto the studio, not a blank frame
   reset(); await titles(t);
   reset(); anchorHere = true;
   HG.show = spec.clip;
+  const cu = $("cu"); cu.querySelectorAll(".it").forEach(x => x.remove());
   const done = heygen("show", t);
   const v = $("hgVid"), last = spec.cues.length - 1;
-  let k = -1, cur = null;
+  let k = -1, cur = null, stage = "";
+  const ltHide = () => { clearInterval(subTimer); A($("lt"), [{ opacity: 1 }, { opacity: 0, transform: "translateY(1cqw)" }], { duration: 400, easing: IO }); };
   const cue = () => {
     const now = v.currentTime || 0;
     let j = k;
     while (j < last && now >= spec.cues[j + 1].t) j++;
     if (j === k) return;
     k = j; const c = spec.cues[k];
+    const st = c.stage || stage || "pip";
     const next = c.keep && cur ? cur : { loc: c.cat || "", cat: "", head: c.head || "", subs: [c.sub || " "] };
-    setMedia({ ...next, media: c.media, mediaType: "video", clips: [], credit: c.credit, creditHtml: "" });
-    if (next !== cur) {                                   // new item: lower third in again
+    if (c.media) setMedia({ ...next, media: c.media, mediaType: "video", clips: [], credit: c.credit, creditHtml: "" });
+    if (st !== stage) {                                   // glide the presenter to the new layout
+      if (stage === "split") A(cu, [{ opacity: 1 }, { opacity: 0, transform: "translateX(-3cqw)" }], { duration: 500, easing: IO }).then(() => { cu.style.visibility = "hidden"; });
+      if (st === "split") { ltHide(); cu.style.visibility = "visible"; A(cu, [{ opacity: 0, transform: "translateX(-3cqw)" }, { opacity: 1, transform: "none" }], { duration: 700, easing: OUT }); }
+      if (st === "pip" && stage) sweep();
+      stageTo(st); stage = st;
+    }
+    if (next === cur || !c.head) return;
+    cur = next;
+    if (st === "split") {                                 // the coming-up list grows as he reads it
+      cu.querySelectorAll(".it").forEach(x => x.classList.remove("on"));
+      const it = document.createElement("div");
+      it.className = "it glass on"; it.innerHTML = `<b>${esc(c.cat || "")}</b><span>${esc(c.head)}</span>`;
+      cu.append(it);
+      A(it, [{ opacity: 0, transform: "translateY(1.5cqw) scale(.96)", filter: "blur(.4cqw)" }, { opacity: 1, transform: "translateX(1cqw)", filter: "blur(0)" }], { duration: 750, easing: SPRING });
+    } else {
       const end = spec.cues.slice(k + 1).find(x => !x.keep);
+      $("lt").getAnimations().forEach(a => a.cancel());     // undo an earlier fade-out that is holding it hidden
       ltIn(next, t, ((end ? end.t : v.duration || 30) - c.t) * 1000);
-      cur = next;
     }
   };
   const timer = setInterval(cue, 80);
   await done; clearInterval(timer);
   if (!live(t)) return;
-  clearInterval(subTimer);
-  await A($("lt"), [{ opacity: 1 }, { opacity: 0, transform: "translateY(1cqw)" }], { duration: 450, easing: IO });
+  ltHide(); await wait(450);
+  tv.classList.remove("show", "st-full", "st-split", "st-pip"); cu.style.visibility = "hidden";
   reset(); $("titles").style.visibility = "visible";              // end card
   sting.currentTime = 0; sting.play().catch(() => {});
   if (has3d) window.PEN_GLASS.play();

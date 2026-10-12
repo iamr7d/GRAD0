@@ -18,4 +18,5 @@ publishing a video that uses them. `news_bed.m4a` is the same track loudness-nor
 
 | Local file | Track | Artist | Source URL | Licence |
 |---|---|---|---|---|
-| news_bed.mp3 | ? | ? | ? | ? |
+| news_bed.m4a (since 13 Oct 2026) | "News / Breaking News" (Pixabay id 597974), loudness-normalised to -20 LUFS | lnplusmusic | Pixabay Music (file `lnplusmusic-news-breaking-news-597974.mp3`) | Pixabay Content Licence (free use in videos; no redistribution of the file) |
+| previous/news_bed.mp3 (8 Oct 2026) | ? | ? | ? | ? |
