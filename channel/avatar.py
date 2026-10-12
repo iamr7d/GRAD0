@@ -9,6 +9,7 @@ with the voice; stories without one fall back to the illustrated anchor.
     python -m channel.avatar --watch      # keep making anchor clips as stories arrive (own window)
     python -m channel.avatar --once       # do what's waiting, then stop
     python -m channel.avatar --intro FILE.mp4   # use a HeyGen (or any) presenter video as the bulletin opening
+    python -m channel.avatar --world FILE.mp4   # section links too: --business --tech --science --india --breaking --outro
     python -m channel.avatar --outro FILE.mp4   # ... and as the sign-off before the end card
 
 Settings in .env (paths on this PC):
@@ -128,6 +129,10 @@ def run_once(limit=None, max_seconds=0, ready_only=False):
     return done
 
 
+# opening and sign-off show the presenter; section links play as his voice over that story's footage
+PRESENTER_KINDS = ("intro", "outro", "world", "business", "tech", "science", "india", "breaking")
+
+
 def import_presenter(src: Path, kind: str):
     """Bring in a presenter video made elsewhere (e.g. HeyGen) as the bulletin's opening or sign-off.
     A transparent .webm is kept as WebM (VP9 with alpha); anything else (e.g. an .mp4 on green) becomes
@@ -152,7 +157,7 @@ def import_presenter(src: Path, kind: str):
 
 
 def main():
-    if len(sys.argv) >= 3 and sys.argv[1] in ("--intro", "--outro"):
+    if len(sys.argv) >= 3 and sys.argv[1][2:] in PRESENTER_KINDS:
         # python -m channel.avatar --intro Downloads\heygen_intro.mp4   (no SadTalker needed)
         return import_presenter(Path(sys.argv[2]), sys.argv[1][2:])
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)

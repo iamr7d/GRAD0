@@ -446,13 +446,14 @@ setInterval(() => {   // keep picture and voice together (and pause with the voi
    heygen_outro (.webm with transparency, or .mp4 on a green screen). When an opening clip exists it replaces
    the generated anchor on the first story. */
 const HG = {};
-const hgReady = Promise.all(["intro", "outro"].map(async n => {
+const HG_LINKS = ["world", "business", "tech", "science", "india", "breaking"];   // spoken over the story's footage
+const hgReady = Promise.all(["intro", "outro", ...HG_LINKS].map(async n => {
   for (const ext of ["webm", "mp4"]) {
     const u = `/bucket/media/anchor/heygen_${n}.${ext}`;
     try { if ((await fetch(u, { method: "HEAD" })).ok) { HG[n] = u; return; } } catch (e) {}
   }
 }));
-function heygen(name, t) {   // plays in the anchor box with its own sound; resolves when it ends
+function heygen(name, t, voiceOnly = false) {   // plays in the anchor box (or just his voice) with its own sound; resolves when it ends
   return new Promise(async res => {
     await hgReady;
     const url = HG[name];
@@ -465,9 +466,9 @@ function heygen(name, t) {   // plays in the anchor box with its own sound; reso
       box.classList.remove("hg", "key", "on"); v.pause(); fade(bgm, BED); res();
     };
     v.src = url; v.volume = 1; v.onended = end; v.onerror = end;
-    box.classList.toggle("key", key); box.classList.add("hg", "on");
+    if (!voiceOnly) { box.classList.toggle("key", key); box.classList.add("hg", "on"); }
     fade(bgm, DUCK, 400);
-    if (key) (function draw() {   // knock out the green screen, softening green spill on the edges
+    if (key && !voiceOnly) (function draw() {   // knock out the green screen, softening green spill on the edges
       if (over) return;
       if (v.videoWidth) {
         c.width = 640; c.height = Math.round(640 * v.videoHeight / v.videoWidth);
@@ -536,10 +537,15 @@ async function headlines(t, list) {
   if (!live(t)) return;
   await sweep(() => { h.style.visibility = "hidden"; });
 }
+let lastLink = "";
 async function story(t, s, cap = 0, wipe = false) {
   anchorHere = ANCHOR_ALL || (!wipe && !HG.intro);   // the first story of a bulletin has no wipe before it
   if (wipe) await brandWipe(s.cat, () => setMedia(s)); else setMedia(s);
   if (!live(t)) return;
+  // the presenter's section link ("Now to business...") over this story's footage, when the section changes
+  const link = s.type === "breaking" ? "breaking" : String(s.cat).toLowerCase();
+  if (!wipe) lastLink = "";
+  if (HG[link] && link !== lastLink) { lastLink = link; await heygen(link, t, true); if (!live(t)) return; }
   sync(s);
   ltIn(s, t, cap || s.dur);
   await speak(s, t, cap); if (!live(t)) return;
@@ -550,6 +556,7 @@ async function breaking(t, s) {
   anchorHere = ANCHOR_ALL;
   const b = $("brk"); b.style.visibility = "visible"; $("lt").style.visibility = "hidden";
   setMedia(s); sync(s);
+  if (HG.breaking) { lastLink = "breaking"; await heygen("breaking", t, true); if (!live(t)) return; }
   $("brkLoc").textContent = s.loc; $("brkTime").textContent = new Date().toTimeString().slice(0, 5);
   $("brkHead").innerHTML = words(esc(s.head));
   rerun();
@@ -618,7 +625,7 @@ async function reel(total) {
   setTicker(list);
   await hgReady;
   const PER = total >= 120 ? 17000 : 11000;                       // time per story, ms (+~1 s transition)
-  const n = Math.max(1, Math.min(list.length, Math.round((total - 24 - (HG.outro ? 9 : 0)) / (PER / 1000 + 1.2))));
+  const n = Math.max(1, Math.min(list.length, Math.round((total - 24 - (HG.outro ? 9 : 0)) / (PER / 1000 + 1.2 + (HG_LINKS.some(k => HG[k]) ? 3 : 0)))));
   const picks = [...list.filter(s => s.media && s.audio), ...list.filter(s => !(s.media && s.audio))].slice(0, n);
   reset(); await titles(t);                     // ~7 s
   reset(); await Promise.all([headlines(t, picks), heygen("intro", t)]);   // ~10 s
