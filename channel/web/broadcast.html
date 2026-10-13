@@ -314,7 +314,7 @@ const A = (el, kf, o = {}) => el ? el.animate(kf, { duration: 700, easing: OUT, 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const words = s => s.split(" ").map(w => `<span class="w"><span>${w}</span></span>`).join(" ");
 const stopAll = () => tv.getAnimations({ subtree: true }).forEach(a => { if (a instanceof CSSAnimation || a instanceof CSSTransition) return; const el = a.effect && a.effect.target; if (el && el.closest && el.closest(".tick")) return; a.cancel(); });
-let clipTimer = null;
+let clipTimer = null, clipZ = 1;
 function playClip(c) {   // cross-fade to the next shot on whichever video layer is free
   const a = $("vid"), b = $("vid2"), cur = a.classList.contains("on") ? a : b.classList.contains("on") ? b : null;
   const next = cur === a ? b : a;
@@ -327,7 +327,10 @@ function playClip(c) {   // cross-fade to the next shot on whichever video layer
     const zin = Math.random() < .7, a0 = "scale(1) translate(0,0)", a1 = `scale(1.08) translate(${dx.toFixed(2)}%, ${dy.toFixed(2)}%)`;
     next.animate([{ transform: zin ? a0 : a1 }, { transform: zin ? a1 : a0 }], { duration: 11000, easing: "linear", fill: "both" });
   }
-  if (cur && cur !== next) setTimeout(() => cur.classList.remove("on"), 60);
+  // the new shot fades in on top while the old one stays fully opaque underneath, so the studio light never
+  // shows through mid-dissolve (that read as a light flare between clips)
+  next.style.zIndex = String(++clipZ);
+  if (cur && cur !== next) setTimeout(() => { if (cur.style.zIndex !== String(clipZ)) cur.classList.remove("on"); }, 1300);
   // footage credits are not shown on screen (owner's choice); sources stay in the run of show
 }
 function setMedia(s) {
