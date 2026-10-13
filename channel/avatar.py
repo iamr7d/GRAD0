@@ -1,4 +1,4 @@
-"""Realistic AI anchor: turn one presenter photo + each story's voice into a talking-head video.
+﻿"""Realistic AI anchor: turn one presenter photo + each story's voice into a talking-head video.
 
 Uses SadTalker (open source, runs on an NVIDIA GPU; about 1-2 minutes per story on an RTX 3050)
 in its own folder and Python environment. For every story in the run of show that has a voice
@@ -8,11 +8,16 @@ with the voice; stories without one fall back to the illustrated anchor.
 
     python -m channel.avatar --watch      # keep making anchor clips as stories arrive (own window)
     python -m channel.avatar --once       # do what's waiting, then stop
+    python -m channel.avatar --intro FILE.mp4   # use a HeyGen (or any) presenter video as the bulletin opening
+    python -m channel.avatar --world FILE.mp4   # section links too: --business --tech --science --india --breaking --outro
+    python -m channel.avatar --outro FILE.mp4   # ... and as the sign-off before the end card
 
 Settings in .env (paths on this PC):
     PEN_SADTALKER_DIR=C:\\Users\\rahul\\SadTalker            # the SadTalker checkout (with checkpoints/)
     PEN_SADTALKER_PYTHON=C:\\Users\\rahul\\SadTalker\\venv\\Scripts\\python.exe
     PEN_ANCHOR_IMAGE=bucket/media/anchor/anchor.png         # front-facing presenter photo (default)
+    PEN_ANCHOR_EXPRESSION=1.6                               # mouth/face movement strength (SadTalker default 1.0)
+    PEN_ANCHOR_PREPROCESS=full                              # or "crop" for a face-only clip
 """
 import argparse
 import json
@@ -24,7 +29,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from .config import FFMPEG, MEDIA, QUEUE_FILE, ROOT, media_url
+from .config import FFMPEG, FFPROBE, MEDIA, QUEUE_FILE, ROOT, media_url
 
 ANCHOR_DIR = MEDIA / "anchor"
 ANCHOR_DIR.mkdir(parents=True, exist_ok=True)
@@ -67,7 +72,8 @@ def render(voice: Path, out: Path, max_seconds=0):
         cut = ["-t", str(max_seconds)] if max_seconds else []
         subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(voice), *cut, "-ac", "1", "-ar", "16000", str(wav)], check=True)
         cmd = [str(py), "inference.py", "--driven_audio", str(wav), "--source_image", str(img),
-               "--result_dir", tmp, "--preprocess", "full", "--still", "--size", "256", "--expression_scale", "1.0"]
+               "--result_dir", tmp, "--preprocess", os.getenv("PEN_ANCHOR_PREPROCESS", "full"), "--still",
+               "--size", "256", "--expression_scale", os.getenv("PEN_ANCHOR_EXPRESSION", "1.6")]   # >1 opens the mouth wider
         enhance = os.getenv("PEN_ANCHOR_ENHANCE")   # sharper face; set 0 if it's too slow
         if enhance == "1" or (enhance is None and (st / "gfpgan" / "weights" / "GFPGANv1.4.pth").exists()):
             cmd += ["--enhancer", "gfpgan"]
@@ -77,7 +83,8 @@ def render(voice: Path, out: Path, max_seconds=0):
             raise RuntimeError("SadTalker made no video")
         part = out.with_suffix(".part.mp4")
         subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(made[-1]), "-c:v", "libx264", "-crf", "20",
-                        "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k",
+                        "-preset", "medium", "-g", "15",   # keyframe every 0.5 s so the page can resync without freezing
+                        "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k",
                         "-movflags", "+faststart", str(part)], check=True)
         part.replace(out)
 
@@ -122,7 +129,79 @@ def run_once(limit=None, max_seconds=0, ready_only=False):
     return done
 
 
+# opening and sign-off show the presenter; section links play as his voice over that story's footage
+PRESENTER_KINDS = ("intro", "outro", "world", "business", "tech", "science", "india", "breaking")
+
+
+def import_presenter(src: Path, kind: str, pre_filter=""):
+    """Bring in a presenter video made elsewhere (e.g. HeyGen) as the bulletin's opening or sign-off.
+    A transparent .webm is kept as WebM (VP9 with alpha); anything else (e.g. an .mp4 on green) becomes
+    bucket/media/anchor/heygen_<kind>.mp4. Either way the voice is brought to -16 LUFS like the TTS.
+    The page plays it in the anchor box with its own sound, over the headlines (intro) or before the end card (outro)."""
+    webm = src.suffix.lower() == ".webm"
+    out = ANCHOR_DIR / f"heygen_{kind}.{'webm' if webm else 'mp4'}"
+    for old in ANCHOR_DIR.glob(f"heygen_{kind}.*"):   # the page prefers .webm, so never leave a stale one behind
+        old.unlink()
+    part = ANCHOR_DIR / f"heygen_{kind}.part{out.suffix}"
+    audio = ["-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000"]
+    if webm:   # libvpx-vp9 keeps the alpha channel (decoder forced so ffmpeg reads it)
+        cmd = [FFMPEG, "-y", "-loglevel", "error", "-c:v", "libvpx-vp9", "-i", str(src), "-c:v", "libvpx-vp9",
+               "-pix_fmt", "yuva420p", "-b:v", "0", "-crf", "30", "-g", "15", *audio, "-c:a", "libopus", "-b:a", "128k", str(part)]
+    else:
+        cmd = [FFMPEG, "-y", "-loglevel", "error", "-i", str(src), "-vf", (pre_filter + "," if pre_filter else "") + "scale=-2:1080:flags=lanczos,fps=30",
+               "-c:v", "libx264", "-crf", "19", "-preset", "medium", "-g", "15", "-pix_fmt", "yuv420p",
+               *audio, "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(part)]
+    subprocess.run(cmd, check=True)
+    part.replace(out)
+    print(f"Presenter {kind}: {out}")
+
+
+# the order the lines are read in a single take (the script in HANDOFF.md); --split cuts them apart
+TAKE_ORDER = ("intro", "world", "business", "tech", "science", "india", "breaking", "outro")
+
+
+def split_take(src: Path, gap=1.0):
+    """One presenter video with every line read in TAKE_ORDER, separated by pauses of ~2 s:
+    find the pauses, cut the take into its lines and import each like --intro/--world/... ."""
+    r = subprocess.run([FFMPEG, "-hide_banner", "-nostats", "-i", str(src), "-af", f"silencedetect=noise=-38dB:d={gap}",
+                        "-vn", "-f", "null", "-"], capture_output=True, text=True)
+    import re
+    starts = [float(x) for x in re.findall(r"silence_start: ([\d.]+)", r.stderr)]
+    ends = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", r.stderr)]
+    dur = float(subprocess.run([FFPROBE, "-v", "error", "-show_entries", "format=duration",
+                                "-of", "csv=p=0", str(src)], capture_output=True, text=True).stdout.strip() or 0)
+    silences = list(zip(starts, ends + [dur] * (len(starts) - len(ends))))   # a pause running to the end has no end mark
+    lines, t = [], 0.0   # speech = what lies between the pauses
+    for s, e in silences + [(dur, dur)]:
+        if s - t > .6:
+            lines.append((t, s))
+        t = e
+    if len(lines) != len(TAKE_ORDER):
+        print(f"Found {len(lines)} spoken lines, expected {len(TAKE_ORDER)} ({', '.join(TAKE_ORDER)}):")
+        for a, b in lines:
+            print(f"  {a:6.2f}s - {b:6.2f}s")
+        sys.exit("Make the pauses between lines longer (about 2 s), or try --gap 0.6 / 1.5.")
+    with tempfile.TemporaryDirectory() as tmp:
+        for kind, (a, b) in zip(TAKE_ORDER, lines):
+            a, b = max(0, a - .25), min(dur, b + .35)   # keep a breath either side
+            piece = Path(tmp) / f"{kind}{src.suffix}"
+            subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-ss", f"{a:.2f}", "-to", f"{b:.2f}", "-i", str(src),
+                            "-c:v", "libx264", "-crf", "16", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", str(piece)]
+                           if src.suffix.lower() != ".webm" else
+                           [FFMPEG, "-y", "-loglevel", "error", "-c:v", "libvpx-vp9", "-ss", f"{a:.2f}", "-to", f"{b:.2f}", "-i", str(src),
+                            "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p", "-b:v", "0", "-crf", "20", "-c:a", "libopus", str(piece)], check=True)
+            print(f"  {kind:9s} {a:6.2f}s - {b:6.2f}s")
+            import_presenter(piece, kind)
+
+
 def main():
+    if len(sys.argv) >= 3 and sys.argv[1] == "--split":
+        # python -m channel.avatar --split Downloads\anchor_take.mp4 [--gap 1.0]
+        gap = float(sys.argv[sys.argv.index("--gap") + 1]) if "--gap" in sys.argv else 1.0
+        return split_take(Path(sys.argv[2]), gap)
+    if len(sys.argv) >= 3 and sys.argv[1][2:] in PRESENTER_KINDS:
+        # python -m channel.avatar --intro Downloads\heygen_intro.mp4   (no SadTalker needed)
+        return import_presenter(Path(sys.argv[2]), sys.argv[1][2:])
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--watch", action="store_true", help="keep going as new stories arrive")
     ap.add_argument("--once", action="store_true", help="make what's waiting, then stop")

@@ -58,9 +58,8 @@ RECORD_JS = """async ({w, h, fps, slice = 1000, vbps = 16e6, waitSting = true}) 
   rec.start(slice);
   await new Promise(r => setTimeout(r, 300));
   start();
-  // seconds before the reel starts (its sting begins); trimmed off when converting
-  const sting = document.getElementById("sting");
-  while (waitSting && sting.paused) await new Promise(r => setTimeout(r, 10));
+  // seconds before the reel starts (the page marks the moment its titles begin); trimmed off when converting
+  while (waitSting && !window.PEN_T0) await new Promise(r => setTimeout(r, 10));
   return {mimeType, lead: Math.max(0, (performance.now() - t0) / 1000 - 0.05)};
 }"""
 
@@ -125,8 +124,10 @@ async def record(url, raw, seconds, show):
         page.on("crash", lambda _: print("\nThe page crashed while recording."))
         out = open(raw, "wb")
         await page.expose_function("penChunk", lambda b64: out.write(base64.b64decode(b64)))
-        await page.goto(url, wait_until="load")
-        await page.wait_for_timeout(1500)  # fonts, 3D titles and first media settle
+        # "load" waits for every media file the page touches, which can stall on a slow local server;
+        # the page only needs its script, and the wait below lets fonts and footage settle
+        await page.goto(url, wait_until="domcontentloaded", timeout=90000)
+        await page.wait_for_timeout(3000)  # fonts, 3D titles and first media settle
         info = await page.evaluate(RECORD_JS, {"w": W, "h": H, "fps": FPS})
         print(f"Recording ({info['mimeType']}) ...")
         t0 = time.time()
@@ -160,6 +161,7 @@ def main():
     ap.add_argument("--base", default=DEFAULT_BASE, help="broadcast server address")
     ap.add_argument("--out", help="output MP4 path (default renders/prime_earth_news_<time>.mp4)")
     ap.add_argument("--show", action="store_true", help="record in a visible window instead of in the background")
+    ap.add_argument("--params", default="", help="extra page options, e.g. anchor=0 (no anchor box) or anchor=all")
     a = ap.parse_args()
 
     check_ready()
@@ -169,7 +171,7 @@ def main():
     mp4 = a.out or OUT_DIR / f"prime_earth_news_{stamp}.mp4"
     raw = OUT_DIR / f"raw_{stamp}.webm"
     try:
-        lead = asyncio.run(record(f"{a.base.rstrip('/')}/?reel={a.seconds}", raw, a.seconds, a.show))
+        lead = asyncio.run(record(f"{a.base.rstrip('/')}/?reel={a.seconds}" + (f"&{a.params.lstrip('&?')}" if a.params else ""),raw, a.seconds, a.show))
     finally:
         if server:
             server.terminate()
