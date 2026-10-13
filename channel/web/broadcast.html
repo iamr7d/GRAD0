@@ -244,15 +244,11 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 /* voice stage: the story footage fills the screen and only his voice carries on (presenter hidden) */
 .tv.show.st-voice .anchor.hg { opacity: 0 !important; transition: opacity .7s ease !important; }
 /* name super: a small credit for the presenter on his first appearance (not a news lower third) */
-.nm { left: 4cqw; bottom: 10.5cqw; z-index: 6; display: flex; align-items: stretch; visibility: hidden; filter: drop-shadow(0 .9cqw 1.8cqw rgba(0,0,0,.28)); }
-.nm .bar { width: .45cqw; background: var(--accent); border-radius: .25cqw 0 0 .25cqw; transform-origin: 50% 100%; }
-.nm .pn { position: relative; overflow: hidden; display: grid; justify-items: start; gap: .45cqw; padding: .85cqw 2.4cqw .9cqw 1.3cqw; border-radius: 0 .6cqw .6cqw 0;
-  background: repeating-linear-gradient(-45deg, rgba(14,20,32,.035) 0 .5cqw, transparent .5cqw 1.1cqw) 0 0 / 3.1cqw 3.1cqw, #fff; animation: nmDrift 6s linear infinite; }
-@keyframes nmDrift { to { background-position: 3.1cqw 0, 0 0; } }   /* faint stripes drifting slowly inside the white card */
-.nm .pn::after { content: ""; position: absolute; right: .9cqw; top: .9cqw; width: .55cqw; height: .55cqw; border-radius: 50%; background: var(--accent); animation: pulse 1.8s ease-in-out infinite; }
-.nm b { font-weight: 800; font-size: 2.1cqw; line-height: 1; letter-spacing: .05em; color: #0e1420; }
-.nm .ln { display: block; width: 100%; height: .2cqw; border-radius: 99px; background: linear-gradient(90deg, var(--accent), rgba(232,0,11,.15)); transform-origin: 0 50%; }
-.nm .ro { font-weight: 700; font-size: .95cqw; line-height: 1; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+.nm { left: 4cqw; bottom: 10.5cqw; z-index: 6; visibility: hidden; text-shadow: 0 .15cqw .8cqw rgba(0,0,0,.55); }
+.nm .pn { display: grid; justify-items: start; gap: .5cqw; }
+.nm b { font-weight: 800; font-size: 2.3cqw; line-height: 1; letter-spacing: .05em; color: #fff; }
+.nm .ln { display: block; width: 100%; height: .18cqw; border-radius: 99px; background: #fff; box-shadow: 0 .1cqw .5cqw rgba(0,0,0,.4); transform-origin: 0 50%; }
+.nm .ro { font-weight: 700; font-size: 1cqw; line-height: 1; letter-spacing: .24em; text-transform: uppercase; color: #fff; }
 .credit { display: none !important; }   /* the owner chose not to show footage credits on screen */
 /* split stage: "coming up" panel on the left */
 .cu { left: 3.2cqw; top: 9cqw; width: 42cqw; z-index: 6; display: grid; gap: 1.1cqw; visibility: hidden; }
@@ -306,7 +302,7 @@ tv.innerHTML = `
   <div class="hls abs" id="hls"><h2><i></i>The headlines</h2><div class="cards" id="cards"></div></div>
   <div class="lt abs" id="lt"><div class="tag glass"><b id="ltKey">LIVE</b><span class="cat" id="ltCat"></span><span id="ltLoc"></span></div>
     <div class="card glass sheen"><i class="lbar"></i><div class="head" id="ltHead"></div><div class="sub" id="ltSub"></div><div class="prog"><i id="prog"></i></div></div></div>
-  <div class="nm abs" id="nm"><i class="bar"></i><div class="pn"><b id="nmA"></b><i class="ln"></i><span class="ro" id="nmB"></span></div></div>
+  <div class="nm abs" id="nm"><div class="pn"><b id="nmA"></b><i class="ln"></i><span class="ro" id="nmB"></span></div></div>
   <div class="tick glass abs"><span class="lab"><span class="fl" style="position:static">Latest</span><span class="fl" id="clock">--:--</span><span class="fl live-fl">LIVE</span></span><div class="trk"><div class="mv" id="tickMv"></div></div></div>
   <div class="brk-wall abs" id="brk"><div class="flash"></div><div class="panel sheen"><div class="glow"></div><div class="bt-row"><span class="pill">BREAKING NEWS</span><span class="meta"><span id="brkLoc"></span> · <b id="brkTime"></b></span></div><div class="bh" id="brkHead"></div><div class="bar"><i></i></div></div></div>
   <div class="titles abs" id="titles"><canvas id="gl"></canvas><div class="fallback"><svg class="fb-logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div>
@@ -784,21 +780,18 @@ async function show() {
     }
     if (next === cur || !c.head) return;
     cur = next;
-    if (c.name) {                                         // name super: a small white credit for the presenter, then away
-      const nm = $("nm"), bar = nm.querySelector(".bar"), pn = nm.querySelector(".pn"), nb = $("nmA"), ln = nm.querySelector(".ln"), ro = $("nmB");
+    if (c.name) {                                         // name super: just his name, a white rule and his role
+      const nm = $("nm"), nb = $("nmA"), ln = nm.querySelector(".ln"), ro = $("nmB");
       nb.textContent = c.head; ro.textContent = c.sub || "";
       nm.style.visibility = "visible";
-      A(bar, [{ transform: "scaleY(0)" }, { transform: "scaleY(1)" }], { duration: 320, easing: OUT });
-      A(pn, [{ clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0 0 0)" }], { duration: 650, delay: 180, easing: OUT });
-      A(nb, [{ opacity: 0, transform: "translateY(.8cqw)" }, { opacity: 1, transform: "none" }], { duration: 520, delay: 480, easing: OUT });
-      A(ln, [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], { duration: 560, delay: 680, easing: OUT });
-      A(ro, [{ opacity: 0, letterSpacing: ".55em" }, { opacity: 1, letterSpacing: ".22em" }], { duration: 760, delay: 760, easing: OUT });
+      A(nb, [{ opacity: 0, transform: "translateY(.8cqw)" }, { opacity: 1, transform: "none" }], { duration: 560, easing: OUT });
+      A(ln, [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], { duration: 600, delay: 220, easing: OUT });
+      A(ro, [{ opacity: 0, letterSpacing: ".55em" }, { opacity: 1, letterSpacing: ".24em" }], { duration: 760, delay: 320, easing: OUT });
       setTimeout(() => {
         if (!live(t)) return;
-        A(ro, [{ opacity: 1 }, { opacity: 0 }], { duration: 260, easing: IO });
-        A(nb, [{ opacity: 1 }, { opacity: 0, transform: "translateY(-.6cqw)" }], { duration: 300, easing: IO });
-        A(pn, [{ clipPath: "inset(0 0 0 0)" }, { clipPath: "inset(0 100% 0 0)" }], { duration: 520, delay: 180, easing: IO });
-        A(bar, [{ transform: "scaleY(1)" }, { transform: "scaleY(0)" }], { duration: 300, delay: 600, easing: IO }).then(() => { nm.style.visibility = "hidden"; });
+        A(ro, [{ opacity: 1 }, { opacity: 0 }], { duration: 300, easing: IO });
+        A(nb, [{ opacity: 1 }, { opacity: 0, transform: "translateY(-.6cqw)" }], { duration: 360, delay: 60, easing: IO });
+        A(ln, [{ transform: "scaleX(1)" }, { transform: "scaleX(0)", transformOrigin: "100% 50%" }], { duration: 420, delay: 120, easing: IO }).then(() => { nm.style.visibility = "hidden"; });
       }, (c.hold || 4.5) * 1000);
       return;
     }
