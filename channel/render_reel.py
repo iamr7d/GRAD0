@@ -124,8 +124,10 @@ async def record(url, raw, seconds, show):
         page.on("crash", lambda _: print("\nThe page crashed while recording."))
         out = open(raw, "wb")
         await page.expose_function("penChunk", lambda b64: out.write(base64.b64decode(b64)))
-        await page.goto(url, wait_until="load")
-        await page.wait_for_timeout(1500)  # fonts, 3D titles and first media settle
+        # "load" waits for every media file the page touches, which can stall on a slow local server;
+        # the page only needs its script, and the wait below lets fonts and footage settle
+        await page.goto(url, wait_until="domcontentloaded", timeout=90000)
+        await page.wait_for_timeout(3000)  # fonts, 3D titles and first media settle
         info = await page.evaluate(RECORD_JS, {"w": W, "h": H, "fps": FPS})
         print(f"Recording ({info['mimeType']}) ...")
         t0 = time.time()
