@@ -19,7 +19,7 @@ from .config import ROOT
 
 
 def build(spec_path: Path):
-    spec = json.loads(spec_path.read_text(encoding="utf-8"))
+    spec = json.loads(spec_path.read_text(encoding="utf-8-sig"))   # -sig: Notepad / PowerShell may add a BOM
     clip = Path(spec["clip"]).expanduser()
     if not clip.is_absolute():
         clip = ROOT / clip

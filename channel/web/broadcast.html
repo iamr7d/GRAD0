@@ -212,44 +212,34 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
   transition: opacity .6s ease, top .9s var(--io), left .9s var(--io), width .9s var(--io), height .9s var(--io), border-radius .9s var(--io), padding .9s var(--io), background .6s ease, box-shadow .6s ease; }
 .tv.show.st-pip .anchor.hg { top: 10.25cqw; left: 78.8cqw; width: 18cqw; height: 22.5cqw; }
 .tv.show .anchor.hg #hgCan { background: radial-gradient(70% 60% at 70% 20%, #4a0d18, transparent 70%), radial-gradient(80% 70% at 20% 90%, #0c2a5a, transparent 70%), #0d1326; }
-.tv.show.st-full .anchor.hg #hgCan, .tv.show.st-split .anchor.hg #hgCan { background: transparent; }
-.tv.show.st-full .anchor.hg, .tv.show.st-split .anchor.hg { top: 0; height: 56.25cqw; padding: 0; border-radius: 0; background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.tv.show.st-full .anchor.hg #hgCan, .tv.show.st-split .anchor.hg #hgCan, .tv.show.st-voice .anchor.hg #hgCan { background: transparent; }
+.tv.show.st-voice .anchor.hg { left: 0; width: 100cqw; }   /* fades out where he stands */
+.tv.show.st-voice .anchor.hg #hgCan { inset: 0; width: 100%; height: 100%; border-radius: 0; object-position: 50% 50%; }
+.tv.show .anchor.hg.wait { opacity: 0 !important; }   /* first frames of the clip, until the cut-out is drawn */
+.tv.show.st-full .anchor.hg, .tv.show.st-split .anchor.hg, .tv.show.st-voice .anchor.hg { top: 0; height: 56.25cqw; padding: 0; border-radius: 0; background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .tv.show.st-full .anchor.hg { left: 0; width: 100cqw; }
 .tv.show.st-split .anchor.hg { left: 46cqw; width: 54cqw; }
 .tv.show.st-full .anchor.hg #hgCan, .tv.show.st-split .anchor.hg #hgCan { inset: 0; width: 100%; height: 100%; border-radius: 0; object-position: 50% 50%; }
 .tv.show.st-full .anchor .atag, .tv.show.st-split .anchor .atag { opacity: 0; }
-/* virtual news set behind the full-size anchor: a curved LED wall with the turning Earth, two side
-   screens with a night skyline, a red LED brand strip, a glossy floor and soft studio light. All slow, no flashes. */
-.studio { inset: 0; z-index: 4; opacity: 0; transition: opacity .9s ease; overflow: hidden; pointer-events: none; perspective: 80cqw;
-  background: radial-gradient(90% 60% at 50% 38%, #16244a 0%, #0b1226 55%, #05080f 100%); }
+/* animated studio backdrop behind the full-size anchor */
+.studio { inset: 0; z-index: 4; opacity: 0; transition: opacity .9s ease; overflow: hidden; pointer-events: none;
+  background: radial-gradient(60% 80% at 75% 35%, #3a0a14 0%, transparent 60%), radial-gradient(70% 90% at 15% 80%, #0c2a5a 0%, transparent 65%), linear-gradient(160deg, #0a0f1f 0%, #121a33 50%, #1a0610 100%); }
 .tv.show.st-full .studio, .tv.show.st-split .studio { opacity: 1; }
-.studio video { position: absolute; object-fit: cover; }
-.studio .wall, .studio .side { position: absolute; }
-.tv.show.no-glide .anchor.hg { transition: none !important; }   /* he starts in place, no glide in */
-.studio .wall { left: 13cqw; right: 13cqw; top: 3cqw; height: 34cqw; border-radius: 1.2cqw; overflow: hidden; transform: rotateX(4deg);
-  box-shadow: 0 0 0 .3cqw rgba(120,160,255,.18), 0 0 6cqw rgba(60,110,255,.25); background: #000; }
-.studio .wall video { inset: 0; width: 100%; height: 100%; filter: saturate(1.15) brightness(.75); }
-.studio .wall::after, .studio .side::after { content: ""; position: absolute; inset: 0;   /* LED pixel texture + falloff */
-  background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px), radial-gradient(80% 90% at 50% 45%, transparent 55%, rgba(5,8,15,.75)); }
-.studio .side { top: 6cqw; width: 11cqw; height: 30cqw; border-radius: .8cqw; overflow: hidden; background: #000; box-shadow: 0 0 0 .2cqw rgba(232,0,11,.35), 0 0 3cqw rgba(232,0,11,.2); }
-.studio .side.l { left: -1.5cqw; transform: rotateY(28deg); } .studio .side.r { right: -1.5cqw; transform: rotateY(-28deg); }
-.studio .side video { inset: 0; width: 100%; height: 100%; filter: brightness(.6) saturate(1.2); }
-.studio .strip { position: absolute; left: 13cqw; right: 13cqw; top: 38cqw; height: 1.6cqw; border-radius: .3cqw; overflow: hidden; background: linear-gradient(90deg, #6a0007, #e8000b 50%, #6a0007); box-shadow: 0 0 2.5cqw rgba(232,0,11,.55); }
-.studio .strip span { position: absolute; top: 0; left: 0; white-space: nowrap; font-family: "Montserrat", "Arial Black", sans-serif; font-weight: 900; font-size: 1.1cqw; line-height: 1.6cqw; letter-spacing: .5em; color: rgba(255,255,255,.85); animation: stripmove 40s linear infinite; }
-@keyframes stripmove { to { transform: translateX(-50%); } }
-.studio .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 17cqw; background: linear-gradient(180deg, rgba(20,30,60,.0), #070b16 40%), radial-gradient(60% 100% at 50% 0%, rgba(80,120,255,.25), transparent 70%); }
-.studio .floor::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 5cqw 100%; transform: perspective(40cqw) rotateX(60deg); transform-origin: top; opacity: .7; }
-.studio .glow { position: absolute; border-radius: 50%; filter: blur(6cqw); animation: breathe 12s ease-in-out infinite alternate; }
-.studio .glow.a { width: 34cqw; height: 20cqw; left: 33cqw; top: 8cqw; background: rgba(60,110,255,.35); }
-.studio .glow.b { width: 24cqw; height: 16cqw; left: 70cqw; top: 26cqw; background: rgba(232,0,11,.25); animation-delay: -6s; }
-@keyframes breathe { from { opacity: .55; transform: scale(1); } to { opacity: 1; transform: scale(1.12); } }
+.studio i { position: absolute; border-radius: 50%; filter: blur(5cqw); opacity: .55; animation: drift 14s ease-in-out infinite alternate; }
+.studio i:nth-child(1) { width: 40cqw; height: 40cqw; left: 55cqw; top: -8cqw; background: #e8000b; }
+.studio i:nth-child(2) { width: 46cqw; height: 46cqw; left: -10cqw; top: 18cqw; background: #1d4ed8; animation-duration: 18s; animation-direction: alternate-reverse; }
+.studio i:nth-child(3) { width: 26cqw; height: 26cqw; left: 30cqw; top: 30cqw; background: #7c3aed; opacity: .35; animation-duration: 11s; }
+@keyframes drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(-6cqw, 4cqw) scale(1.15); } }
+.studio .grid { position: absolute; inset: -20%; background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 4cqw 4cqw; transform: perspective(60cqw) rotateX(58deg) translateY(18cqw); animation: gridmove 6s linear infinite; -webkit-mask-image: linear-gradient(transparent 30%, #000 70%); mask-image: linear-gradient(transparent 30%, #000 70%); }
+@keyframes gridmove { to { background-position: 0 4cqw; } }
+.studio .col { position: absolute; top: 0; bottom: 0; width: 7cqw; background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 70%); animation: col 16s ease-in-out infinite alternate; }
+.studio .col:nth-of-type(1) { left: 8cqw; } .studio .col:nth-of-type(2) { left: 30cqw; animation-delay: -5s; } .studio .col:nth-of-type(3) { left: 70cqw; animation-delay: -9s; } .studio .col:nth-of-type(4) { left: 88cqw; animation-delay: -13s; }
+@keyframes col { from { opacity: .3; transform: translateX(-2cqw); } to { opacity: 1; transform: translateX(2cqw); } }
+.studio .mark { position: absolute; left: 4cqw; top: 3.4cqw; font-family: "Montserrat", "Arial Black", sans-serif; font-weight: 900; font-size: 11cqw; line-height: .9; letter-spacing: -.02em; color: rgba(255,255,255,.04); }
 /* show mode: no glints or light sweeps anywhere */
 .tv.show .sheen::after, .tv.show .face::after { animation: none !important; opacity: 0; }
-/* wall stage: the presenter stays full size; the footage plays on a studio screen beside him */
-.tv.show.st-wall .foot { animation: wallin .8s ease both; }   /* footage fades up on the LED wall (no full-screen flash) */
-@keyframes wallin { from { opacity: 0; } to { opacity: 1; } }
-.tv.show.st-wall .foot { inset: auto; left: 13cqw; top: 3cqw; width: 74cqw; height: 34cqw; z-index: 4; border-radius: 1.2cqw; overflow: hidden; box-shadow: 0 0 0 .3cqw rgba(120,160,255,.18), 0 0 6cqw rgba(60,110,255,.25); }   /* story footage on the LED wall behind him */
-.tv.show.st-wall .studio { z-index: 3; }
+/* voice stage: the story footage fills the screen and only his voice carries on (presenter hidden) */
+.tv.show.st-voice .anchor.hg { opacity: 0 !important; transition: opacity .7s ease; }
 .credit { display: none !important; }   /* the owner chose not to show footage credits on screen */
 /* split stage: "coming up" panel on the left */
 .cu { left: 3.2cqw; top: 9cqw; width: 42cqw; z-index: 6; display: grid; gap: 1.1cqw; visibility: hidden; }
@@ -307,7 +297,7 @@ tv.innerHTML = `
   <div class="brk-wall abs" id="brk"><div class="flash"></div><div class="panel sheen"><div class="glow"></div><div class="bt-row"><span class="pill">BREAKING NEWS</span><span class="meta"><span id="brkLoc"></span> · <b id="brkTime"></b></span></div><div class="bh" id="brkHead"></div><div class="bar"><i></i></div></div></div>
   <div class="titles abs" id="titles"><canvas id="gl"></canvas><div class="fallback"><svg class="fb-logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div>
     </div>
-  <div class="studio abs"><div class="glow a"></div><div class="side l"><video src="/bucket/media/video/33811924.mp4" muted loop playsinline preload="auto"></video></div><div class="side r"><video src="/bucket/media/video/33811924.mp4" muted loop playsinline preload="auto"></video></div><div class="wall"><video src="/bucket/media/video/30895551.mp4" muted loop playsinline preload="auto"></video></div><div class="strip"><span>PRIME EARTH NEWS &nbsp;•&nbsp; PRIME EARTH NEWS &nbsp;•&nbsp; PRIME EARTH NEWS &nbsp;•&nbsp; PRIME EARTH NEWS &nbsp;•&nbsp; PRIME EARTH NEWS &nbsp;•&nbsp; PRIME EARTH NEWS &nbsp;•&nbsp; PRIME EARTH NEWS &nbsp;•&nbsp; PRIME EARTH NEWS &nbsp;•&nbsp;</span></div><div class="floor"></div><div class="glow b"></div></div>
+  <div class="studio abs"><i></i><i></i><i></i><div class="grid"></div><b class="col"></b><b class="col"></b><b class="col"></b><b class="col"></b><div class="mark">PRIME<br>EARTH<br>NEWS</div></div>
   <div class="cu abs" id="cu"><h3><i></i>Coming up</h3></div>
   <div class="wipe abs"><i></i></div>
   <div class="bw abs" id="bw"><div class="g"></div><div class="r"></div><div class="lg"><svg viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg><span id="bwCat"></span></div></div>`;
@@ -719,27 +709,35 @@ async function show() {
   // ticker: the bulletin's actual headlines (spec.ticker, else every cue headline except the opening greeting)
   setTicker((spec.ticker || heads.slice(1).map(c => c.head)).map(h => ({ head: h })));
   tv.querySelectorAll(".studio video").forEach(x => x.play().catch(() => {}));
-  // "wall" keeps the presenter full size and puts the footage on a screen beside him
-  const stageTo = st => { tv.classList.remove("st-full", "st-split", "st-pip", "st-wall"); tv.classList.add("st-" + st); if (st === "wall") tv.classList.add("st-full"); };
+  // stages: full (presenter on the studio), split, pip (side box), voice (footage only, his voice over it)
+  const stageTo = st => { tv.classList.remove("st-full", "st-split", "st-pip", "st-voice"); tv.classList.add("st-" + st); };
   tv.classList.add("show", "no-glide"); stageTo(spec.cues[0].stage || "pip");
   setTimeout(() => tv.classList.remove("no-glide"), 12000);   // after the opening, stage changes glide   // the titles sweep off onto the studio, not a blank frame
   reset(); await titles(t);
   reset(); anchorHere = true;
   HG.show = spec.clip;
   const cu = $("cu"); cu.querySelectorAll(".it").forEach(x => x.remove());
+  const preload = spec.cues.filter(c => c.media).map(c => Object.assign(document.createElement("video"), { muted: true, preload: "auto", src: c.media }));
+  preload.forEach(p => p.load());                       // footage is ready the moment its cue comes (no grey frame)
+  $("anchor").classList.add("wait");
   const done = heygen("show", t);
+  (function reveal() { if ($("hgVid").currentTime > .6 || !live(t)) $("anchor").classList.remove("wait"); else requestAnimationFrame(reveal); })();
   const v = $("hgVid"), last = spec.cues.length - 1;
-  let k = -1, cur = null, stage = "";
+  let k = -1, cur = null, stage = "", preset = null;
   const ltHide = () => { clearInterval(subTimer); A($("lt"), [{ opacity: 1 }, { opacity: 0, transform: "translateY(1cqw)" }], { duration: 400, easing: IO }); };
   const cue = () => {
     const now = v.currentTime || 0;
     let j = k;
     while (j < last && now >= spec.cues[j + 1].t) j++;
+    const nx = spec.cues[j + 1];                          // footage for a cut away from the studio goes in behind it early
+    if (nx && nx.media && nx.stage === "voice" && preset !== nx && now >= nx.t - 1.5) {
+      preset = nx; setMedia({ media: nx.media, mediaType: "video", clips: [], credit: "", creditHtml: "", dur: 8000 });
+    }
     if (j === k) return;
     k = j; const c = spec.cues[k];
     const st = c.stage || stage || "pip";
     const next = c.keep && cur ? cur : { loc: c.cat || "", cat: "", head: c.head || "", subs: [c.sub || " "] };
-    if (c.media) setMedia({ ...next, media: c.media, mediaType: "video", clips: [], credit: c.credit, creditHtml: "" });
+    if (c.media && preset !== c) setMedia({ ...next, media: c.media, mediaType: "video", clips: [], credit: c.credit, creditHtml: "" });
     if (st !== stage) {                                   // glide the presenter to the new layout
       if (stage === "split") A(cu, [{ opacity: 1 }, { opacity: 0, transform: "translateX(-3cqw)" }], { duration: 500, easing: IO }).then(() => { cu.style.visibility = "hidden"; });
       if (st === "split") { ltHide(); cu.style.visibility = "visible"; A(cu, [{ opacity: 0, transform: "translateX(-3cqw)" }, { opacity: 1, transform: "none" }], { duration: 700, easing: OUT }); }
@@ -780,7 +778,7 @@ async function show() {
   await done; clearInterval(timer);
   if (!live(t)) return;
   ltHide(); await wait(450);
-  tv.classList.remove("show", "st-full", "st-split", "st-pip", "st-wall"); cu.style.visibility = "hidden";
+  tv.classList.remove("show", "st-full", "st-split", "st-pip", "st-voice"); cu.style.visibility = "hidden";
   reset(); $("titles").style.visibility = "visible";              // end card
   if (has3d) window.PEN_GLASS.play();
   fade(bgm, .55, 500); setTimeout(() => fade(bgm, 0, 3500), 1500);   // music swells on the end card, then out
