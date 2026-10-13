@@ -21,7 +21,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 .tv * { box-sizing: border-box; }
 .abs { position: absolute; }
 /* daylight footage stand-ins */
-.foot { position: absolute; inset: 0; overflow: hidden; }
+.foot { position: absolute; inset: 0; overflow: hidden; isolation: isolate; }   /* clip layering stays inside the footage layer */
 .foot .f { position: absolute; inset: -4%; opacity: 0; transition: opacity 1.2s ease; animation: pushin 22s ease-in-out infinite alternate; }
 .foot .f.on { opacity: 1; }
 .foot video.f { width: 108%; height: 108%; object-fit: cover; animation: none; }
