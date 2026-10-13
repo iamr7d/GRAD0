@@ -222,6 +222,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 .studio { inset: 0; z-index: 4; opacity: 0; transition: opacity .9s ease; overflow: hidden; pointer-events: none;
   background: radial-gradient(60% 80% at 75% 35%, #3a0a14 0%, transparent 60%), radial-gradient(70% 90% at 15% 80%, #0c2a5a 0%, transparent 65%), linear-gradient(160deg, #0a0f1f 0%, #121a33 50%, #1a0610 100%); }
 .tv.show.st-full .studio, .tv.show.st-split .studio { opacity: 1; }
+.tv.show.st-full .credit, .tv.show.st-split .credit { opacity: 0; }   /* the footage is hidden behind the studio */
 .studio i { position: absolute; border-radius: 50%; filter: blur(5cqw); opacity: .55; animation: drift 14s ease-in-out infinite alternate; }
 .studio i:nth-child(1) { width: 40cqw; height: 40cqw; left: 55cqw; top: -8cqw; background: #e8000b; }
 .studio i:nth-child(2) { width: 46cqw; height: 46cqw; left: -10cqw; top: 18cqw; background: #1d4ed8; animation-duration: 18s; animation-direction: alternate-reverse; }
@@ -499,6 +500,7 @@ function heygen(name, t, voiceOnly = false) {   // plays in the anchor box (or j
     let over = false;
     const end = () => {
       if (over) return; over = true;
+      if (tv.classList.contains("show")) box.style.visibility = "hidden";   // don't let the illustrated anchor flash up as it fades
       box.classList.remove("hg", "key", "on"); v.pause(); fade(bgm, BED); res();
     };
     v.src = url; v.volume = 1; v.onended = end; v.onerror = end;
@@ -517,6 +519,7 @@ function heygen(name, t, voiceOnly = false) {   // plays in the anchor box (or j
           else if (gr > m) { d[i + 1] = m; d[i + 3] = Math.min(255, 255 - (gr - m) * 3); }
         }
         g.putImageData(f, 0, 0);
+        if (tv.classList.contains("show")) g.clearRect(c.width * .82, c.height * .68, c.width * .18, c.height * .32);   // HeyGen watermark corner (he never reaches it)
       }
       requestAnimationFrame(draw);
     })();
@@ -549,7 +552,8 @@ const anchorOn = on => { $("anchor").classList.toggle("on", on && ANCHOR && anch
 /* ---------- scenes ---------- */
 async function titles(t) {
   const ti = $("titles"); ti.style.visibility = "visible";
-  sting.volume = .9; sting.currentTime = 0; sting.play().catch(() => {}); fade(bgm, 0, 300);
+  fade(bgm, .95, 300);   // the music bed itself swells under the titles (no separate sting)
+  window.PEN_T0 = window.PEN_T0 || performance.now();   // render_reel trims everything before this
   if (has3d) window.PEN_GLASS.play();
   else A(ti.querySelector(".fallback .fb-logo"), [{ opacity: 0, transform: "translateY(-1cqw) scale(1.08)", filter: "blur(1cqw)" }, { opacity: 1, transform: "translateY(-3cqw)", filter: "blur(0)" }], { duration: 1600 });
   await wait(6200); if (!live(t)) return;
@@ -681,9 +685,8 @@ async function reel(total) {
   for (const [i, s] of picks.entries()) { reset(); await story(t, s, len(s) * 1000, i > 0); }
   reset(); await heygen("outro", t);                               // HeyGen sign-off, if there is one
   reset(); $("titles").style.visibility = "visible";              // end card
-  sting.currentTime = 0; sting.play().catch(() => {});
   if (has3d) window.PEN_GLASS.play();
-  fade(bgm, 0, 4000);
+  fade(bgm, .95, 500); setTimeout(() => fade(bgm, 0, 3500), 1500);   // music swells on the end card, then out
   document.title = "REEL DONE";
 }
 
@@ -723,6 +726,23 @@ async function show() {
     }
     if (next === cur || !c.head) return;
     cur = next;
+    if (c.card) {                                         // headline cards along the bottom, one per tease, as he reads them
+      const h = $("hls"), cards = $("cards");
+      if (h.style.visibility !== "visible") {
+        ltHide(); cards.innerHTML = ""; h.querySelector("h2").innerHTML = "<i></i>Coming up";
+        h.style.visibility = "visible";
+        A(h.querySelector("h2"), [{ opacity: 0, transform: "translateY(1.5cqw)", filter: "blur(.4cqw)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { duration: 800 });
+      }
+      cards.querySelectorAll(".hc").forEach(x => x.classList.remove("on"));
+      const n = cards.children.length + 1;
+      cards.insertAdjacentHTML("beforeend", `<div class="hc glass on"><div class="row"><span class="n">0${n}</span><span class="cat">${esc(c.cat || "")}</span></div><div class="x">${esc(c.head)}</div></div>`);
+      A(cards.lastElementChild, [{ opacity: 0, transform: "translateY(3cqw) scale(.95)", filter: "blur(.6cqw)" }, { opacity: 1, transform: "translateY(-1.2cqw)", filter: "blur(0)" }], { duration: 900, easing: SPRING, fill: "backwards" });   // then the .on class lifts / lowers it
+      return;
+    }
+    if ($("hls").style.visibility === "visible") {        // cards make way for the next item
+      const h = $("hls");
+      A(h, [{ opacity: 1 }, { opacity: 0, transform: "translateY(2cqw)" }], { duration: 500, easing: IO }).then(() => { h.style.visibility = "hidden"; h.getAnimations().forEach(a => a.cancel()); });
+    }
     if (st === "split") {                                 // the coming-up list grows as he reads it
       cu.querySelectorAll(".it").forEach(x => x.classList.remove("on"));
       const it = document.createElement("div");
@@ -741,9 +761,8 @@ async function show() {
   ltHide(); await wait(450);
   tv.classList.remove("show", "st-full", "st-split", "st-pip"); cu.style.visibility = "hidden";
   reset(); $("titles").style.visibility = "visible";              // end card
-  sting.currentTime = 0; sting.play().catch(() => {});
   if (has3d) window.PEN_GLASS.play();
-  fade(bgm, 0, 4000);
+  fade(bgm, .95, 500); setTimeout(() => fade(bgm, 0, 3500), 1500);   // music swells on the end card, then out
   document.title = "REEL DONE";
 }
 

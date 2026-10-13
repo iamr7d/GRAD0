@@ -58,9 +58,8 @@ RECORD_JS = """async ({w, h, fps, slice = 1000, vbps = 16e6, waitSting = true}) 
   rec.start(slice);
   await new Promise(r => setTimeout(r, 300));
   start();
-  // seconds before the reel starts (its sting begins); trimmed off when converting
-  const sting = document.getElementById("sting");
-  while (waitSting && sting.paused) await new Promise(r => setTimeout(r, 10));
+  // seconds before the reel starts (the page marks the moment its titles begin); trimmed off when converting
+  while (waitSting && !window.PEN_T0) await new Promise(r => setTimeout(r, 10));
   return {mimeType, lead: Math.max(0, (performance.now() - t0) / 1000 - 0.05)};
 }"""
 
