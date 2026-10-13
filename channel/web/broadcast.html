@@ -145,6 +145,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 .hc .row { display: flex; justify-content: space-between; align-items: center; }
 .hc .n { font-family: var(--mark); font-weight: 900; font-size: 1.6cqw; color: var(--ink-3); }
 .hc .cat { font-weight: 700; font-size: .95cqw; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); }
+.hc .src { display: block; margin-top: .5cqw; font-weight: 600; font-size: .9cqw; color: var(--ink-3); }
 .hc .x { font-weight: 700; font-size: 1.7cqw; line-height: 1.2; letter-spacing: -.015em; color: var(--ink-2); }
 .hc.on { transform: translateY(-1.2cqw); background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.76)); box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), inset 0 .3cqw 0 var(--accent), 0 2cqw 4cqw rgba(16,26,46,.22); }
 .hc.on .n { color: var(--accent); } .hc.on .x { color: var(--ink); } .hc.on .cat { color: var(--ink-2); }
@@ -771,7 +772,7 @@ async function show() {
     if (j === k) return;
     k = j; const c = spec.cues[k];
     const st = c.stage || stage || "pip";
-    const next = c.keep && cur ? cur : { loc: c.cat || "", cat: "", head: c.head || "", subs: [c.sub || " "] };
+    const next = c.keep && cur ? cur : { loc: c.source || c.cat || "", cat: c.source ? c.cat || "" : "", head: c.head || "", subs: [c.sub || " "].concat(c.source ? ["Source: " + c.source] : []) };
     if (c.media && preset !== c) setMedia({ ...next, media: c.media, mediaType: "video", clips: [], credit: c.credit, creditHtml: "" });
     if (st !== stage) {                                   // glide the presenter to the new layout
       if (stage === "split") A(cu, [{ opacity: 1 }, { opacity: 0, transform: "translateX(-3cqw)" }], { duration: 500, easing: IO }).then(() => { cu.style.visibility = "hidden"; });
@@ -804,7 +805,7 @@ async function show() {
       }
       cards.querySelectorAll(".hc").forEach(x => x.classList.remove("on"));
       const n = cards.children.length + 1;
-      cards.insertAdjacentHTML("beforeend", `<div class="hc glass on"><div class="row"><span class="n">0${n}</span><span class="cat">${esc(c.cat || "")}</span></div><div class="x">${esc(c.head)}</div></div>`);
+      cards.insertAdjacentHTML("beforeend", `<div class="hc glass on"><div class="row"><span class="n">0${n}</span><span class="cat">${esc(c.cat || "")}</span></div><div class="x">${esc(c.head)}</div>${c.source ? `<span class="src">Source: ${esc(c.source)}</span>` : ""}</div>`);
       A(cards.lastElementChild, [{ opacity: 0, transform: "translateY(3cqw) scale(.95)", filter: "blur(.6cqw)" }, { opacity: 1, transform: "translateY(-1.2cqw)", filter: "blur(0)" }], { duration: 900, easing: SPRING, fill: "backwards" });   // then the .on class lifts / lowers it
       return;
     }
