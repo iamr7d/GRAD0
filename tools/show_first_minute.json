@@ -10,7 +10,7 @@
     "HEALTH: Vanillin, the compound behind vanilla's flavour, may help fight infections and heal wounds, a new study suggests"
   ],
   "cues": [
-    {"t": 0.0,  "stage": "full", "cat": "Prime Earth News", "head": "JOY", "sub": "AI NEWS ANCHOR", "query": "earth from space night"},
+    {"t": 0.0,  "stage": "full", "name": true, "hold": 4.5, "head": "JOY", "sub": "AI News Anchor", "query": "earth from space night"},
     {"t": 5.0,  "card": true, "cat": "Science", "head": "A nuclear clock that could outperform the world's best atomic clocks", "query": "physics laboratory"},
     {"t": 8.6,  "card": true, "cat": "Health", "head": "Why a little exercise could mean deeper sleep", "query": "woman jogging sunrise"},
     {"t": 11.3, "card": true, "cat": "Tech", "head": "Free AI security checks for open‑source software", "query": "programmer code screen"},
