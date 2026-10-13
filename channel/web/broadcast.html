@@ -439,8 +439,12 @@ function sync(s) {
 
 /* ---------- audio ---------- */
 const bgm = document.getElementById("bgm"), voice = document.getElementById("voice"), sting = document.getElementById("sting");
-const BED = .3, DUCK = .07;   // music bed level, and while the anchor speaks (voice plays at 1.0)
-function fade(el, to, ms = 600) { const from = el.volume, t0 = performance.now(); const step = n => { const k = Math.min(1, (n - t0) / ms); el.volume = from + (to - from) * k; if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
+const BED = .3, DUCK = .05;   // music bed level, and while the anchor speaks (voice plays at 1.0)
+function fade(el, to, ms = 600) {   // a new fade replaces one still running on the same element
+  const id = el._fade = (el._fade || 0) + 1, from = el.volume, t0 = performance.now();
+  const step = n => { if (el._fade !== id) return; const k = Math.min(1, (n - t0) / ms); el.volume = from + (to - from) * k; if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
 function speak(s, t, cap = 0) {
   return new Promise(res => {
     // timers are cleared when this story finishes, so a late one can't pause the next story's voice
@@ -519,7 +523,8 @@ function heygen(name, t, voiceOnly = false) {   // plays in the anchor box (or j
       if (tv.classList.contains("show")) box.style.visibility = "hidden";   // don't let the illustrated anchor flash up as it fades
       box.classList.remove("hg", "key", "on"); v.pause(); fade(bgm, BED); res();
     };
-    v.src = url; v.volume = 1; v.onended = end; v.onerror = end;
+    if (v.getAttribute("src") !== url) v.src = url;   // the show preloads it during the titles
+    v.volume = 1; v.onended = end; v.onerror = end;
     if (!voiceOnly) { box.classList.toggle("key", key); box.classList.add("hg", "on"); }
     fade(bgm, DUCK, 400);
     if (key && !voiceOnly) (function draw() {   // knock out the green screen, softening green spill on the edges
@@ -723,6 +728,7 @@ async function show() {
   const stageTo = st => { tv.classList.remove("st-full", "st-split", "st-pip", "st-voice"); tv.classList.add("st-" + st); };
   tv.classList.add("show", "no-glide"); stageTo(spec.cues[0].stage || "pip");
   setTimeout(() => tv.classList.remove("no-glide"), 12000);   // after the opening, stage changes glide   // the titles sweep off onto the studio, not a blank frame
+  const hv = $("hgVid"); hv.preload = "auto"; hv.src = spec.clip; hv.load();   // buffer the presenter during the titles so he is there the moment they clear
   reset(); await titles(t);
   reset(); anchorHere = true;
   HG.show = spec.clip;
@@ -740,6 +746,7 @@ async function show() {
   let k = -1, cur = null, stage = "", preset = null;
   const ltHide = () => { clearInterval(subTimer); A($("lt"), [{ opacity: 1 }, { opacity: 0, transform: "translateY(1cqw)" }], { duration: 400, easing: IO }); };
   const cue = () => {
+    if ($("anchor").classList.contains("wait")) return;   // nothing (not even his name) before he is on screen
     const now = v.currentTime || 0;
     let j = k;
     while (j < last && now >= spec.cues[j + 1].t) j++;
