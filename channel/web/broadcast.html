@@ -223,7 +223,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 .tv.show.st-full .anchor.hg { left: 0; width: 100cqw; }
 .tv.show.st-split .anchor.hg { left: 46cqw; width: 54cqw; }
 .tv.show.st-full .anchor.hg #hgCan, .tv.show.st-split .anchor.hg #hgCan { inset: 0; width: 100%; height: 100%; border-radius: 0; object-position: 50% 50%; }
-.tv.show.st-full .anchor .atag, .tv.show.st-split .anchor .atag { opacity: 0; }
+.tv.show .anchor .atag { display: none !important; }   /* no "AI ANCHOR" badge in a show */
 /* animated studio backdrop behind the full-size anchor */
 .studio { inset: 0; z-index: 4; opacity: 0; transition: opacity .9s ease; overflow: hidden; pointer-events: none;
   background: radial-gradient(60% 80% at 75% 35%, #3a0a14 0%, transparent 60%), radial-gradient(70% 90% at 15% 80%, #0c2a5a 0%, transparent 65%), linear-gradient(160deg, #0a0f1f 0%, #121a33 50%, #1a0610 100%); }
