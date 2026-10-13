@@ -246,6 +246,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 /* name super: a small credit for the presenter on his first appearance (not a news lower third) */
 .nm { left: 4cqw; bottom: 10.5cqw; z-index: 6; visibility: hidden; text-shadow: 0 .15cqw .8cqw rgba(0,0,0,.55); }
 .nm .pn { display: grid; justify-items: start; gap: .5cqw; }
+.nm b, .nm .ln, .nm .ro { will-change: transform, opacity; }
 .nm b { font-weight: 800; font-size: 2.3cqw; line-height: 1; letter-spacing: .05em; color: #fff; }
 .nm .ln { display: block; width: 100%; height: .18cqw; border-radius: 99px; background: #fff; box-shadow: 0 .1cqw .5cqw rgba(0,0,0,.4); transform-origin: 0 50%; }
 .nm .ro { font-weight: 700; font-size: 1cqw; line-height: 1; letter-spacing: .24em; text-transform: uppercase; color: #fff; }
@@ -782,17 +783,18 @@ async function show() {
     if (next === cur || !c.head) return;
     cur = next;
     if (c.name) {                                         // name super: just his name, a white rule and his role
-      const nm = $("nm"), nb = $("nmA"), ln = nm.querySelector(".ln"), ro = $("nmB");
+      // transform and opacity only, so it runs on the compositor and stays smooth while his cut-out is drawn
+      const nm = $("nm"), nb = $("nmA"), ln = nm.querySelector(".ln"), ro = $("nmB"), SOFT = "cubic-bezier(.22, 1, .36, 1)";
       nb.textContent = c.head; ro.textContent = c.sub || "";
       nm.style.visibility = "visible";
-      A(nb, [{ opacity: 0, transform: "translateY(.8cqw)" }, { opacity: 1, transform: "none" }], { duration: 560, easing: OUT });
-      A(ln, [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], { duration: 600, delay: 220, easing: OUT });
-      A(ro, [{ opacity: 0, letterSpacing: ".55em" }, { opacity: 1, letterSpacing: ".24em" }], { duration: 760, delay: 320, easing: OUT });
+      A(nb, [{ opacity: 0, transform: "translateY(1cqw)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 900, easing: SOFT });
+      A(ln, [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], { duration: 1000, delay: 250, easing: SOFT });
+      A(ro, [{ opacity: 0, transform: "translateY(-.6cqw)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 900, delay: 500, easing: SOFT });
       setTimeout(() => {
         if (!live(t)) return;
-        A(ro, [{ opacity: 1 }, { opacity: 0 }], { duration: 300, easing: IO });
-        A(nb, [{ opacity: 1 }, { opacity: 0, transform: "translateY(-.6cqw)" }], { duration: 360, delay: 60, easing: IO });
-        A(ln, [{ transform: "scaleX(1)" }, { transform: "scaleX(0)", transformOrigin: "100% 50%" }], { duration: 420, delay: 120, easing: IO }).then(() => { nm.style.visibility = "hidden"; });
+        A(ro, [{ opacity: 1, transform: "translateY(0)" }, { opacity: 0, transform: "translateY(-.4cqw)" }], { duration: 600, easing: SOFT });
+        A(nb, [{ opacity: 1, transform: "translateY(0)" }, { opacity: 0, transform: "translateY(-.6cqw)" }], { duration: 650, delay: 100, easing: SOFT });
+        A(ln, [{ transform: "scaleX(1)", opacity: 1 }, { transform: "scaleX(0)", opacity: 0 }], { duration: 700, delay: 150, easing: SOFT }).then(() => { nm.style.visibility = "hidden"; });
       }, (c.hold || 4.5) * 1000);
       return;
     }
