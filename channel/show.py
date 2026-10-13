@@ -23,7 +23,11 @@ def build(spec_path: Path):
     clip = Path(spec["clip"]).expanduser()
     if not clip.is_absolute():
         clip = ROOT / clip
-    import_presenter(clip, "show")   # -> bucket/media/anchor/heygen_show.(mp4|webm), voice at -16 LUFS
+    # "cover": [[x, y, w, h], ...] fractions of the frame painted in the screen colour (e.g. HeyGen's
+    # watermark), so the green key removes them along with the background
+    colour = spec.get("screen_colour", "0x089146")
+    boxes = ",".join(f"drawbox=x=iw*{x}:y=ih*{y}:w=iw*{w}:h=ih*{h}:color={colour}:t=fill" for x, y, w, h in spec.get("cover", []))
+    import_presenter(clip, "show", boxes)   # -> bucket/media/anchor/heygen_show.(mp4|webm), voice at -16 LUFS
     made = next(ANCHOR_DIR.glob("heygen_show.*"))
     cues, used = [], set()
     for c in spec["cues"]:

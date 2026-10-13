@@ -133,7 +133,7 @@ def run_once(limit=None, max_seconds=0, ready_only=False):
 PRESENTER_KINDS = ("intro", "outro", "world", "business", "tech", "science", "india", "breaking")
 
 
-def import_presenter(src: Path, kind: str):
+def import_presenter(src: Path, kind: str, pre_filter=""):
     """Bring in a presenter video made elsewhere (e.g. HeyGen) as the bulletin's opening or sign-off.
     A transparent .webm is kept as WebM (VP9 with alpha); anything else (e.g. an .mp4 on green) becomes
     bucket/media/anchor/heygen_<kind>.mp4. Either way the voice is brought to -16 LUFS like the TTS.
@@ -148,7 +148,7 @@ def import_presenter(src: Path, kind: str):
         cmd = [FFMPEG, "-y", "-loglevel", "error", "-c:v", "libvpx-vp9", "-i", str(src), "-c:v", "libvpx-vp9",
                "-pix_fmt", "yuva420p", "-b:v", "0", "-crf", "30", "-g", "15", *audio, "-c:a", "libopus", "-b:a", "128k", str(part)]
     else:
-        cmd = [FFMPEG, "-y", "-loglevel", "error", "-i", str(src), "-vf", "scale=-2:1080:flags=lanczos,fps=30",
+        cmd = [FFMPEG, "-y", "-loglevel", "error", "-i", str(src), "-vf", (pre_filter + "," if pre_filter else "") + "scale=-2:1080:flags=lanczos,fps=30",
                "-c:v", "libx264", "-crf", "19", "-preset", "medium", "-g", "15", "-pix_fmt", "yuv420p",
                *audio, "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(part)]
     subprocess.run(cmd, check=True)

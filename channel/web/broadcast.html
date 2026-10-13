@@ -230,8 +230,14 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 @keyframes drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(-6cqw, 4cqw) scale(1.15); } }
 .studio .grid { position: absolute; inset: -20%; background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 4cqw 4cqw; transform: perspective(60cqw) rotateX(58deg) translateY(18cqw); animation: gridmove 6s linear infinite; -webkit-mask-image: linear-gradient(transparent 30%, #000 70%); mask-image: linear-gradient(transparent 30%, #000 70%); }
 @keyframes gridmove { to { background-position: 0 4cqw; } }
-.studio .beam { position: absolute; top: -30%; bottom: -30%; width: 12cqw; left: -20cqw; transform: skewX(-18deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); animation: beam 7s ease-in-out infinite; }
-@keyframes beam { 0%, 30% { left: -20cqw; } 70%, 100% { left: 115cqw; } }
+.studio .col { position: absolute; top: 0; bottom: 0; width: 7cqw; background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 70%); animation: col 16s ease-in-out infinite alternate; }
+.studio .col:nth-of-type(1) { left: 8cqw; } .studio .col:nth-of-type(2) { left: 30cqw; animation-delay: -5s; } .studio .col:nth-of-type(3) { left: 70cqw; animation-delay: -9s; } .studio .col:nth-of-type(4) { left: 88cqw; animation-delay: -13s; }
+@keyframes col { from { opacity: .3; transform: translateX(-2cqw); } to { opacity: 1; transform: translateX(2cqw); } }
+/* wall stage: the presenter stays full size; the footage plays on a studio screen beside him */
+.tv.show .foot { transition: left .9s var(--io), top .9s var(--io), width .9s var(--io), height .9s var(--io), border-radius .9s var(--io); }
+.tv.show.st-wall .foot { inset: auto; left: 3.2cqw; top: 7.5cqw; width: 44cqw; height: 24.75cqw; z-index: 4; border-radius: 1.2cqw; box-shadow: 0 0 0 .25cqw rgba(255,255,255,.18), 0 2cqw 5cqw rgba(0,0,0,.5); }
+.tv.show.st-wall .studio { z-index: 3; }
+.credit { display: none !important; }   /* the owner chose not to show footage credits on screen */
 .studio .mark { position: absolute; left: 4cqw; top: 3.4cqw; font-family: "Montserrat", "Arial Black", sans-serif; font-weight: 900; font-size: 11cqw; line-height: .9; letter-spacing: -.02em; color: rgba(255,255,255,.04); }
 /* split stage: "coming up" panel on the left */
 .cu { left: 3.2cqw; top: 9cqw; width: 42cqw; z-index: 6; display: grid; gap: 1.1cqw; visibility: hidden; }
@@ -289,7 +295,7 @@ tv.innerHTML = `
   <div class="brk-wall abs" id="brk"><div class="flash"></div><div class="panel sheen"><div class="glow"></div><div class="bt-row"><span class="pill">BREAKING NEWS</span><span class="meta"><span id="brkLoc"></span> · <b id="brkTime"></b></span></div><div class="bh" id="brkHead"></div><div class="bar"><i></i></div></div></div>
   <div class="titles abs" id="titles"><canvas id="gl"></canvas><div class="fallback"><svg class="fb-logo" viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg></div>
     </div>
-  <div class="studio abs"><i></i><i></i><i></i><div class="grid"></div><div class="beam"></div><div class="mark">PRIME<br>EARTH<br>NEWS</div></div>
+  <div class="studio abs"><i></i><i></i><i></i><div class="grid"></div><b class="col"></b><b class="col"></b><b class="col"></b><b class="col"></b><div class="mark">PRIME<br>EARTH<br>NEWS</div></div>
   <div class="cu abs" id="cu"><h3><i></i>Coming up</h3></div>
   <div class="wipe abs"><i></i></div>
   <div class="bw abs" id="bw"><div class="g"></div><div class="r"></div><div class="lg"><svg viewBox="0 0 604 432" aria-label="Prime Earth News.AI"><rect width="604" height="432" fill="#ff0000"/><g font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="141" letter-spacing="-2"><text x="26" y="152" fill="#fff">PRIME</text><text x="26" y="270" fill="#fff">EARTH</text><text x="26" y="393" fill="#000">NEWS</text></g><text x="478" y="393" font-family="Montserrat, Arial Black, sans-serif" font-weight="900" font-size="52" fill="#a10008">.AI</text></svg><span id="bwCat"></span></div></div>`;
@@ -423,7 +429,7 @@ function sync(s) {
 
 /* ---------- audio ---------- */
 const bgm = document.getElementById("bgm"), voice = document.getElementById("voice"), sting = document.getElementById("sting");
-const BED = .55, DUCK = .14;   // music bed level, and while the anchor speaks (voice plays at 1.0)
+const BED = .3, DUCK = .07;   // music bed level, and while the anchor speaks (voice plays at 1.0)
 function fade(el, to, ms = 600) { const from = el.volume, t0 = performance.now(); const step = n => { const k = Math.min(1, (n - t0) / ms); el.volume = from + (to - from) * k; if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
 function speak(s, t, cap = 0) {
   return new Promise(res => {
@@ -519,7 +525,6 @@ function heygen(name, t, voiceOnly = false) {   // plays in the anchor box (or j
           else if (gr > m) { d[i + 1] = m; d[i + 3] = Math.min(255, 255 - (gr - m) * 3); }
         }
         g.putImageData(f, 0, 0);
-        if (tv.classList.contains("show")) g.clearRect(c.width * .82, c.height * .68, c.width * .18, c.height * .32);   // HeyGen watermark corner (he never reaches it)
       }
       requestAnimationFrame(draw);
     })();
@@ -552,7 +557,7 @@ const anchorOn = on => { $("anchor").classList.toggle("on", on && ANCHOR && anch
 /* ---------- scenes ---------- */
 async function titles(t) {
   const ti = $("titles"); ti.style.visibility = "visible";
-  fade(bgm, .95, 300);   // the music bed itself swells under the titles (no separate sting)
+  fade(bgm, .55, 300);   // the music bed itself swells under the titles (no separate sting)
   window.PEN_T0 = window.PEN_T0 || performance.now();   // render_reel trims everything before this
   if (has3d) window.PEN_GLASS.play();
   else A(ti.querySelector(".fallback .fb-logo"), [{ opacity: 0, transform: "translateY(-1cqw) scale(1.08)", filter: "blur(1cqw)" }, { opacity: 1, transform: "translateY(-3cqw)", filter: "blur(0)" }], { duration: 1600 });
@@ -686,7 +691,7 @@ async function reel(total) {
   reset(); await heygen("outro", t);                               // HeyGen sign-off, if there is one
   reset(); $("titles").style.visibility = "visible";              // end card
   if (has3d) window.PEN_GLASS.play();
-  fade(bgm, .95, 500); setTimeout(() => fade(bgm, 0, 3500), 1500);   // music swells on the end card, then out
+  fade(bgm, .55, 500); setTimeout(() => fade(bgm, 0, 3500), 1500);   // music swells on the end card, then out
   document.title = "REEL DONE";
 }
 
@@ -699,7 +704,8 @@ async function show() {
   catch (e) { console.warn("No show.json, playing the reel instead", e); return reel(60); }
   const heads = spec.cues.filter(c => c.head);
   setTicker(heads.map(c => ({ head: c.head })));
-  const stageTo = st => { tv.classList.remove("st-full", "st-split", "st-pip"); tv.classList.add("st-" + st); };
+  // "wall" keeps the presenter full size and puts the footage on a screen beside him
+  const stageTo = st => { tv.classList.remove("st-full", "st-split", "st-pip", "st-wall"); tv.classList.add("st-" + st); if (st === "wall") tv.classList.add("st-full"); };
   tv.classList.add("show"); stageTo(spec.cues[0].stage || "pip");   // the titles sweep off onto the studio, not a blank frame
   reset(); await titles(t);
   reset(); anchorHere = true;
@@ -759,10 +765,10 @@ async function show() {
   await done; clearInterval(timer);
   if (!live(t)) return;
   ltHide(); await wait(450);
-  tv.classList.remove("show", "st-full", "st-split", "st-pip"); cu.style.visibility = "hidden";
+  tv.classList.remove("show", "st-full", "st-split", "st-pip", "st-wall"); cu.style.visibility = "hidden";
   reset(); $("titles").style.visibility = "visible";              // end card
   if (has3d) window.PEN_GLASS.play();
-  fade(bgm, .95, 500); setTimeout(() => fade(bgm, 0, 3500), 1500);   // music swells on the end card, then out
+  fade(bgm, .55, 500); setTimeout(() => fade(bgm, 0, 3500), 1500);   // music swells on the end card, then out
   document.title = "REEL DONE";
 }
 
