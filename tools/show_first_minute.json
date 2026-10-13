@@ -2,6 +2,12 @@
   "title": "Top of the hour",
   "clip": "C:/Users/rahul/Videos/Avatar_Video.mp4",
   "cover": [[0.81, 0.62, 0.19, 0.38]],
+  "ticker": [
+    "Australia's outback turns into a sea of wildflowers after heavy rains",
+    "Scientists say a nuclear clock could outperform the world's best atomic clocks",
+    "A little more exercise could mean a deeper night's sleep, researchers say",
+    "Free AI security checks offered to open-source software projects"
+  ],
   "cues": [
     {"t": 0.0,  "stage": "full", "cat": "Top of the hour", "head": "Good evening from Prime Earth News", "sub": "The stories shaping the world this hour", "query": "earth from space night"},
     {"t": 5.0,  "card": true, "cat": "Science", "head": "A nuclear clock that could outperform the best atomic clocks", "query": "physics laboratory"},

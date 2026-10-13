@@ -40,6 +40,8 @@ def build(spec_path: Path):
                      "media": got["path"] if got else "", "credit": got["credit"] if got else ""})
         print(f"  {c['t']:5.1f}s  {c.get('head') or '(footage)':60.60s} {got['path'] if got else ''}")
     out = {"clip": "/bucket/media/anchor/" + made.name, "cues": cues, "title": spec.get("title", "")}
+    if spec.get("ticker"):
+        out["ticker"] = spec["ticker"]
     (ANCHOR_DIR / "show.json").write_text(json.dumps(out, indent=2))
     print(f"Show ready: {ANCHOR_DIR / 'show.json'}")
 
