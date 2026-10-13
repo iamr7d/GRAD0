@@ -1,22 +1,22 @@
-﻿{
+{
   "title": "Top of the hour",
   "clip": "C:/Users/rahul/Videos/Avatar_Video.mp4",
   "cover": [[0.81, 0.62, 0.19, 0.38]],
   "ticker": [
+    "A nuclear clock that could outperform the world's best atomic clocks",
+    "Why a little exercise could mean deeper sleep",
+    "Free AI security checks for open‑source software",
     "Australia's outback turns into a sea of wildflowers after heavy rains",
-    "Scientists say a nuclear clock could outperform the world's best atomic clocks",
-    "A little more exercise could mean a deeper night's sleep, researchers say",
-    "Free AI security checks offered to open-source software projects"
+    "NASA images show the bloom from space"
   ],
   "cues": [
-    {"t": 0.0,  "stage": "full", "cat": "Top of the hour", "head": "Good evening from Prime Earth News", "sub": "The stories shaping the world this hour", "query": "earth from space night"},
-    {"t": 5.0,  "card": true, "cat": "Science", "head": "A nuclear clock that could outperform the best atomic clocks", "query": "physics laboratory"},
-    {"t": 8.6,  "card": true, "cat": "Health", "head": "Why a little more exercise could mean deeper sleep", "query": "woman jogging sunrise"},
-    {"t": 11.3, "card": true, "cat": "Tech", "head": "Free AI security checks for open-source software", "query": "programmer code screen"},
-    {"t": 14.8, "stage": "voice", "cat": "World", "head": "Australia's outback turns into a sea of wildflowers", "sub": "After heavy rains, possibly the best bloom in nearly 20 years", "query": "colorful wildflowers meadow"},
+    {"t": 0.0,  "stage": "full", "cat": "Top of the hour", "head": "Good evening from Prime Earth News", "sub": "It's the top of the hour", "query": "earth from space night"},
+    {"t": 5.0,  "card": true, "cat": "Science", "head": "A nuclear clock that could outperform the world's best atomic clocks", "query": "physics laboratory"},
+    {"t": 8.6,  "card": true, "cat": "Health", "head": "Why a little exercise could mean deeper sleep", "query": "woman jogging sunrise"},
+    {"t": 11.3, "card": true, "cat": "Tech", "head": "Free AI security checks for open‑source software", "query": "programmer code screen"},
+    {"t": 14.8, "stage": "voice", "cat": "World", "head": "Australia's outback turns into a sea of wildflowers", "sub": "After heavy rains, it could be the region's best bloom in nearly 20 years", "query": "colorful wildflowers meadow"},
     {"t": 17.6, "keep": true, "query": "australia outback red desert"},
     {"t": 20.5, "keep": true, "query": "nasa earth satellite view"},
     {"t": 22.9, "keep": true, "query": "wildflowers field"}
   ]
 }
-

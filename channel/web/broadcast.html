@@ -131,7 +131,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 .tick .lab .live-fl { color: #fff; }
 .tick .lab .live-fl::before { content: ""; width: .55cqw; height: .55cqw; border-radius: 50%; background: var(--accent-hi); animation: pulse 1.8s ease-in-out infinite; }
 .tick .trk { flex: 1; min-width: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 3%, #000 95%, transparent); }
-.tick .mv { display: flex; white-space: nowrap; animation: mv 60s linear infinite; }
+.tick .mv { display: flex; width: max-content; white-space: nowrap; animation: mv 60s linear infinite; }   /* max-content: -50% = exactly one copy of the headlines, so the loop is seamless */
 .tick .mv span { display: inline-flex; align-items: center; gap: 2cqw; padding: 0 1cqw; font-weight: 500; font-size: 1.35cqw; color: var(--ink); }
 .tick .mv span i { width: .4cqw; height: .4cqw; border-radius: 50%; background: var(--accent); }
 @keyframes mv { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -720,6 +720,10 @@ async function show() {
   const preload = spec.cues.filter(c => c.media).map(c => Object.assign(document.createElement("video"), { muted: true, preload: "auto", src: c.media }));
   preload.forEach(p => p.load());                       // footage is ready the moment its cue comes (no grey frame)
   $("anchor").classList.add("wait");
+  // ticker: starts on its first headline and crawls at broadcast speed (~7% of the screen width a second)
+  const mv = $("tickMv"); mv.style.animation = "none";
+  mv.animate([{ transform: "translateX(0)" }, { transform: "translateX(-50%)" }],
+             { duration: Math.max(12000, (mv.getBoundingClientRect().width / 2) / (tv.getBoundingClientRect().width * .07) * 1000), iterations: Infinity });
   const done = heygen("show", t);
   (function reveal() { if ($("hgVid").currentTime > .6 || !live(t)) $("anchor").classList.remove("wait"); else requestAnimationFrame(reveal); })();
   const v = $("hgVid"), last = spec.cues.length - 1;
