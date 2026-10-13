@@ -216,6 +216,9 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 .tv.show.st-voice .anchor.hg { left: 0; width: 100cqw; }   /* fades out where he stands */
 .tv.show.st-voice .anchor.hg #hgCan { inset: 0; width: 100%; height: 100%; border-radius: 0; object-position: 50% 50%; }
 .tv.show .anchor.hg.wait { opacity: 0 !important; }   /* first frames of the clip, until the cut-out is drawn */
+/* presenter show: he is simply sitting there. No glide, grow or fade-in, and no frosted box behind him */
+.tv.show .anchor, .tv.show .anchor.hg { transition: none !important; background: transparent !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.tv.show .anchor::before, .tv.show .anchor::after { display: none !important; }
 .tv.show.st-full .anchor.hg, .tv.show.st-split .anchor.hg, .tv.show.st-voice .anchor.hg { top: 0; height: 56.25cqw; padding: 0; border-radius: 0; background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .tv.show.st-full .anchor.hg { left: 0; width: 100cqw; }
 .tv.show.st-split .anchor.hg { left: 46cqw; width: 54cqw; }
@@ -239,7 +242,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 /* show mode: no glints or light sweeps anywhere */
 .tv.show .sheen::after, .tv.show .face::after { animation: none !important; opacity: 0; }
 /* voice stage: the story footage fills the screen and only his voice carries on (presenter hidden) */
-.tv.show.st-voice .anchor.hg { opacity: 0 !important; transition: opacity .7s ease; }
+.tv.show.st-voice .anchor.hg { opacity: 0 !important; transition: opacity .7s ease !important; }
 /* name super: a small credit for the presenter on his first appearance (not a news lower third) */
 .nm { left: 4cqw; bottom: 10.5cqw; z-index: 6; display: flex; align-items: stretch; visibility: hidden; filter: drop-shadow(0 .9cqw 1.8cqw rgba(0,0,0,.28)); }
 .nm .bar { width: .45cqw; background: var(--accent); border-radius: .25cqw 0 0 .25cqw; transform-origin: 50% 100%; }
@@ -514,12 +517,26 @@ const hgReady = Promise.all(["intro", "outro", ...HG_LINKS].map(async n => {
     try { if ((await fetch(u, { method: "HEAD" })).ok) { HG[n] = u; return; } } catch (e) {}
   }
 }));
+function keyFrame(v, c) {   // knock out the green screen, softening green spill on the edges
+  if (!v.videoWidth) return;
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const cw = tv.classList.contains("show") ? Math.min(v.videoWidth, 1280) : 640;   // full-size presenter needs full resolution
+  if (c.width !== cw) { c.width = cw; c.height = Math.round(cw * v.videoHeight / v.videoWidth); }
+  g.drawImage(v, 0, 0, c.width, c.height);
+  const f = g.getImageData(0, 0, c.width, c.height), d = f.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i], gr = d[i + 1], b = d[i + 2], m = Math.max(r, b);
+    if (gr > 90 && gr > m * 1.35) d[i + 3] = 0;
+    else if (gr > m) { d[i + 1] = m; d[i + 3] = Math.min(255, 255 - (gr - m) * 3); }
+  }
+  g.putImageData(f, 0, 0);
+}
 function heygen(name, t, voiceOnly = false) {   // plays in the anchor box (or just his voice) with its own sound; resolves when it ends
   return new Promise(async res => {
     await hgReady;
     const url = HG[name];
     if (!url || !ANCHOR || !live(t)) return res();
-    const v = $("hgVid"), box = $("anchor"), c = $("hgCan"), g = c.getContext("2d", { willReadFrequently: true });
+    const v = $("hgVid"), box = $("anchor"), c = $("hgCan");
     const key = url.endsWith(".mp4");
     let over = false;
     const end = () => {
@@ -531,20 +548,9 @@ function heygen(name, t, voiceOnly = false) {   // plays in the anchor box (or j
     v.volume = 1; v.onended = end; v.onerror = end;
     if (!voiceOnly) { box.classList.toggle("key", key); box.classList.add("hg", "on"); }
     fade(bgm, DUCK, 400);
-    if (key && !voiceOnly) (function draw() {   // knock out the green screen, softening green spill on the edges
+    if (key && !voiceOnly) (function draw() {
       if (over) return;
-      if (v.videoWidth) {
-        const cw = tv.classList.contains("show") ? Math.min(v.videoWidth, 1280) : 640;   // full-size presenter needs full resolution
-        if (c.width !== cw) { c.width = cw; c.height = Math.round(cw * v.videoHeight / v.videoWidth); }
-        g.drawImage(v, 0, 0, c.width, c.height);
-        const f = g.getImageData(0, 0, c.width, c.height), d = f.data;
-        for (let i = 0; i < d.length; i += 4) {
-          const r = d[i], gr = d[i + 1], b = d[i + 2], m = Math.max(r, b);
-          if (gr > 90 && gr > m * 1.35) d[i + 3] = 0;
-          else if (gr > m) { d[i + 1] = m; d[i + 3] = Math.min(255, 255 - (gr - m) * 3); }
-        }
-        g.putImageData(f, 0, 0);
-      }
+      keyFrame(v, c);
       requestAnimationFrame(draw);
     })();
     v.play().catch(end);
@@ -732,14 +738,22 @@ async function show() {
   const stageTo = st => { tv.classList.remove("st-full", "st-split", "st-pip", "st-voice"); tv.classList.add("st-" + st); };
   tv.classList.add("show", "no-glide"); stageTo(spec.cues[0].stage || "pip");
   setTimeout(() => tv.classList.remove("no-glide"), 12000);   // after the opening, stage changes glide   // the titles sweep off onto the studio, not a blank frame
-  const hv = $("hgVid"); hv.preload = "auto"; hv.src = spec.clip; hv.load();   // buffer the presenter during the titles so he is there the moment they clear
+  // buffer the presenter during the titles and put his first frame in place behind them, so when the titles
+  // clear he is already sitting there (no fade-in, no glide)
+  const hv = $("hgVid"); hv.preload = "auto"; hv.src = spec.clip; hv.load();
+  if (spec.clip.endsWith(".mp4")) hv.addEventListener("loadeddata", () => {
+    const still = () => { keyFrame(hv, $("hgCan")); $("anchor").classList.add("hg", "key", "on"); };
+    if (hv.readyState >= 2) still(); else hv.addEventListener("seeked", still, { once: true });
+    try { hv.currentTime = 0; } catch (e) {}
+    still();
+  }, { once: true });
   reset(); await titles(t);
   reset(); anchorHere = true;
+  if ($("anchor").classList.contains("hg")) $("anchor").classList.add("on");   // reset() hid him; he stays put
   HG.show = spec.clip;
   const cu = $("cu"); cu.querySelectorAll(".it").forEach(x => x.remove());
   const preload = spec.cues.filter(c => c.media).map(c => Object.assign(document.createElement("video"), { muted: true, preload: "auto", src: c.media }));
   preload.forEach(p => p.load());                       // footage is ready the moment its cue comes (no grey frame)
-  $("anchor").classList.add("wait");
   // ticker: starts on its first headline and crawls at broadcast speed (~7% of the screen width a second)
   const mv = $("tickMv"); mv.style.animation = "none";
   mv.animate([{ transform: "translateX(0)" }, { transform: "translateX(-50%)" }],
